@@ -6,20 +6,55 @@ void main() {
   runApp(const QuestLogApp());
 }
 
-class QuestLogApp extends StatelessWidget {
+class QuestLogApp extends StatefulWidget {
   const QuestLogApp({super.key});
+
+  @override
+  State<QuestLogApp> createState() => _QuestLogAppState();
+}
+
+class _QuestLogAppState extends State<QuestLogApp> {
+  int _selectedIndex = 0;
+
+  static const List<Widget> _pages = <Widget>[
+    Center(
+      child: Text(
+        'QuestLog',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    ),
+    Center(
+      child: Text(
+        'Assembler',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    ),
+    Center(
+      child: Text(
+        'Analytics',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    ),
+    Center(
+      child: Text(
+        'Settings',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'QuestLog',
       home: Scaffold(
-        body: Center(
-          child: Text(
-            'QuestLog',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        ),
+        body: _pages.elementAt(_selectedIndex),
         bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'LOG'),
@@ -36,7 +71,8 @@ class QuestLogApp extends StatelessWidget {
               label: 'SETTINGS',
             ),
           ],
-          currentIndex: 0,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Color(0xFFe6fcfe),
           unselectedItemColor: Color(0xFF879495),
