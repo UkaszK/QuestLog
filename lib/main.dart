@@ -55,36 +55,67 @@ class _QuestLogAppState extends State<QuestLogApp> {
       title: 'QuestLog',
       home: Scaffold(
         body: _pages.elementAt(_selectedIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'LOG'),
-            BottomNavigationBarItem(
-              icon: _ThemedSvgIcon('assets/icons/assembler.svg'),
-              label: 'ASSEMBLER',
+        bottomNavigationBar: Stack(
+          children: [
+            BottomNavigationBar(
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.assignment),
+                  label: 'LOG',
+                ),
+                BottomNavigationBarItem(
+                  icon: _ThemedSvgIcon('assets/icons/assembler.svg'),
+                  label: 'ASSEMBLER',
+                ),
+                BottomNavigationBarItem(
+                  icon: _ThemedSvgIcon('assets/icons/analytics.svg'),
+                  label: 'ANALYTICS',
+                ),
+                BottomNavigationBarItem(
+                  icon: _ThemedSvgIcon('assets/icons/settings.svg'),
+                  label: 'SETTINGS',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: Color(0xFFe6fcfe),
+              unselectedItemColor: Color(0xFF879495),
+              selectedLabelStyle: GoogleFonts.jetBrainsMono(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+              unselectedLabelStyle: GoogleFonts.jetBrainsMono(
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+              ),
+              backgroundColor: Color(0xFF131718),
             ),
-            BottomNavigationBarItem(
-              icon: _ThemedSvgIcon('assets/icons/analytics.svg'),
-              label: 'ANALYTICS',
-            ),
-            BottomNavigationBarItem(
-              icon: _ThemedSvgIcon('assets/icons/settings.svg'),
-              label: 'SETTINGS',
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: MediaQuery.of(context).padding.bottom + 4,
+              child: Row(
+                children: List.generate(
+                  4,
+                  (i) => Expanded(
+                    child: Center(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        height: 2,
+                        width: i == _selectedIndex ? 32.0 : 0.0,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFe6fcfe),
+                          borderRadius: BorderRadius.circular(1),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Color(0xFFe6fcfe),
-          unselectedItemColor: Color(0xFF879495),
-          selectedLabelStyle: GoogleFonts.jetBrainsMono(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-          ),
-          unselectedLabelStyle: GoogleFonts.jetBrainsMono(
-            fontSize: 11,
-            fontWeight: FontWeight.w400,
-          ),
-          backgroundColor: Color(0xFF131313),
         ),
       ),
     );
