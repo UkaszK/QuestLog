@@ -35,6 +35,35 @@ class _QuestLogAppState extends State<QuestLogApp> {
     return MaterialApp(
       title: 'QuestLog',
       home: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Container(
+            color: const Color(0xFF131718),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.only(top: 0),
+            child: SafeArea(
+              bottom: false,
+              child: Text(
+                'QUESTLOG',
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      color: const Color.fromARGB(255, 203, 251, 255),
+                      blurRadius: 12,
+                    ),
+                    Shadow(
+                      color: const Color.fromARGB(255, 117, 243, 255),
+                      blurRadius: 24,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
         body: _pages.elementAt(_selectedIndex),
         bottomNavigationBar: Stack(
           children: [
