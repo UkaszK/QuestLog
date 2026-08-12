@@ -33,27 +33,28 @@ class _QuestLogAppState extends State<QuestLogApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: .dark(),
       title: 'QuestLog',
       home: Scaffold(
         appBar: AppBar(
-          title: Text("QUESTLOG"),
+          title: Text('QUESTLOG'),
           titleTextStyle: GoogleFonts.jetBrainsMono(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            shadows: [Shadow(color: Colors.cyan, blurRadius: 20)],
+            shadows: [Shadow(color: Colors.cyan, blurRadius: 24)],
           ),
           centerTitle: true,
-          backgroundColor: const Color(0xFF131718),
+          backgroundColor: Color(0xFF131718),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
-            child: Container(height: 1, color: const Color(0xFF4B4F52)),
+            child: Container(height: 1, color: Color(0xFF4B4F52)),
           ),
         ),
         body: _pages.elementAt(_selectedIndex),
         bottomNavigationBar: Stack(
           children: [
             BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
+              items: [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.assignment),
                   label: 'LOG',
@@ -74,8 +75,8 @@ class _QuestLogAppState extends State<QuestLogApp> {
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,
               type: BottomNavigationBarType.fixed,
-              selectedItemColor: const Color(0xFFe6fcfe),
-              unselectedItemColor: const Color(0xFF879495),
+              selectedItemColor: Color(0xFFe6fcfe),
+              unselectedItemColor: Color(0xFF879495),
               selectedLabelStyle: GoogleFonts.jetBrainsMono(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -84,7 +85,7 @@ class _QuestLogAppState extends State<QuestLogApp> {
                 fontSize: 11,
                 fontWeight: FontWeight.w400,
               ),
-              backgroundColor: const Color(0xFF131718),
+              backgroundColor: Color(0xFF131718),
             ),
             Positioned(
               left: 0,
