@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:questlog/widgets/questlog_app_bar.dart';
 
 import 'screens/log_screen.dart';
 import 'screens/assembler_screen.dart';
@@ -35,20 +36,7 @@ class _QuestLogAppState extends State<QuestLogApp> {
     return MaterialApp(
       theme: .dark(),
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('QUESTLOG'),
-          titleTextStyle: GoogleFonts.jetBrainsMono(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            shadows: [Shadow(color: Colors.cyan, blurRadius: 24)],
-          ),
-          centerTitle: true,
-          backgroundColor: Color(0xFF131718),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1),
-            child: Container(height: 1, color: Color(0xFF4B4F52)),
-          ),
-        ),
+        appBar: QuestLogAppBar(),
         body: IndexedStack(index: _selectedIndex, children: _pages),
         bottomNavigationBar: Stack(
           children: [
