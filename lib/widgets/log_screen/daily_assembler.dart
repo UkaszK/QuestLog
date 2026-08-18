@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:questlog/data/quest.dart';
 
 class DailyAssembler extends StatelessWidget {
   const DailyAssembler({super.key, required this.quests});
 
-  final List<Map<String, Object>> quests;
+  final List<Quest> quests;
 
-  Widget buildQuestContainer(
-    IconData icon,
-    String startTime,
-    String endTime,
-    String label,
-  ) {
+  Widget buildQuestContainer(Quest quest) {
     return Container(
       width: 100,
       padding: EdgeInsets.all(10),
@@ -28,8 +24,12 @@ class DailyAssembler extends StatelessWidget {
             spacing: 20,
             mainAxisAlignment: .spaceBetween,
             children: [
-              Icon(icon),
-              Icon(Icons.circle, color: Colors.cyanAccent, size: 10),
+              Icon(quest.icon),
+              Icon(
+                Icons.circle,
+                color: Quest.statusColor(quest.status),
+                size: 10,
+              ),
             ],
           ),
           Column(
@@ -37,14 +37,14 @@ class DailyAssembler extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '$startTime -\n$endTime',
+                '${quest.startTime} -\n${quest.endTime}',
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 12,
                   color: Colors.white70,
                 ),
               ),
               Text(
-                label,
+                quest.name,
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -81,13 +81,7 @@ class DailyAssembler extends StatelessWidget {
                 spacing: 10,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  for (final data in quests)
-                    buildQuestContainer(
-                      data['icon'] as IconData,
-                      data['startTime'] as String,
-                      data['endTime'] as String,
-                      data['label'] as String,
-                    ),
+                  for (final data in quests) buildQuestContainer(data),
                 ],
               ),
             ),
