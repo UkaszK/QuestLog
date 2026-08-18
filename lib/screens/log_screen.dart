@@ -1,30 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:questlog/screens/test_screen.dart';
+import 'package:questlog/widgets/log_screen/active_protocol.dart';
+import 'package:questlog/widgets/log_screen/daily_assembler.dart';
+import 'package:questlog/widgets/log_screen/main_quests.dart';
+import 'package:questlog/widgets/log_screen/side_quests.dart';
 
 class LogScreen extends StatelessWidget {
   const LogScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return SingleChildScrollView(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'QuestLog',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const TestScreen(),
-                ),
-              );
-            },
-            child: Text('Test'),
-          ),
+          DailyAssembler(),
+          ActiveProtocol(),
+          MainQuests(),
+          SideQuests(),
         ],
       ),
     );
