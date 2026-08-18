@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:questlog/data/dummy_quests.dart';
 import 'package:questlog/widgets/log_screen/active_protocol.dart';
 import 'package:questlog/widgets/log_screen/daily_assembler.dart';
 import 'package:questlog/widgets/log_screen/main_quests.dart';
@@ -9,14 +10,20 @@ class LogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          DailyAssembler(),
-          ActiveProtocol(),
-          MainQuests(),
-          SideQuests(),
-        ],
+    return Scaffold(
+      body: Container(
+        margin: const EdgeInsets.all(10),
+        child: SingleChildScrollView(
+          child: Column(
+            spacing: 10,
+            children: [
+              DailyAssembler(quests: dailyAssemblerQuests),
+              ActiveProtocol(),
+              MainQuests(),
+              SideQuests(),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -6,6 +6,6 @@ class TestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: QuestLogAppBar(), body: Text("Test"));
+    return Scaffold(appBar: QuestLogAppBar(), body: Text('Test'));
   }
 }
