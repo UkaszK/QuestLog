@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum QuestStatus { pending, completed, active }
+enum QuestStatus { open, completed, active, pending }
 
 class Quest {
   const Quest({
@@ -19,9 +19,10 @@ class Quest {
 
   static Color statusColor(QuestStatus status) {
     return switch (status) {
-      QuestStatus.pending => Colors.white38,
+      QuestStatus.open => Colors.white38,
       QuestStatus.completed => Colors.greenAccent,
       QuestStatus.active => Colors.cyanAccent,
+      QuestStatus.pending => Colors.red,
     };
   }
 }
