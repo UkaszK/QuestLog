@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:questlog/constants/themed_colors.dart';
+import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/questlog_app_bar.dart';
 
 import 'screens/log_screen.dart';
@@ -77,15 +77,15 @@ class _QuestLogAppState extends State<QuestLogApp> {
                   final isSelected = states.contains(WidgetState.selected);
                   return GoogleFonts.jetBrainsMono(
                     color: isSelected
-                        ? ThemedColors.textPrimary
-                        : ThemedColors.textSecondary,
+                        ? QuestLogColors.textPrimary
+                        : QuestLogColors.textSecondary,
                     fontSize: isSelected ? 12 : 11,
                     fontWeight: isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
                   );
                 }),
-                backgroundColor: ThemedColors.background,
+                backgroundColor: QuestLogColors.background,
               ),
             ),
             Positioned(
@@ -103,7 +103,7 @@ class _QuestLogAppState extends State<QuestLogApp> {
                         height: 2,
                         width: i == _selectedIndex ? 32.0 : 0.0,
                         decoration: BoxDecoration(
-                          color: ThemedColors.textPrimary,
+                          color: QuestLogColors.textPrimary,
                           borderRadius: BorderRadius.circular(1),
                         ),
                       ),

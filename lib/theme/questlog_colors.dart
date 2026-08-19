@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Centralized app color constants.
 /// Use these throughout the app instead of hardcoding colors,
 /// so the theme can be easily adjusted from a single place.
-class ThemedColors {
+class QuestLogColors {
   // Brand colors
   // static const Color primary = Color(0xFF6C63FF);
   // static const Color secondary = Color(0xFF03DAC6);

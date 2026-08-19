@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:questlog/constants/themed_colors.dart';
+import 'package:questlog/theme/questlog_colors.dart';
 
 enum QuestStatus { open, completed, active, pending }
 
@@ -10,6 +10,7 @@ class Quest {
     required this.startTime,
     required this.endTime,
     required this.status,
+    required this.subTasks,
   });
 
   final IconData icon;
@@ -17,13 +18,14 @@ class Quest {
   final String startTime;
   final String endTime;
   final QuestStatus status;
+  final Map<String, bool> subTasks;
 
   static Color statusColor(QuestStatus status) {
     return switch (status) {
-      QuestStatus.open => ThemedColors.textSecondary,
-      QuestStatus.completed => ThemedColors.success,
-      QuestStatus.active => ThemedColors.accent,
-      QuestStatus.pending => ThemedColors.warning,
+      QuestStatus.open => QuestLogColors.textSecondary,
+      QuestStatus.completed => QuestLogColors.success,
+      QuestStatus.active => QuestLogColors.accent,
+      QuestStatus.pending => QuestLogColors.warning,
     };
   }
 

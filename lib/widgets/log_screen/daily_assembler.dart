@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:questlog/constants/themed_colors.dart';
+import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/data/quest.dart';
+import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/widgets/section_decoration.dart';
 
 class DailyAssembler extends StatelessWidget {
@@ -43,7 +44,7 @@ class DailyAssembler extends StatelessWidget {
                   fontSize: 12,
                   color: isPendingOrCompleted
                       ? questColor
-                      : ThemedColors.textSecondary,
+                      : QuestLogColors.textSecondary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -53,7 +54,7 @@ class DailyAssembler extends StatelessWidget {
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: ThemedColors.textPrimary,
+                  color: QuestLogColors.textPrimary,
                 ),
               ),
             ],
@@ -71,14 +72,7 @@ class DailyAssembler extends StatelessWidget {
         spacing: 12,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'DAILY ASSEMBLER',
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 12,
-              fontWeight: FontWeight.normal,
-              color: ThemedColors.textSecondary,
-            ),
-          ),
+          Text('DAILY ASSEMBLER', style: QuestLogTextStyles.headerText),
           SingleChildScrollView(
             physics: ScrollPhysics(parent: ClampingScrollPhysics()),
             scrollDirection: Axis.horizontal,

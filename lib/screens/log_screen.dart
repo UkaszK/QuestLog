@@ -18,7 +18,12 @@ class LogScreen extends StatelessWidget {
             spacing: 10,
             children: [
               DailyAssembler(quests: dailyAssemblerQuests),
-              ActiveProtocol(),
+              ActiveProtocol(
+                activeQuest: dailyAssemblerQuests.firstWhere(
+                  (quest) =>
+                      quest.status == .active || quest.status == .pending,
+                ),
+              ),
               MainQuests(),
               SideQuests(),
             ],

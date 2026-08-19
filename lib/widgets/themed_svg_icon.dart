@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:questlog/constants/themed_colors.dart';
+import 'package:questlog/theme/questlog_colors.dart';
 
 class ThemedSvgIcon extends StatelessWidget {
   final String assetPath;
@@ -9,7 +9,7 @@ class ThemedSvgIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = IconTheme.of(context).color ?? ThemedColors.textPrimary;
+    final color = IconTheme.of(context).color ?? QuestLogColors.textPrimary;
     return SvgPicture.asset(
       assetPath,
       width: 20,
