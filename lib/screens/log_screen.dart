@@ -15,7 +15,7 @@ class LogScreen extends StatelessWidget {
         margin: const EdgeInsets.all(10),
         child: SingleChildScrollView(
           child: Column(
-            spacing: 10,
+            spacing: 25,
             children: [
               DailyAssembler(quests: dailyAssemblerQuests),
               ActiveProtocol(
@@ -24,8 +24,8 @@ class LogScreen extends StatelessWidget {
                       quest.status == .active || quest.status == .pending,
                 ),
               ),
+              SideQuests(sideQuests: dummySideQuests),
               MainQuests(),
-              SideQuests(),
             ],
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/data/quest.dart';
+import 'package:questlog/data/side_quest.dart';
 
 const dailyAssemblerQuests = [
   Quest(
@@ -54,4 +55,23 @@ const dailyAssemblerQuests = [
       'Read a chapter': false,
     },
   ),
+];
+
+const dummySideQuests = [
+  SideQuest(
+    name: 'Read a Book',
+    questCategory: .learning,
+    repeatDays: {.monday, .tuesday, .wednesday, .thursday, .friday},
+  ),
+  SideQuest(
+    name: 'Care for Plants',
+    questCategory: .chores,
+    repeatDays: {.monday, .thursday},
+  ),
+  SideQuest(
+    name: 'Tidy Desk',
+    questCategory: .chores,
+    repeatDays: {.saturday, .sunday},
+  ),
+  SideQuest(name: 'Gym', questCategory: .fitness, repeatDays: {}),
 ];

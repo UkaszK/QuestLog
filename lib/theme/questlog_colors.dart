@@ -8,6 +8,9 @@ class QuestLogColors {
   // static const Color primary = Color(0xFF6C63FF);
   // static const Color secondary = Color(0xFF03DAC6);
   static const Color accent = Color.fromARGB(255, 111, 238, 252);
+  static const Color accentLessOpactiy = Color.fromARGB(20, 111, 238, 252);
+  static const Color otherAccent = Color.fromARGB(255, 243, 176, 229);
+  static const Color otherAccentLessOpacity = Color.fromARGB(20, 243, 176, 229);
 
   // Neutral colors
   static const Color background = Color(0xFF131718);
