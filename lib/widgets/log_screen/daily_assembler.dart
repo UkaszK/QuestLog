@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:questlog/constants/themed_colors.dart';
 import 'package:questlog/data/quest.dart';
 
 class DailyAssembler extends StatelessWidget {
@@ -9,12 +10,15 @@ class DailyAssembler extends StatelessWidget {
 
   Widget buildQuestContainer(Quest quest) {
     final isPending = quest.status == QuestStatus.pending;
+    final questColor = Quest.statusColor(quest.status);
+
     return Container(
       width: 100,
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white, width: 0.2),
+        border: Border.all(color: ThemedColors.border, width: 1),
         borderRadius: BorderRadius.circular(2),
+        color: ThemedColors.surface,
       ),
       child: Column(
         spacing: 3,
@@ -26,15 +30,11 @@ class DailyAssembler extends StatelessWidget {
             mainAxisAlignment: .spaceBetween,
             children: [
               if (isPending)
-                Icon(Icons.warning, color: Colors.red)
+                Icon(Icons.warning, color: questColor)
               else
                 Icon(quest.icon),
 
-              Icon(
-                Icons.circle,
-                color: Quest.statusColor(quest.status),
-                size: 10,
-              ),
+              Icon(Icons.circle, color: questColor, size: 10),
             ],
           ),
           Column(
@@ -46,7 +46,7 @@ class DailyAssembler extends StatelessWidget {
                   'PENDING',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 13,
-                    color: Colors.red,
+                    color: questColor,
                     fontWeight: .w900,
                   ),
                 )
@@ -55,7 +55,7 @@ class DailyAssembler extends StatelessWidget {
                   '${quest.startTime} -\n${quest.endTime}',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 12,
-                    color: Colors.white70,
+                    color: ThemedColors.textSecondary,
                   ),
                 ),
 
@@ -64,7 +64,7 @@ class DailyAssembler extends StatelessWidget {
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: ThemedColors.textPrimary,
                 ),
               ),
             ],
@@ -87,10 +87,11 @@ class DailyAssembler extends StatelessWidget {
             style: GoogleFonts.jetBrainsMono(
               fontSize: 12,
               fontWeight: FontWeight.normal,
-              color: Colors.white70,
+              color: ThemedColors.textSecondary,
             ),
           ),
           SingleChildScrollView(
+            physics: ScrollPhysics(parent: ClampingScrollPhysics()),
             scrollDirection: Axis.horizontal,
             child: IntrinsicHeight(
               child: Row(
