@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/constants/themed_colors.dart';
 import 'package:questlog/data/quest.dart';
+import 'package:questlog/widgets/section_decoration.dart';
 
 class DailyAssembler extends StatelessWidget {
   const DailyAssembler({super.key, required this.quests});
@@ -17,11 +18,7 @@ class DailyAssembler extends StatelessWidget {
     return Container(
       width: 100,
       padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        border: Border.all(color: ThemedColors.border, width: 1),
-        borderRadius: BorderRadius.circular(2),
-        color: ThemedColors.surface,
-      ),
+      decoration: SectionDecoration(),
       child: Column(
         spacing: 3,
         mainAxisAlignment: .spaceBetween,
