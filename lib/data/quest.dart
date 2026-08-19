@@ -26,4 +26,12 @@ class Quest {
       QuestStatus.pending => ThemedColors.warning,
     };
   }
+
+  String timeLabel() {
+    return switch (status) {
+      QuestStatus.completed => 'COMPLETED',
+      QuestStatus.pending => 'PENDING',
+      _ => '$startTime -\n$endTime',
+    };
+  }
 }

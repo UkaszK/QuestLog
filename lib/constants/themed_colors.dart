@@ -21,7 +21,7 @@ class ThemedColors {
   // static const Color textOnPrimary = Color(0xFFFFFFFF);
 
   // Status colors
-  static const Color success = Color(0xFF4CAF50);
+  static const Color success = Color.fromARGB(255, 165, 214, 167);
   static const Color warning = Color.fromARGB(255, 244, 183, 174);
   static const Color danger = Colors.red;
   static const Color info = Color(0xFF2196F3);

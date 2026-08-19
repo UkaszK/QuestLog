@@ -9,7 +9,9 @@ class DailyAssembler extends StatelessWidget {
   final List<Quest> quests;
 
   Widget buildQuestContainer(Quest quest) {
-    final isPending = quest.status == QuestStatus.pending;
+    final isPendingOrCompleted =
+        quest.status == QuestStatus.pending ||
+        quest.status == QuestStatus.completed;
     final questColor = Quest.statusColor(quest.status);
 
     return Container(
@@ -29,10 +31,7 @@ class DailyAssembler extends StatelessWidget {
             spacing: 20,
             mainAxisAlignment: .spaceBetween,
             children: [
-              if (isPending)
-                Icon(Icons.warning, color: questColor)
-              else
-                Icon(quest.icon),
+              Icon(quest.icon),
 
               Icon(Icons.circle, color: questColor, size: 10),
             ],
@@ -41,23 +40,16 @@ class DailyAssembler extends StatelessWidget {
             spacing: 3,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (isPending)
-                Text(
-                  'PENDING',
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: 13,
-                    color: questColor,
-                    fontWeight: .w900,
-                  ),
-                )
-              else
-                Text(
-                  '${quest.startTime} -\n${quest.endTime}',
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: 12,
-                    color: ThemedColors.textSecondary,
-                  ),
+              Text(
+                quest.timeLabel(),
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 12,
+                  color: isPendingOrCompleted
+                      ? questColor
+                      : ThemedColors.textSecondary,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
 
               Text(
                 quest.name,
