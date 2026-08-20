@@ -19,7 +19,7 @@ class SideQuests extends StatelessWidget {
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.otherAccent,
             fontSize: 12,
-            fontWeight: .bold,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],
@@ -27,6 +27,8 @@ class SideQuests extends StatelessWidget {
   }
 
   Widget _buildSideQuest(SideQuest sideQuest) {
+    final isRepetitive = sideQuest.repeatDays.isNotEmpty;
+
     return Container(
       decoration: SectionDecoration(),
       padding: EdgeInsets.all(10),
@@ -48,7 +50,7 @@ class SideQuests extends StatelessWidget {
                     sideQuest.name,
                     style: TextStyle(
                       color: QuestLogColors.textPrimary,
-                      fontWeight: .bold,
+                      fontWeight: FontWeight.bold,
                       letterSpacing: -1,
                       fontSize: 14,
                     ),
@@ -72,7 +74,7 @@ class SideQuests extends StatelessWidget {
                   style: GoogleFonts.jetBrainsMono(
                     color: QuestLogColors.accent,
                     fontSize: 10,
-                    fontWeight: .bold,
+                    fontWeight: FontWeight.bold,
                     letterSpacing: -0.5,
                   ),
                 ),
@@ -80,41 +82,47 @@ class SideQuests extends StatelessWidget {
             ],
           ),
           Row(
-            mainAxisAlignment: .spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 sideQuest.categoryString().toUpperCase(),
                 style: GoogleFonts.jetBrainsMono(fontSize: 10),
               ),
-              if (sideQuest.repeatDays.isNotEmpty)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: QuestLogColors.otherAccentLessOpacity,
-                    border: Border.all(
-                      color: QuestLogColors.otherAccent,
-                      width: 1,
-                    ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: QuestLogColors.otherAccentLessOpacity,
+                  border: Border.all(
+                    color: isRepetitive
+                        ? QuestLogColors.otherAccent
+                        : QuestLogColors.textSecondary,
+                    width: 1,
                   ),
-                  child: Row(
-                    spacing: 5,
-                    children: [
+                ),
+                child: Row(
+                  spacing: 5,
+                  children: [
+                    if (isRepetitive)
                       Icon(
                         Icons.history,
                         size: 12,
                         color: QuestLogColors.otherAccent,
                       ),
-                      Text(
-                        sideQuest.timeIntervalString()!.toUpperCase(),
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 9,
-                          color: QuestLogColors.otherAccent,
-                          fontWeight: .bold,
-                        ),
+                    Text(
+                      isRepetitive
+                          ? sideQuest.timeIntervalString()!.toUpperCase()
+                          : 'JUST ONCE',
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 9,
+                        color: isRepetitive
+                            ? QuestLogColors.otherAccent
+                            : QuestLogColors.textSecondary,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
             ],
           ),
         ],
