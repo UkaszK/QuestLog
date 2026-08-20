@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:questlog/data/quest_info.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
 enum QuestStatus { open, completed, active, pending }
 
-class Quest {
-  const Quest({
-    required this.icon,
-    required this.name,
+class AssemblerQuest {
+  const AssemblerQuest({
+    required this.questInfo,
     required this.startTime,
     required this.endTime,
     required this.status,
-    required this.subTasks,
   });
 
-  final IconData icon;
-  final String name;
+  final QuestInfo questInfo;
   final String startTime;
   final String endTime;
   final QuestStatus status;
-  final Map<String, bool> subTasks;
 
   static Color statusColor(QuestStatus status) {
     return switch (status) {

@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/data/quest.dart';
+import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/widgets/section_decoration.dart';
+import 'package:questlog/utils/quest_category_icon.dart';
 
 class DailyAssembler extends StatelessWidget {
   const DailyAssembler({super.key, required this.quests});
 
-  final List<Quest> quests;
+  final List<AssemblerQuest> quests;
 
   Widget _buildHeader() {
     return Text('DAILY ASSEMBLER', style: QuestLogTextStyles.headerText);
   }
 
-  Widget _buildQuestContainer(Quest quest) {
+  Widget _buildQuestContainer(AssemblerQuest assemblerQuest) {
     final isPendingOrCompleted =
-        quest.status == QuestStatus.pending ||
-        quest.status == QuestStatus.completed;
-    final questColor = Quest.statusColor(quest.status);
+        assemblerQuest.status == QuestStatus.pending ||
+        assemblerQuest.status == QuestStatus.completed;
+    final questColor = AssemblerQuest.statusColor(assemblerQuest.status);
 
     return Container(
       width: 100,
@@ -33,7 +34,9 @@ class DailyAssembler extends StatelessWidget {
             spacing: 20,
             mainAxisAlignment: .spaceBetween,
             children: [
-              Icon(quest.icon),
+              Icon(
+                getQuestCategoryIcon(assemblerQuest.questInfo.questCategory),
+              ),
 
               Icon(Icons.circle, color: questColor, size: 10),
             ],
@@ -43,7 +46,7 @@ class DailyAssembler extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                quest.timeLabel(),
+                assemblerQuest.timeLabel(),
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 12,
                   color: isPendingOrCompleted
@@ -54,7 +57,7 @@ class DailyAssembler extends StatelessWidget {
               ),
 
               Text(
-                quest.name,
+                assemblerQuest.questInfo.name,
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,

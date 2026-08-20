@@ -1,6 +1,5 @@
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/day.dart';
-import 'package:questlog/utils/stringify_quest_category.dart';
 
 class SideQuest {
   const SideQuest({
@@ -12,10 +11,6 @@ class SideQuest {
   final String name;
   final QuestCategory questCategory;
   final Set<Day> repeatDays;
-
-  String categoryString() {
-    return stringifyQuestCategory(questCategory);
-  }
 
   String? timeIntervalString() {
     if (repeatDays.isEmpty) return null;

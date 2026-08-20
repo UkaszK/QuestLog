@@ -14,7 +14,7 @@ class MainQuest {
   final String name;
   final QuestCategory questCategory;
   final int durationMin;
-  final Map<String, bool> subTasks;
+  final List<({String name, bool completed})> subTasks;
   final DateTime dueDate;
   final Priority priority;
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/priority.dart';
+import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/utils/stringify_duration.dart';
@@ -150,7 +151,7 @@ class MainQuests extends StatelessWidget {
             child: Column(
               spacing: 5,
               children: [
-                for (final subTask in mainQuest.subTasks.keys)
+                for (final subTask in mainQuest.subTasks)
                   _buildSubTask(subTask),
               ],
             ),
@@ -192,14 +193,14 @@ class MainQuests extends StatelessWidget {
     );
   }
 
-  Widget _buildSubTask(String subTask) {
+  Widget _buildSubTask(SubTask subTask) {
     return Row(
       spacing: 5,
       children: [
         Icon(Icons.chevron_right, size: 16, color: QuestLogColors.accent),
 
         Text(
-          subTask.toUpperCase(),
+          subTask.name.toUpperCase(),
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textPrimary,
             fontSize: 10,
