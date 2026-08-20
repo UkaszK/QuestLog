@@ -53,7 +53,7 @@ class MainQuests extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: QuestLogColors.accentLessOpactiy,
+                  color: QuestLogColors.accentLessOpacity,
                   border: Border.all(color: QuestLogColors.accent, width: 1),
                 ),
                 child: Text(
@@ -158,32 +158,33 @@ class MainQuests extends StatelessWidget {
 
           TextButton(
             onPressed: () {},
-            child: Container(
+            style: TextButton.styleFrom(
               padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: QuestLogColors.accentLessOpactiy,
-                border: Border.all(width: 1, color: QuestLogColors.accent),
+              backgroundColor: QuestLogColors.accentLessOpacity,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1, color: QuestLogColors.accent),
+                borderRadius: BorderRadius.zero,
               ),
-              child: Row(
-                mainAxisAlignment: .center,
-                spacing: 5,
-                children: [
-                  Icon(
-                    Icons.bolt_outlined,
-                    color: QuestLogColors.accent,
-                    size: 20,
-                  ),
+            ),
+            child: Row(
+              mainAxisAlignment: .center,
+              spacing: 5,
+              children: [
+                Icon(
+                  Icons.bolt_outlined,
+                  color: QuestLogColors.accent,
+                  size: 20,
+                ),
 
-                  Text(
-                    'ASSEMBLE',
-                    style: GoogleFonts.jetBrainsMono(
-                      color: QuestLogColors.accent,
-                      fontSize: 12,
-                      fontWeight: .w900,
-                    ),
+                Text(
+                  'ASSEMBLE',
+                  style: GoogleFonts.jetBrainsMono(
+                    color: QuestLogColors.accent,
+                    fontSize: 12,
+                    fontWeight: .w900,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],

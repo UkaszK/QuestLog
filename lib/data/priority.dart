@@ -22,7 +22,7 @@ Color priorityColor(Priority priority) {
 IconData priorityIcon(Priority priority) {
   return switch (priority) {
     .low => Icons.low_priority,
-    .medium => Icons.accessible,
+    .medium => Icons.check,
     .high => Icons.priority_high,
   };
 }

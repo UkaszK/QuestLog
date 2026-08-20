@@ -56,29 +56,24 @@ class SideQuests extends StatelessWidget {
                 ],
               ),
               TextButton(
+                onPressed: () {},
                 style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                onPressed: () {},
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: QuestLogColors.accentLessOpactiy,
-                    border: BoxBorder.all(
-                      color: QuestLogColors.accent,
-                      width: 1,
-                    ),
+                  backgroundColor: QuestLogColors.accentLessOpacity,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 1, color: QuestLogColors.accent),
+                    borderRadius: BorderRadius.zero,
                   ),
-                  child: Text(
-                    'COMPLETE',
-                    style: GoogleFonts.jetBrainsMono(
-                      color: QuestLogColors.accent,
-                      fontSize: 10,
-                      fontWeight: .bold,
-                      letterSpacing: -0.5,
-                    ),
+                ),
+                child: Text(
+                  'COMPLETE',
+                  style: GoogleFonts.jetBrainsMono(
+                    color: QuestLogColors.accent,
+                    fontSize: 10,
+                    fontWeight: .bold,
+                    letterSpacing: -0.5,
                   ),
                 ),
               ),
