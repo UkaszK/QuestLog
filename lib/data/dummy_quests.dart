@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest.dart';
 import 'package:questlog/data/side_quest.dart';
 
@@ -74,4 +75,59 @@ const dummySideQuests = [
     repeatDays: {.saturday, .sunday},
   ),
   SideQuest(name: 'Gym', questCategory: .fitness, repeatDays: {}),
+];
+
+final dummyMainQuests = [
+  MainQuest(
+    name: 'Launch Product Sprint',
+    questCategory: .work,
+    durationMin: 150,
+    subTasks: {
+      'Define goals': true,
+      'Prioritize tasks': true,
+      'Ship MVP': false,
+    },
+    dueDate: DateTime(2026, 8, 22),
+    priority: .high,
+  ),
+  MainQuest(
+    name: 'Weekend Reset',
+    questCategory: .chores,
+    durationMin: 90,
+    subTasks: {'Laundry': true, 'Vacuum': false, 'Meal prep': false},
+    dueDate: DateTime(2026, 8, 23),
+    priority: .low,
+  ),
+  MainQuest(
+    name: 'Marathon Training',
+    questCategory: .fitness,
+    durationMin: 85,
+    subTasks: {'Warm-up': true, 'Run intervals': false, 'Stretch': false},
+    dueDate: DateTime(2026, 8, 25),
+    priority: .high,
+  ),
+  MainQuest(
+    name: 'Reading Streak',
+    questCategory: .learning,
+    durationMin: 45,
+    subTasks: {
+      'Read chapter': true,
+      'Take notes': false,
+      'Summarize insights': false,
+    },
+    dueDate: DateTime(2026, 8, 21),
+    priority: .medium,
+  ),
+  MainQuest(
+    name: 'Health Check-In',
+    questCategory: .health,
+    durationMin: 30,
+    subTasks: {
+      'Drink water': true,
+      'Go for a walk': false,
+      'Plan sleep': false,
+    },
+    dueDate: DateTime(2026, 8, 20),
+    priority: .low,
+  ),
 ];

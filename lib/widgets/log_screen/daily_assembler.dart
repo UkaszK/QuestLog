@@ -10,7 +10,11 @@ class DailyAssembler extends StatelessWidget {
 
   final List<Quest> quests;
 
-  Widget buildQuestContainer(Quest quest) {
+  Widget _buildHeader() {
+    return Text('DAILY ASSEMBLER', style: QuestLogTextStyles.headerText);
+  }
+
+  Widget _buildQuestContainer(Quest quest) {
     final isPendingOrCompleted =
         quest.status == QuestStatus.pending ||
         quest.status == QuestStatus.completed;
@@ -72,7 +76,8 @@ class DailyAssembler extends StatelessWidget {
         spacing: 12,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('DAILY ASSEMBLER', style: QuestLogTextStyles.headerText),
+          _buildHeader(),
+
           SingleChildScrollView(
             physics: ScrollPhysics(parent: ClampingScrollPhysics()),
             scrollDirection: Axis.horizontal,
@@ -81,7 +86,7 @@ class DailyAssembler extends StatelessWidget {
                 spacing: 10,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  for (final data in quests) buildQuestContainer(data),
+                  for (final data in quests) _buildQuestContainer(data),
                 ],
               ),
             ),

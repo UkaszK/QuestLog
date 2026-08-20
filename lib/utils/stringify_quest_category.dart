@@ -1,6 +1,6 @@
 import 'package:questlog/data/quest_category.dart';
 
-String stringifyCategory(QuestCategory questCategory) {
+String stringifyQuestCategory(QuestCategory questCategory) {
   return switch (questCategory) {
     .chores => 'Chores',
     .creative => 'Creative',

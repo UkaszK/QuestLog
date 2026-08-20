@@ -22,7 +22,7 @@ class ActiveProtocol extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('ACTIVE PROTOCOL', style: QuestLogTextStyles.headerText),
-
+          
           Row(
             mainAxisAlignment: .spaceBetween,
             children: [

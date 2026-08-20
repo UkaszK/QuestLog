@@ -25,7 +25,7 @@ class LogScreen extends StatelessWidget {
                 ),
               ),
               SideQuests(sideQuests: dummySideQuests),
-              MainQuests(),
+              MainQuests(mainQuests: dummyMainQuests),
             ],
           ),
         ),
