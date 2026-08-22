@@ -5,22 +5,47 @@ import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/stringify_quest_category.dart';
 import 'package:questlog/widgets/section_decoration.dart';
 
-class SideQuests extends StatelessWidget {
+class SideQuests extends StatefulWidget {
   const SideQuests({super.key, required this.sideQuests});
 
   final List<SideQuest> sideQuests;
 
+  @override
+  State<SideQuests> createState() => _SideQuestsState();
+}
+
+class _SideQuestsState extends State<SideQuests> {
+  bool isExpanded = false;
+
   Widget _buildHeader() {
     return Row(
-      spacing: 5,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(Icons.more_horiz, color: QuestLogColors.otherAccent, size: 16),
-        Text(
-          'SIDE QUESTS',
-          style: GoogleFonts.jetBrainsMono(
-            color: QuestLogColors.otherAccent,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
+        Row(
+          spacing: 5,
+          children: [
+            Icon(Icons.more_horiz, color: QuestLogColors.otherAccent, size: 16),
+            Text(
+              'SIDE QUESTS',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.otherAccent,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+
+        IconButton(
+          onPressed: () {
+            setState(() {
+              isExpanded = !isExpanded;
+            });
+          },
+          icon: AnimatedRotation(
+            turns: isExpanded ? 0.5 : 0,
+            duration: Duration(milliseconds: 200),
+            child: Icon(Icons.arrow_drop_down),
           ),
         ),
       ],
@@ -134,11 +159,23 @@ class SideQuests extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 10,
       children: [
         _buildHeader(),
 
-        for (final sideQuest in sideQuests) _buildSideQuest(sideQuest),
+        AnimatedCrossFade(
+          firstChild: SizedBox.shrink(),
+          secondChild: Column(
+            spacing: 10,
+            children: [
+              for (final sideQuest in widget.sideQuests)
+                _buildSideQuest(sideQuest),
+            ],
+          ),
+          crossFadeState: isExpanded
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          duration: Duration(milliseconds: 250),
+        ),
       ],
     );
   }

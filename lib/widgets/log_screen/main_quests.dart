@@ -8,18 +8,47 @@ import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/utils/stringify_duration.dart';
 import 'package:questlog/utils/stringify_quest_category.dart';
 
-class MainQuests extends StatelessWidget {
+class MainQuests extends StatefulWidget {
   const MainQuests({super.key, required this.mainQuests});
 
   final List<MainQuest> mainQuests;
 
+  @override
+  State<MainQuests> createState() => _MainQuestsState();
+}
+
+class _MainQuestsState extends State<MainQuests> {
+  bool isExpanded = false;
+
   Widget _buildHeader() {
     return Row(
-      spacing: 5,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(Icons.calendar_month, color: QuestLogColors.textPrimary, size: 16),
+        Row(
+          spacing: 5,
+          children: [
+            Icon(
+              Icons.calendar_month,
+              color: QuestLogColors.textPrimary,
+              size: 16,
+            ),
 
-        Text('MAIN QUESTS', style: QuestLogTextStyles.headerText),
+            Text('MAIN QUESTS', style: QuestLogTextStyles.headerText),
+          ],
+        ),
+
+        IconButton(
+          onPressed: () {
+            setState(() {
+              isExpanded = !isExpanded;
+            });
+          },
+          icon: AnimatedRotation(
+            turns: isExpanded ? 0.5 : 0,
+            duration: Duration(milliseconds: 200),
+            child: Icon(Icons.arrow_drop_down),
+          ),
+        ),
       ],
     );
   }
@@ -213,14 +242,25 @@ class MainQuests extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 10,
       children: [
         _buildHeader(),
 
-        for (final mainQuest
-            in (mainQuests.toList()
-              ..sort((a, b) => a.dueDate.compareTo(b.dueDate))))
-          _buildMainQuest(mainQuest),
+        AnimatedCrossFade(
+          firstChild: SizedBox.shrink(),
+          secondChild: Column(
+            spacing: 10,
+            children: [
+              for (final mainQuest
+                  in (widget.mainQuests.toList()
+                    ..sort((a, b) => a.dueDate.compareTo(b.dueDate))))
+                _buildMainQuest(mainQuest),
+            ],
+          ),
+          crossFadeState: isExpanded
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          duration: Duration(milliseconds: 250),
+        ),
       ],
     );
   }
