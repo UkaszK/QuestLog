@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/dummy_quests.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
 import 'package:questlog/widgets/assembler_screen/assembler_title.dart';
@@ -13,6 +14,12 @@ class AssemblerScreen extends StatefulWidget {
 
 class _AssemblerScreenState extends State<AssemblerScreen> {
   DateTime _selectedDay = DateTime.now();
+
+  List<AssemblerQuest> get _selectedDayQuests {
+    return dailyAssemblerQuests
+        .where((quest) => DateUtils.isSameDay(quest.startTime, _selectedDay))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +47,12 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
 
             SizedBox(height: 35),
 
-            Expanded(child: Assembler(assemblerQuests: dailyAssemblerQuests)),
+            Expanded(
+              child: Assembler(
+                day: _selectedDay,
+                assemblerQuests: _selectedDayQuests,
+              ),
+            ),
           ],
         ),
       ),

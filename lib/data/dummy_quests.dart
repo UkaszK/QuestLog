@@ -7,6 +7,29 @@ import 'package:questlog/utils/set_time.dart';
 final dailyAssemblerQuests = [
   AssemblerQuest(
     questInfo: QuestInfo(
+      name: 'Plan Weekly Goals',
+      questCategory: .learning,
+      subTasks: [
+        (name: 'Review last week', completed: true),
+        (name: 'Choose priorities', completed: true),
+      ],
+    ),
+    startTime: setTime(DateTime.now().subtract(const Duration(days: 1)), 9, 0),
+    endTime: setTime(DateTime.now().subtract(const Duration(days: 1)), 10, 30),
+    status: QuestStatus.completed,
+  ),
+  AssemblerQuest(
+    questInfo: QuestInfo(
+      name: 'Grocery Shopping',
+      questCategory: .chores,
+      subTasks: [],
+    ),
+    startTime: setTime(DateTime.now().subtract(Duration(days: 1)), 16, 0),
+    endTime: setTime(DateTime.now().subtract(Duration(days: 1)), 17, 0),
+    status: QuestStatus.completed,
+  ),
+  AssemblerQuest(
+    questInfo: QuestInfo(
       name: 'Morning Routine',
       questCategory: .personal,
       subTasks: [],
@@ -62,6 +85,29 @@ final dailyAssemblerQuests = [
     startTime: setTime(DateTime.now(), 22, 0),
     endTime: setTime(DateTime.now(), 22, 30),
     status: QuestStatus.open,
+  ),
+  AssemblerQuest(
+    questInfo: QuestInfo(
+      name: 'Plan Next Sprint',
+      questCategory: .work,
+      subTasks: [
+        (name: 'Review backlog', completed: false),
+        (name: 'Set sprint goals', completed: false),
+      ],
+    ),
+    startTime: setTime(DateTime.now().add(const Duration(days: 1)), 9, 30),
+    endTime: setTime(DateTime.now().add(const Duration(days: 1)), 11, 0),
+    status: QuestStatus.open,
+  ),
+  AssemblerQuest(
+    questInfo: QuestInfo(
+      name: 'Evening Walk',
+      questCategory: .fitness,
+      subTasks: [],
+    ),
+    startTime: setTime(DateTime.now().add(const Duration(days: 1)), 18, 30),
+    endTime: setTime(DateTime.now().add(const Duration(days: 1)), 19, 15),
+    status: QuestStatus.pending,
   ),
 ];
 

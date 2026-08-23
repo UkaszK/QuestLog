@@ -6,20 +6,16 @@ import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/get_time_text.dart';
 
 class Assembler extends StatelessWidget {
-  Assembler({super.key, required this.assemblerQuests});
+  Assembler({super.key, required this.day, required this.assemblerQuests});
 
+  final DateTime day;
   final List<AssemblerQuest> assemblerQuests;
 
   final double _pixelsPerMinute = 1.0;
   final double _leftOffset = 70;
   final double _rightOffset = 15;
 
-  final DateTime baseDate = DateTime(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
-    0,
-  );
+  late final DateTime baseDate = DateTime(day.year, day.month, day.day);
 
   Widget _buildTimeGrid() {
     List<Widget> gridElements = [];
@@ -97,7 +93,11 @@ class Assembler extends StatelessWidget {
           .map((el) => el.name)
           .join(', ');
       Color statusColor = quest.statusColor;
-      String timeText = quest.timeText;
+      String timeText = getTimeText(
+        quest.startTime,
+        quest.endTime,
+        height >= 50,
+      );
 
       blocks.add(
         Positioned(
@@ -145,16 +145,16 @@ class Assembler extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            if (height >= 60)
-                              Text(
-                                timeText,
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  color: QuestLogColors.textPrimary,
-                                  fontSize: 10,
-                                  fontFamily: 'monospace',
-                                ),
+
+                            Text(
+                              timeText,
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: QuestLogColors.textPrimary,
+                                fontSize: 10,
+                                fontFamily: 'monospace',
                               ),
+                            ),
                           ],
                         ),
 
