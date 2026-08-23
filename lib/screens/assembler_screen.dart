@@ -21,7 +21,6 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
         margin: EdgeInsets.all(15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 15,
           children: [
             DayPicker(
               selectedDay: _selectedDay,
@@ -35,7 +34,11 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
 
             AssemblerTitle(),
 
+            SizedBox(height: 10),
+
             Divider(),
+
+            SizedBox(height: 35),
 
             Expanded(child: Assembler(assemblerQuests: dailyAssemblerQuests)),
           ],

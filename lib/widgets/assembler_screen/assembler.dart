@@ -201,7 +201,7 @@ class Assembler extends StatelessWidget {
 
     bool isSmallBlock = height < 50;
 
-    Color color = QuestLogColors.textSecondary;
+    Color color = QuestLogColors.textSecondary.withValues(alpha: 0.3);
 
     return Positioned(
       top: topPosition + 5 + topOffset,
@@ -223,14 +223,6 @@ class Assembler extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 alignment: Alignment.center,
-
-                // decoration: BoxDecoration(
-                //   color: Colors.transparent,
-                //   border: Border.all(
-                //     color: color.withValues(alpha: 0.3),
-                //     width: 1,
-                //   ),
-                // ),
                 child: Text(
                   '+ INSERT BLOCK ($timeText)',
                   maxLines: isSmallBlock ? 1 : 2,

@@ -53,7 +53,7 @@ class _DayPickerState extends State<DayPicker> {
   Widget _buildDayField(String day, int dayNum, bool isSelected) {
     final color = isSelected
         ? QuestLogColors.accent
-        : QuestLogColors.textSecondary;
+        : QuestLogColors.textSecondary.withValues(alpha: 0.3);
     final fontSizeIncrement = isSelected ? 2 : 0;
 
     TextStyle createFont(double fontSize) {
@@ -69,7 +69,7 @@ class _DayPickerState extends State<DayPicker> {
 
     return (Column(
       children: [
-        Text(day.substring(0, 3), style: createFont(12)),
+        Text(day.substring(0, 3), style: createFont(9)),
         Text(dayNum.toString(), style: createFont(16)),
       ],
     ));
@@ -78,7 +78,7 @@ class _DayPickerState extends State<DayPicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 25),
+      margin: EdgeInsets.symmetric(vertical: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
