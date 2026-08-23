@@ -12,7 +12,7 @@ final dailyAssemblerQuests = [
       subTasks: [],
     ),
     startTime: setTime(DateTime.now(), 7, 0),
-    endTime: setTime(DateTime.now(), 7, 10),
+    endTime: setTime(DateTime.now(), 8, 0),
     status: QuestStatus.completed,
   ),
   AssemblerQuest(

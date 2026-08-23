@@ -1,7 +1,9 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/utils/get_time_text.dart';
 
 class Assembler extends StatelessWidget {
   Assembler({super.key, required this.assemblerQuests});
@@ -10,6 +12,7 @@ class Assembler extends StatelessWidget {
 
   final double _pixelsPerMinute = 1.0;
   final double _leftOffset = 70;
+  final double _rightOffset = 15;
 
   final DateTime baseDate = DateTime(
     DateTime.now().year,
@@ -74,25 +77,33 @@ class Assembler extends StatelessWidget {
   Widget _buildTimeBlocks() {
     List<Widget> blocks = [];
 
-    for (final assemblerQuest in assemblerQuests) {
-      int minutesFromStart = assemblerQuest.startTime
-          .difference(baseDate)
-          .inMinutes;
-      double topPosition = minutesFromStart * _pixelsPerMinute;
-      double height = assemblerQuest.durationInMinutes * _pixelsPerMinute;
+    final sortedQuests = List<AssemblerQuest>.from(assemblerQuests)
+      ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
-      String title = assemblerQuest.questInfo.name;
-      String description = assemblerQuest.questInfo.subTasks
+    DateTime currentTracker = baseDate;
+    final endOfDay = baseDate.add(const Duration(hours: 24));
+
+    for (final quest in sortedQuests) {
+      if (quest.startTime.isAfter(currentTracker)) {
+        blocks.add(_buildInsertBlock(currentTracker, quest.startTime));
+      }
+
+      int minutesFromStart = quest.startTime.difference(baseDate).inMinutes;
+      double topPosition = minutesFromStart * _pixelsPerMinute;
+      double height = quest.durationInMinutes * _pixelsPerMinute;
+
+      String title = quest.questInfo.name;
+      String description = quest.questInfo.subTasks
           .map((el) => el.name)
           .join(', ');
-      Color statusColor = assemblerQuest.statusColor;
-      String timeText = assemblerQuest.timeText;
+      Color statusColor = quest.statusColor;
+      String timeText = quest.timeText;
 
       blocks.add(
         Positioned(
           top: topPosition + 2,
           left: _leftOffset,
-          right: 15,
+          right: _rightOffset,
           height: height,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,9 +179,74 @@ class Assembler extends StatelessWidget {
           ),
         ),
       );
+      currentTracker = quest.endTime;
+    }
+
+    if (currentTracker.isBefore(endOfDay)) {
+      blocks.add(_buildInsertBlock(currentTracker, endOfDay));
     }
 
     return Stack(clipBehavior: Clip.none, children: blocks);
+  }
+
+  Widget _buildInsertBlock(DateTime start, DateTime end) {
+    int minutesFromStart = start.difference(baseDate).inMinutes;
+    int duration = end.difference(start).inMinutes;
+
+    double topPosition = minutesFromStart * _pixelsPerMinute;
+    double topOffset = 2;
+    double height = duration * _pixelsPerMinute - topOffset * 2;
+
+    String timeText = getTimeText(start, end, false);
+
+    bool isSmallBlock = height < 50;
+
+    Color color = QuestLogColors.textSecondary;
+
+    return Positioned(
+      top: topPosition + 5 + topOffset,
+      left: _leftOffset,
+      right: _rightOffset,
+      height: height - 5,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 15,
+            height: 1,
+            color: color,
+            margin: EdgeInsets.only(top: 1),
+          ),
+          Expanded(
+            child: DottedBorder(
+              options: RectDottedBorderOptions(strokeWidth: 1, color: color),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                alignment: Alignment.center,
+
+                // decoration: BoxDecoration(
+                //   color: Colors.transparent,
+                //   border: Border.all(
+                //     color: color.withValues(alpha: 0.3),
+                //     width: 1,
+                //   ),
+                // ),
+                child: Text(
+                  '+ INSERT BLOCK ($timeText)',
+                  maxLines: isSmallBlock ? 1 : 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.jetBrainsMono(
+                    color: color,
+                    fontSize: isSmallBlock ? 10 : 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
