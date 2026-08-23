@@ -17,7 +17,7 @@ class LogScreen extends StatelessWidget {
           child: Column(
             spacing: 25,
             children: [
-              DailyAssembler(quests: dailyAssemblerQuests),
+              DailyAssembler(assemblerQuests: dailyAssemblerQuests),
               ActiveProtocol(
                 activeQuest: dailyAssemblerQuests.firstWhere(
                   (quest) =>

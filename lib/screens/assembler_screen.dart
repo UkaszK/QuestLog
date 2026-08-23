@@ -37,7 +37,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
 
             Divider(),
 
-            Assembler(),
+            Expanded(child: Assembler(assemblerQuests: dailyAssemblerQuests)),
           ],
         ),
       ),

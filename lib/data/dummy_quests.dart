@@ -2,6 +2,7 @@ import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/quest_info.dart';
 import 'package:questlog/data/side_quest.dart';
+import 'package:questlog/utils/set_time.dart';
 
 final dailyAssemblerQuests = [
   AssemblerQuest(
@@ -10,14 +11,14 @@ final dailyAssemblerQuests = [
       questCategory: .personal,
       subTasks: [],
     ),
-    startTime: '06:00',
-    endTime: '07:00',
+    startTime: setTime(DateTime.now(), 7, 0),
+    endTime: setTime(DateTime.now(), 7, 10),
     status: QuestStatus.completed,
   ),
   AssemblerQuest(
     questInfo: QuestInfo(name: 'Deep Work', questCategory: .work, subTasks: []),
-    startTime: '08:00',
-    endTime: '12:00',
+    startTime: setTime(DateTime.now(), 8, 0),
+    endTime: setTime(DateTime.now(), 12, 0),
     status: QuestStatus.pending,
   ),
   AssemblerQuest(
@@ -30,8 +31,8 @@ final dailyAssemblerQuests = [
         (name: 'Stretch', completed: false),
       ],
     ),
-    startTime: '12:30',
-    endTime: '15:00',
+    startTime: setTime(DateTime.now(), 12, 30),
+    endTime: setTime(DateTime.now(), 15, 0),
     status: QuestStatus.active,
   ),
   AssemblerQuest(
@@ -44,8 +45,8 @@ final dailyAssemblerQuests = [
         (name: 'Send follow-up', completed: false),
       ],
     ),
-    startTime: '18:00',
-    endTime: '19:00',
+    startTime: setTime(DateTime.now(), 18, 0),
+    endTime: setTime(DateTime.now(), 19, 0),
     status: QuestStatus.open,
   ),
   AssemblerQuest(
@@ -58,8 +59,8 @@ final dailyAssemblerQuests = [
         (name: 'Read a chapter', completed: false),
       ],
     ),
-    startTime: '22:00',
-    endTime: '22:30',
+    startTime: setTime(DateTime.now(), 22, 0),
+    endTime: setTime(DateTime.now(), 22, 30),
     status: QuestStatus.open,
   ),
 ];
