@@ -73,6 +73,9 @@ class DailyAssembler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sortedQuests = List<AssemblerQuest>.from(assemblerQuests)
+      ..sort((a, b) => a.startTime.compareTo(b.startTime));
+
     return Align(
       alignment: Alignment.centerLeft,
       child: Column(
@@ -89,8 +92,7 @@ class DailyAssembler extends StatelessWidget {
                 spacing: 10,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  for (final data in assemblerQuests)
-                    _buildQuestContainer(data),
+                  for (final data in sortedQuests) _buildQuestContainer(data),
                 ],
               ),
             ),

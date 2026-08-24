@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/utils/is_same_day.dart';
 
 class DayPicker extends StatefulWidget {
   const DayPicker({
@@ -44,7 +43,7 @@ class _DayPickerState extends State<DayPicker> {
       return {
         'day': weekdays[date.weekday - 1],
         'dayNum': date.day,
-        'isSelected': isSameDay(date, widget.selectedDay),
+        'isSelected': DateUtils.isSameDay(date, widget.selectedDay),
         'fullDate': date,
       };
     });

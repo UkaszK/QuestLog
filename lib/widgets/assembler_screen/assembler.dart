@@ -2,6 +2,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_quest.dart';
+import 'package:questlog/screens/add_assembler_quest_screen.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/get_time_text.dart';
 
@@ -16,6 +17,12 @@ class Assembler extends StatelessWidget {
   final double _rightOffset = 15;
 
   late final DateTime baseDate = DateTime(day.year, day.month, day.day);
+
+  // Past days are read-only, so insert blocks are not offered there.
+  bool get _isPastDay {
+    final today = DateTime.now();
+    return baseDate.isBefore(DateTime(today.year, today.month, today.day));
+  }
 
   Widget _buildTimeGrid() {
     List<Widget> gridElements = [];
@@ -70,7 +77,7 @@ class Assembler extends StatelessWidget {
     return Stack(clipBehavior: Clip.none, children: gridElements);
   }
 
-  Widget _buildTimeBlocks() {
+  Widget _buildTimeBlocks(BuildContext context) {
     List<Widget> blocks = [];
 
     final sortedQuests = List<AssemblerQuest>.from(assemblerQuests)
@@ -80,8 +87,8 @@ class Assembler extends StatelessWidget {
     final endOfDay = baseDate.add(const Duration(hours: 24));
 
     for (final quest in sortedQuests) {
-      if (quest.startTime.isAfter(currentTracker)) {
-        blocks.add(_buildInsertBlock(currentTracker, quest.startTime));
+      if (!_isPastDay && quest.startTime.isAfter(currentTracker)) {
+        blocks.add(_buildInsertBlock(context, currentTracker, quest.startTime));
       }
 
       int minutesFromStart = quest.startTime.difference(baseDate).inMinutes;
@@ -182,14 +189,14 @@ class Assembler extends StatelessWidget {
       currentTracker = quest.endTime;
     }
 
-    if (currentTracker.isBefore(endOfDay)) {
-      blocks.add(_buildInsertBlock(currentTracker, endOfDay));
+    if (!_isPastDay && currentTracker.isBefore(endOfDay)) {
+      blocks.add(_buildInsertBlock(context, currentTracker, endOfDay));
     }
 
     return Stack(clipBehavior: Clip.none, children: blocks);
   }
 
-  Widget _buildInsertBlock(DateTime start, DateTime end) {
+  Widget _buildInsertBlock(BuildContext context, DateTime start, DateTime end) {
     int minutesFromStart = start.difference(baseDate).inMinutes;
     int duration = end.difference(start).inMinutes;
 
@@ -218,19 +225,30 @@ class Assembler extends StatelessWidget {
             margin: EdgeInsets.only(top: 1),
           ),
           Expanded(
-            child: DottedBorder(
-              options: RectDottedBorderOptions(strokeWidth: 1, color: color),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                alignment: Alignment.center,
-                child: Text(
-                  '+ INSERT BLOCK ($timeText)',
-                  maxLines: isSmallBlock ? 1 : 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.jetBrainsMono(
-                    color: color,
-                    fontSize: isSmallBlock ? 10 : 12,
-                    fontWeight: FontWeight.bold,
+            child: GestureDetector(
+              behavior: .opaque,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddAssemblerQuestScreen(),
+                  ),
+                );
+              },
+              child: DottedBorder(
+                options: RectDottedBorderOptions(strokeWidth: 1, color: color),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '+ INSERT BLOCK ($timeText)',
+                    maxLines: isSmallBlock ? 1 : 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.jetBrainsMono(
+                      color: color,
+                      fontSize: isSmallBlock ? 10 : 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -247,7 +265,7 @@ class Assembler extends StatelessWidget {
       child: SizedBox(
         width: double.infinity,
         height: (24 - baseDate.hour) * 60 * _pixelsPerMinute,
-        child: Stack(children: [_buildTimeGrid(), _buildTimeBlocks()]),
+        child: Stack(children: [_buildTimeGrid(), _buildTimeBlocks(context)]),
       ),
     );
   }

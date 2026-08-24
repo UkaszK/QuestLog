@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/dummy_quests.dart';
 import 'package:questlog/widgets/log_screen/active_protocol.dart';
 import 'package:questlog/widgets/log_screen/daily_assembler.dart';
@@ -7,6 +8,12 @@ import 'package:questlog/widgets/log_screen/side_quests.dart';
 
 class LogScreen extends StatelessWidget {
   const LogScreen({super.key});
+
+  List<AssemblerQuest> get _assemblerQuests {
+    return dailyAssemblerQuests
+        .where((quest) => DateUtils.isSameDay(quest.startTime, DateTime.now()))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +24,9 @@ class LogScreen extends StatelessWidget {
           child: Column(
             spacing: 25,
             children: [
-              DailyAssembler(assemblerQuests: dailyAssemblerQuests),
+              DailyAssembler(assemblerQuests: _assemblerQuests),
               ActiveProtocol(
-                activeQuest: dailyAssemblerQuests.firstWhere(
+                activeQuest: _assemblerQuests.firstWhere(
                   (quest) =>
                       quest.status == .active || quest.status == .pending,
                 ),

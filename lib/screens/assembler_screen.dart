@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/dummy_quests.dart';
+import 'package:questlog/screens/add_assembler_quest_screen.dart';
+import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
 import 'package:questlog/widgets/assembler_screen/assembler_title.dart';
 import 'package:questlog/widgets/assembler_screen/day_picker.dart';
@@ -24,6 +26,23 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: QuestLogColors.surface,
+        shape: BoxBorder.all(width: 1, color: QuestLogColors.textSecondary),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddAssemblerQuestScreen(),
+            ),
+          );
+        },
+        child: Icon(
+          Icons.add_to_photos_outlined,
+          size: 24,
+          color: QuestLogColors.textPrimary,
+        ),
+      ),
       body: Container(
         margin: EdgeInsets.all(15),
         child: Column(
