@@ -7,22 +7,22 @@ import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/get_time_text.dart';
 
 class Assembler extends StatelessWidget {
-  Assembler({super.key, required this.day, required this.assemblerQuests});
+  Assembler({
+    super.key,
+    required this.day,
+    required this.assemblerQuests,
+    required this.isPastDay,
+  });
 
   final DateTime day;
   final List<AssemblerQuest> assemblerQuests;
+  final bool isPastDay;
 
   final double _pixelsPerMinute = 1.0;
   final double _leftOffset = 70;
   final double _rightOffset = 15;
 
   late final DateTime baseDate = DateTime(day.year, day.month, day.day);
-
-  // Past days are read-only, so insert blocks are not offered there.
-  bool get _isPastDay {
-    final today = DateTime.now();
-    return baseDate.isBefore(DateTime(today.year, today.month, today.day));
-  }
 
   Widget _buildTimeGrid() {
     List<Widget> gridElements = [];
@@ -87,7 +87,7 @@ class Assembler extends StatelessWidget {
     final endOfDay = baseDate.add(const Duration(hours: 24));
 
     for (final quest in sortedQuests) {
-      if (!_isPastDay && quest.startTime.isAfter(currentTracker)) {
+      if (!isPastDay && quest.startTime.isAfter(currentTracker)) {
         blocks.add(_buildInsertBlock(context, currentTracker, quest.startTime));
       }
 
@@ -189,7 +189,7 @@ class Assembler extends StatelessWidget {
       currentTracker = quest.endTime;
     }
 
-    if (!_isPastDay && currentTracker.isBefore(endOfDay)) {
+    if (!isPastDay && currentTracker.isBefore(endOfDay)) {
       blocks.add(_buildInsertBlock(context, currentTracker, endOfDay));
     }
 

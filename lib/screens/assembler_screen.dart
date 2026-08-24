@@ -23,26 +23,42 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
         .toList();
   }
 
+  // Past days are read-only, so insert blocks are not offered there.
+  bool get _isPastDay {
+    final today = DateTime.now();
+    final selectedDate = DateTime(
+      _selectedDay.year,
+      _selectedDay.month,
+      _selectedDay.day,
+    );
+    return selectedDate.isBefore(DateTime(today.year, today.month, today.day));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: QuestLogColors.surface,
-        shape: BoxBorder.all(width: 1, color: QuestLogColors.textSecondary),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddAssemblerQuestScreen(),
+      floatingActionButton: _isPastDay
+          ? null
+          : FloatingActionButton(
+              backgroundColor: QuestLogColors.surface,
+              shape: BoxBorder.all(
+                width: 1,
+                color: QuestLogColors.textSecondary,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddAssemblerQuestScreen(),
+                  ),
+                );
+              },
+              child: Icon(
+                Icons.add_to_photos_outlined,
+                size: 24,
+                color: QuestLogColors.textPrimary,
+              ),
             ),
-          );
-        },
-        child: Icon(
-          Icons.add_to_photos_outlined,
-          size: 24,
-          color: QuestLogColors.textPrimary,
-        ),
-      ),
       body: Container(
         margin: EdgeInsets.all(15),
         child: Column(
@@ -70,6 +86,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
               child: Assembler(
                 day: _selectedDay,
                 assemblerQuests: _selectedDayQuests,
+                isPastDay: _isPastDay,
               ),
             ),
           ],
