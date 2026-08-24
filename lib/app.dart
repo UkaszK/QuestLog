@@ -17,7 +17,7 @@ class QuestLogApp extends StatefulWidget {
 }
 
 class _QuestLogAppState extends State<QuestLogApp> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   static const List<Widget> _pages = [
     LogScreen(),

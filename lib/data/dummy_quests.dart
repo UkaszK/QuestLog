@@ -2,22 +2,46 @@ import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/quest_info.dart';
 import 'package:questlog/data/side_quest.dart';
+import 'package:questlog/utils/set_time.dart';
 
 final dailyAssemblerQuests = [
+  AssemblerQuest(
+    questInfo: QuestInfo(
+      name: 'Plan Weekly Goals',
+      questCategory: .learning,
+      subTasks: [
+        (name: 'Review last week', completed: true),
+        (name: 'Choose priorities', completed: true),
+      ],
+    ),
+    startTime: setTime(DateTime.now().subtract(const Duration(days: 1)), 9, 0),
+    endTime: setTime(DateTime.now().subtract(const Duration(days: 1)), 10, 30),
+    status: QuestStatus.completed,
+  ),
+  AssemblerQuest(
+    questInfo: QuestInfo(
+      name: 'Grocery Shopping',
+      questCategory: .chores,
+      subTasks: [],
+    ),
+    startTime: setTime(DateTime.now().subtract(Duration(days: 1)), 16, 0),
+    endTime: setTime(DateTime.now().subtract(Duration(days: 1)), 17, 0),
+    status: QuestStatus.completed,
+  ),
   AssemblerQuest(
     questInfo: QuestInfo(
       name: 'Morning Routine',
       questCategory: .personal,
       subTasks: [],
     ),
-    startTime: '06:00',
-    endTime: '07:00',
+    startTime: setTime(DateTime.now(), 7, 0),
+    endTime: setTime(DateTime.now(), 8, 0),
     status: QuestStatus.completed,
   ),
   AssemblerQuest(
     questInfo: QuestInfo(name: 'Deep Work', questCategory: .work, subTasks: []),
-    startTime: '08:00',
-    endTime: '12:00',
+    startTime: setTime(DateTime.now(), 8, 0),
+    endTime: setTime(DateTime.now(), 12, 0),
     status: QuestStatus.pending,
   ),
   AssemblerQuest(
@@ -30,8 +54,8 @@ final dailyAssemblerQuests = [
         (name: 'Stretch', completed: false),
       ],
     ),
-    startTime: '12:30',
-    endTime: '15:00',
+    startTime: setTime(DateTime.now(), 12, 30),
+    endTime: setTime(DateTime.now(), 15, 0),
     status: QuestStatus.active,
   ),
   AssemblerQuest(
@@ -44,8 +68,8 @@ final dailyAssemblerQuests = [
         (name: 'Send follow-up', completed: false),
       ],
     ),
-    startTime: '18:00',
-    endTime: '19:00',
+    startTime: setTime(DateTime.now(), 18, 0),
+    endTime: setTime(DateTime.now(), 19, 0),
     status: QuestStatus.open,
   ),
   AssemblerQuest(
@@ -58,9 +82,32 @@ final dailyAssemblerQuests = [
         (name: 'Read a chapter', completed: false),
       ],
     ),
-    startTime: '22:00',
-    endTime: '22:30',
+    startTime: setTime(DateTime.now(), 22, 0),
+    endTime: setTime(DateTime.now(), 22, 30),
     status: QuestStatus.open,
+  ),
+  AssemblerQuest(
+    questInfo: QuestInfo(
+      name: 'Plan Next Sprint',
+      questCategory: .work,
+      subTasks: [
+        (name: 'Review backlog', completed: false),
+        (name: 'Set sprint goals', completed: false),
+      ],
+    ),
+    startTime: setTime(DateTime.now().add(const Duration(days: 1)), 9, 30),
+    endTime: setTime(DateTime.now().add(const Duration(days: 1)), 11, 0),
+    status: QuestStatus.open,
+  ),
+  AssemblerQuest(
+    questInfo: QuestInfo(
+      name: 'Evening Walk',
+      questCategory: .fitness,
+      subTasks: [],
+    ),
+    startTime: setTime(DateTime.now().add(const Duration(days: 1)), 18, 30),
+    endTime: setTime(DateTime.now().add(const Duration(days: 1)), 19, 15),
+    status: QuestStatus.pending,
   ),
 ];
 

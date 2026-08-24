@@ -7,9 +7,9 @@ import 'package:questlog/widgets/section_decoration.dart';
 import 'package:questlog/utils/quest_category_icon.dart';
 
 class DailyAssembler extends StatelessWidget {
-  const DailyAssembler({super.key, required this.quests});
+  const DailyAssembler({super.key, required this.assemblerQuests});
 
-  final List<AssemblerQuest> quests;
+  final List<AssemblerQuest> assemblerQuests;
 
   Widget _buildHeader() {
     return Text('DAILY ASSEMBLER', style: QuestLogTextStyles.headerText);
@@ -19,7 +19,7 @@ class DailyAssembler extends StatelessWidget {
     final isPendingOrCompleted =
         assemblerQuest.status == QuestStatus.pending ||
         assemblerQuest.status == QuestStatus.completed;
-    final questColor = AssemblerQuest.statusColor(assemblerQuest.status);
+    final questColor = assemblerQuest.statusColor;
 
     return Container(
       width: 100,
@@ -73,6 +73,9 @@ class DailyAssembler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sortedQuests = List<AssemblerQuest>.from(assemblerQuests)
+      ..sort((a, b) => a.startTime.compareTo(b.startTime));
+
     return Align(
       alignment: Alignment.centerLeft,
       child: Column(
@@ -89,7 +92,7 @@ class DailyAssembler extends StatelessWidget {
                 spacing: 10,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  for (final data in quests) _buildQuestContainer(data),
+                  for (final data in sortedQuests) _buildQuestContainer(data),
                 ],
               ),
             ),
