@@ -262,6 +262,7 @@ class Assembler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: EdgeInsets.only(top: 30, bottom: 180),
       child: SizedBox(
         width: double.infinity,
         height: (24 - baseDate.hour) * 60 * _pixelsPerMinute,

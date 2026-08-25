@@ -13,7 +13,8 @@ class QuestLogColors {
   static const Color otherAccentLessOpacity = Color.fromARGB(20, 243, 176, 229);
 
   // Neutral colors
-  static const Color background = Color(0xFF131718);
+  static const Color black = Colors.black;
+  static const Color background = Color(0xFF141218);
   static const Color border = Color.fromARGB(255, 53, 53, 52);
   static const Color surface = Color.fromARGB(255, 28, 27, 27);
   // static const Color error = Color(0xFFB00020);

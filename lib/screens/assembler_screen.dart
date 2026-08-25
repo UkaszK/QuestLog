@@ -39,28 +39,37 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     return Scaffold(
       floatingActionButton: _isPastDay
           ? null
-          : FloatingActionButton(
-              backgroundColor: QuestLogColors.surface,
-              shape: BoxBorder.all(
-                width: 1,
-                color: QuestLogColors.textSecondary,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddAssemblerQuestScreen(),
+          : Padding(
+              padding: EdgeInsetsGeometry.only(bottom: 100),
+              child: SizedBox(
+                width: 48,
+                height: 48,
+                child: FloatingActionButton(
+                  heroTag: 'assembler_fab',
+                  backgroundColor: QuestLogColors.surface,
+                  elevation: 0,
+                  shape: BoxBorder.all(
+                    width: 1,
+                    color: QuestLogColors.textSecondary.withValues(alpha: 0.5),
                   ),
-                );
-              },
-              child: Icon(
-                Icons.add_to_photos_outlined,
-                size: 24,
-                color: QuestLogColors.textPrimary,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddAssemblerQuestScreen(),
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    Icons.add_to_photos_outlined,
+                    size: 24,
+                    color: QuestLogColors.textPrimary,
+                  ),
+                ),
               ),
             ),
       body: Container(
-        margin: EdgeInsets.all(15),
+        padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -78,9 +87,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
 
             SizedBox(height: 10),
 
-            Divider(),
-
-            SizedBox(height: 35),
+            Divider(height: 1),
 
             Expanded(
               child: Assembler(
