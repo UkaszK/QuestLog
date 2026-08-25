@@ -12,8 +12,8 @@ class ThemedSvgIcon extends StatelessWidget {
     final color = IconTheme.of(context).color ?? QuestLogColors.textPrimary;
     return SvgPicture.asset(
       assetPath,
-      width: 20,
-      height: 20,
+      width: 18,
+      height: 18,
       colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
     );
   }

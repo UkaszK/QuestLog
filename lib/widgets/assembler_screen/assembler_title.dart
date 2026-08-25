@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:questlog/theme/questlog_colors.dart';
 
 class AssemblerTitle extends StatelessWidget {
   const AssemblerTitle({super.key});
@@ -10,8 +9,6 @@ class AssemblerTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Divider(color: QuestLogColors.textSecondary.withValues(alpha: 0.1)),
-
         Text(
           'ASSEMBLER',
           style: GoogleFonts.jetBrainsMono(

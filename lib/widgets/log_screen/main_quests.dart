@@ -44,7 +44,7 @@ class _MainQuestsState extends State<MainQuests> {
             });
           },
           icon: AnimatedRotation(
-            turns: isExpanded ? 0.5 : 0,
+            turns: isExpanded ? 0 : 0.5,
             duration: Duration(milliseconds: 200),
             child: Icon(Icons.arrow_drop_down),
           ),

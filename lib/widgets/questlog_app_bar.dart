@@ -12,7 +12,7 @@ class QuestLogAppBar extends AppBar {
           shadows: const [Shadow(color: QuestLogColors.accent, blurRadius: 24)],
         ),
         centerTitle: true,
-        backgroundColor: QuestLogColors.background,
+        backgroundColor: QuestLogColors.surface,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: QuestLogColors.border),

@@ -17,25 +17,20 @@ class LogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.all(10),
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 25,
-            children: [
-              DailyAssembler(assemblerQuests: _assemblerQuests),
-              ActiveProtocol(
-                activeQuest: _assemblerQuests.firstWhere(
-                  (quest) =>
-                      quest.status == .active || quest.status == .pending,
-                ),
-              ),
-              SideQuests(sideQuests: dummySideQuests),
-              MainQuests(mainQuests: dummyMainQuests),
-            ],
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(top: 16, right: 16, left: 16, bottom: 150),
+      child: Column(
+        spacing: 25,
+        children: [
+          DailyAssembler(assemblerQuests: _assemblerQuests),
+          ActiveProtocol(
+            activeQuest: _assemblerQuests.firstWhere(
+              (quest) => quest.status == .active || quest.status == .pending,
+            ),
           ),
-        ),
+          SideQuests(sideQuests: dummySideQuests),
+          MainQuests(mainQuests: dummyMainQuests),
+        ],
       ),
     );
   }

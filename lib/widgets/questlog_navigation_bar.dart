@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
@@ -18,77 +20,117 @@ class QuestLogNavigationBar extends StatefulWidget {
 }
 
 class _QuestLogNavigationBarState extends State<QuestLogNavigationBar> {
+  Widget _buildNavItem({
+    required Widget icon,
+    required String label,
+    required int index,
+  }) {
+    final isSelected = widget.selectedIndex == index;
+    final color = isSelected
+        ? QuestLogColors.textPrimary
+        : QuestLogColors.textSecondary;
+
+    return GestureDetector(
+      onTap: () => widget.onDestinationSelected(index),
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: 64,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconTheme(
+              data: IconThemeData(color: color, size: 22),
+              child: icon,
+            ),
+
+            SizedBox(height: 6),
+
+            Text(
+              label,
+              style: GoogleFonts.jetBrainsMono(
+                color: color,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.0,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.visible,
+            ),
+
+            SizedBox(height: 4),
+
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              height: 2,
+              width: isSelected ? 24 : 0,
+              decoration: BoxDecoration(
+                color: QuestLogColors.textPrimary,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        NavigationBarTheme(
-          data: NavigationBarThemeData(
-            iconTheme: WidgetStateProperty.resolveWith((state) {
-              return IconThemeData(
-                color: state.contains(WidgetState.selected)
-                    ? const Color(0xFFe6fcfe)
-                    : const Color(0xFF879495),
-              );
-            }),
-          ),
-          child: NavigationBar(
-            destinations: [
-              NavigationDestination(icon: Icon(Icons.assignment), label: 'LOG'),
-              NavigationDestination(
-                icon: ThemedSvgIcon('assets/icons/assembler.svg'),
-                label: 'ASSEMBLER',
-              ),
-              NavigationDestination(
-                icon: ThemedSvgIcon('assets/icons/analytics.svg'),
-                label: 'ANALYTICS',
-              ),
-              NavigationDestination(
-                icon: ThemedSvgIcon('assets/icons/settings.svg'),
-                label: 'SETTINGS',
-              ),
-            ],
-            selectedIndex: widget.selectedIndex,
-            onDestinationSelected: widget.onDestinationSelected,
-            indicatorColor: Colors.transparent,
-            labelTextStyle: WidgetStateProperty.resolveWith((states) {
-              final isSelected = states.contains(WidgetState.selected);
-              return GoogleFonts.jetBrainsMono(
-                color: isSelected
-                    ? QuestLogColors.textPrimary
-                    : QuestLogColors.textSecondary,
-                fontSize: isSelected ? 12 : 11,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              );
-            }),
-            backgroundColor: QuestLogColors.background,
-          ),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: MediaQuery.of(context).padding.bottom + 4,
-          child: Row(
-            children: List.generate(
-              4,
-              (i) => Expanded(
-                child: Center(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    height: 2,
-                    width: i == widget.selectedIndex ? 32.0 : 0.0,
-                    decoration: BoxDecoration(
-                      color: QuestLogColors.textPrimary,
-                      borderRadius: BorderRadius.circular(1),
-                    ),
-                  ),
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+
+        // Drop Shadow Container
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+
+            child: Container(
+              height: 70,
+              decoration: BoxDecoration(
+                color: QuestLogColors.surface.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: QuestLogColors.textSecondary.withValues(alpha: 0.1),
+                  width: 1,
                 ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildNavItem(
+                    icon: Icon(Icons.assignment),
+                    label: 'LOG',
+                    index: 0,
+                  ),
+                  _buildNavItem(
+                    icon: ThemedSvgIcon('assets/icons/assembler.svg'),
+                    label: 'ASSEMBLER',
+                    index: 1,
+                  ),
+
+                  SizedBox(width: 50),
+
+                  _buildNavItem(
+                    icon: ThemedSvgIcon('assets/icons/analytics.svg'),
+                    label: 'ANALYTICS',
+                    index: 2,
+                  ),
+                  _buildNavItem(
+                    icon: ThemedSvgIcon('assets/icons/settings.svg'),
+                    label: 'SETTINGS',
+                    index: 3,
+                  ),
+                ],
               ),
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }
