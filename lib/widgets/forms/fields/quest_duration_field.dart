@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
 
-class QuestTitleInputField extends StatelessWidget {
-  const QuestTitleInputField({super.key, required this.controller});
+class QuestDurationField extends StatelessWidget {
+  QuestDurationField({super.key, required this.controller});
 
   final TextEditingController controller;
+
+  final _timeFormatter = MaskTextInputFormatter(
+    mask: '##:##',
+    filter: {'#': RegExp(r'[0-9]')},
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +20,8 @@ class QuestTitleInputField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
       children: [
-        Text('Quest Title', style: QuestLogTextStyles.headerText),
-        
+        Text('Duration (HH:MM)', style: QuestLogTextStyles.headerText),
+
         Container(
           decoration: BoxDecoration(
             border: Border.all(
@@ -25,15 +31,20 @@ class QuestTitleInputField extends StatelessWidget {
           ),
           child: TextFormField(
             controller: controller,
-            maxLength: 25,
+            keyboardType: TextInputType.number,
+            inputFormatters: [_timeFormatter],
+            textAlignVertical: TextAlignVertical.top,
             style: GoogleFonts.jetBrainsMono(
               color: QuestLogColors.textPrimary,
               fontSize: 16,
             ),
             autocorrect: false,
             decoration: InputDecoration(
-              counterText: '',
-              hintText: 'Enter quest title...',
+              prefixIcon: Icon(
+                Icons.timer_outlined,
+                color: QuestLogColors.textSecondary,
+              ),
+              hintText: '00:00',
               hintStyle: GoogleFonts.jetBrainsMono(
                 color: QuestLogColors.textSecondary,
                 fontSize: 16,

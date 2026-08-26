@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:questlog/data/dummy_data.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
+import 'package:questlog/widgets/forms/fields/quest_duration_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_notes_input_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_title_input_field.dart';
 
@@ -15,6 +16,7 @@ class MainQuestForm extends StatefulWidget {
 class _MainQuestFormState extends State<MainQuestForm> {
   final _titleController = TextEditingController();
   final _notesController = TextEditingController();
+  final _durationController = TextEditingController();
 
   QuestCategory _selectedCategory = questCategories.first;
 
@@ -51,6 +53,8 @@ class _MainQuestFormState extends State<MainQuestForm> {
           QuestTitleInputField(controller: _titleController),
 
           QuestNotesInputField(controller: _notesController),
+
+          QuestDurationField(controller: _durationController),
 
           TextButton(
             onPressed: () => _submitForm(),

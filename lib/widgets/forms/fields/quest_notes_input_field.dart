@@ -15,6 +15,7 @@ class QuestNotesInputField extends StatelessWidget {
       spacing: 10,
       children: [
         Text('Quest Title', style: QuestLogTextStyles.headerText),
+
         Container(
           decoration: BoxDecoration(
             border: Border.all(
@@ -34,6 +35,7 @@ class QuestNotesInputField extends StatelessWidget {
             ),
             autocorrect: false,
             decoration: InputDecoration(
+              counterText: '',
               hintText: 'Add notes here...',
               hintStyle: GoogleFonts.jetBrainsMono(
                 color: QuestLogColors.textSecondary,
