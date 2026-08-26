@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/data/assembler_quest.dart';
-import 'package:questlog/data/dummy_quests.dart';
+import 'package:questlog/data/dummy_data.dart';
 import 'package:questlog/screens/add_assembler_quest_screen.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';

@@ -1,14 +1,31 @@
+import 'package:flutter/material.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/assembler_quest.dart';
+import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/quest_info.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/utils/set_time.dart';
+
+final questCategories = [
+  QuestCategory(name: 'Chores', icon: Icons.cleaning_services),
+  QuestCategory(name: 'Creative', icon: Icons.palette),
+  QuestCategory(name: 'Errands', icon: Icons.local_grocery_store),
+  QuestCategory(name: 'Finance', icon: Icons.account_balance_wallet),
+  QuestCategory(name: 'Fitness', icon: Icons.fitness_center),
+  QuestCategory(name: 'Health', icon: Icons.favorite),
+  QuestCategory(name: 'Learning', icon: Icons.menu_book),
+  QuestCategory(name: 'Other', icon: Icons.category),
+  QuestCategory(name: 'Personal', icon: Icons.person),
+  QuestCategory(name: 'Social', icon: Icons.group),
+  QuestCategory(name: 'Travel', icon: Icons.flight),
+  QuestCategory(name: 'Work', icon: Icons.work),
+];
 
 final dailyAssemblerQuests = [
   AssemblerQuest(
     questInfo: QuestInfo(
       name: 'Plan Weekly Goals',
-      questCategory: .learning,
+      questCategory: questCategories.firstWhere((q) => q.name == 'Learning'),
       subTasks: [
         (name: 'Review last week', completed: true),
         (name: 'Choose priorities', completed: true),
@@ -21,7 +38,7 @@ final dailyAssemblerQuests = [
   AssemblerQuest(
     questInfo: QuestInfo(
       name: 'Grocery Shopping',
-      questCategory: .chores,
+      questCategory: questCategories.firstWhere((q) => q.name == 'Chores'),
       subTasks: [],
     ),
     startTime: setTime(DateTime.now().subtract(Duration(days: 1)), 16, 0),
@@ -31,7 +48,7 @@ final dailyAssemblerQuests = [
   AssemblerQuest(
     questInfo: QuestInfo(
       name: 'Morning Routine',
-      questCategory: .personal,
+      questCategory: questCategories.firstWhere((q) => q.name == 'Personal'),
       subTasks: [],
     ),
     startTime: setTime(DateTime.now(), 7, 0),
@@ -39,7 +56,11 @@ final dailyAssemblerQuests = [
     status: QuestStatus.completed,
   ),
   AssemblerQuest(
-    questInfo: QuestInfo(name: 'Deep Work', questCategory: .work, subTasks: []),
+    questInfo: QuestInfo(
+      name: 'Deep Work',
+      questCategory: questCategories.firstWhere((q) => q.name == 'Work'),
+      subTasks: [],
+    ),
     startTime: setTime(DateTime.now(), 8, 0),
     endTime: setTime(DateTime.now(), 12, 0),
     status: QuestStatus.pending,
@@ -47,7 +68,7 @@ final dailyAssemblerQuests = [
   AssemblerQuest(
     questInfo: QuestInfo(
       name: 'Workout',
-      questCategory: .fitness,
+      questCategory: questCategories.firstWhere((q) => q.name == 'Fitness'),
       subTasks: [
         (name: 'Warm up', completed: true),
         (name: 'Workout set', completed: false),
@@ -61,7 +82,7 @@ final dailyAssemblerQuests = [
   AssemblerQuest(
     questInfo: QuestInfo(
       name: 'Meeting',
-      questCategory: .work,
+      questCategory: questCategories.firstWhere((q) => q.name == 'Work'),
       subTasks: [
         (name: 'Review agenda', completed: true),
         (name: 'Take notes', completed: false),
@@ -75,7 +96,7 @@ final dailyAssemblerQuests = [
   AssemblerQuest(
     questInfo: QuestInfo(
       name: 'Evening Routine',
-      questCategory: .health,
+      questCategory: questCategories.firstWhere((q) => q.name == 'Health'),
       subTasks: [
         (name: 'Wash face', completed: true),
         (name: 'Prepare for bed', completed: false),
@@ -89,7 +110,7 @@ final dailyAssemblerQuests = [
   AssemblerQuest(
     questInfo: QuestInfo(
       name: 'Plan Next Sprint',
-      questCategory: .work,
+      questCategory: questCategories.firstWhere((q) => q.name == 'Work'),
       subTasks: [
         (name: 'Review backlog', completed: false),
         (name: 'Set sprint goals', completed: false),
@@ -102,7 +123,7 @@ final dailyAssemblerQuests = [
   AssemblerQuest(
     questInfo: QuestInfo(
       name: 'Evening Walk',
-      questCategory: .fitness,
+      questCategory: questCategories.firstWhere((q) => q.name == 'Fitness'),
       subTasks: [],
     ),
     startTime: setTime(DateTime.now().add(const Duration(days: 1)), 18, 30),
@@ -111,29 +132,33 @@ final dailyAssemblerQuests = [
   ),
 ];
 
-const dummySideQuests = [
+final dummySideQuests = [
   SideQuest(
     name: 'Read a Book',
-    questCategory: .learning,
+    questCategory: questCategories.firstWhere((q) => q.name == 'Learning'),
     repeatDays: {.monday, .tuesday, .wednesday, .thursday, .friday},
   ),
   SideQuest(
     name: 'Care for Plants',
-    questCategory: .chores,
+    questCategory: questCategories.firstWhere((q) => q.name == 'Chores'),
     repeatDays: {.monday, .thursday},
   ),
   SideQuest(
     name: 'Tidy Desk',
-    questCategory: .chores,
+    questCategory: questCategories.firstWhere((q) => q.name == 'Chores'),
     repeatDays: {.saturday, .sunday},
   ),
-  SideQuest(name: 'Gym', questCategory: .fitness, repeatDays: {}),
+  SideQuest(
+    name: 'Gym',
+    questCategory: questCategories.firstWhere((q) => q.name == 'Fitness'),
+    repeatDays: {},
+  ),
 ];
 
 final dummyMainQuests = [
   MainQuest(
     name: 'Launch Product Sprint',
-    questCategory: .work,
+    questCategory: questCategories.firstWhere((q) => q.name == 'Work'),
     durationMin: 150,
     subTasks: [
       (name: 'Define goals', completed: true),
@@ -145,7 +170,7 @@ final dummyMainQuests = [
   ),
   MainQuest(
     name: 'Weekend Reset',
-    questCategory: .chores,
+    questCategory: questCategories.firstWhere((q) => q.name == 'Chores'),
     durationMin: 90,
     subTasks: [
       (name: 'Laundry', completed: true),
@@ -157,7 +182,7 @@ final dummyMainQuests = [
   ),
   MainQuest(
     name: 'Marathon Training',
-    questCategory: .fitness,
+    questCategory: questCategories.firstWhere((q) => q.name == 'Fitness'),
     durationMin: 85,
     subTasks: [
       (name: 'Warm-up', completed: true),
@@ -169,7 +194,7 @@ final dummyMainQuests = [
   ),
   MainQuest(
     name: 'Reading Streak',
-    questCategory: .learning,
+    questCategory: questCategories.firstWhere((q) => q.name == 'Learning'),
     durationMin: 45,
     subTasks: [
       (name: 'Read chapter', completed: true),
@@ -181,7 +206,7 @@ final dummyMainQuests = [
   ),
   MainQuest(
     name: 'Health Check-In',
-    questCategory: .health,
+    questCategory: questCategories.firstWhere((q) => q.name == 'Health'),
     durationMin: 30,
     subTasks: [
       (name: 'Drink water', completed: true),

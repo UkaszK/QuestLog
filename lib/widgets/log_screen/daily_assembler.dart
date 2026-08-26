@@ -4,7 +4,6 @@ import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/widgets/section_decoration.dart';
-import 'package:questlog/utils/quest_category_icon.dart';
 
 class DailyAssembler extends StatelessWidget {
   const DailyAssembler({super.key, required this.assemblerQuests});
@@ -34,9 +33,7 @@ class DailyAssembler extends StatelessWidget {
             spacing: 20,
             mainAxisAlignment: .spaceBetween,
             children: [
-              Icon(
-                getQuestCategoryIcon(assemblerQuest.questInfo.questCategory),
-              ),
+              Icon(assemblerQuest.questInfo.questCategory.icon),
 
               Icon(Icons.circle, color: questColor, size: 10),
             ],

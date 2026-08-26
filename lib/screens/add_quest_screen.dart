@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/quest_type.dart';
 import 'package:questlog/theme/questlog_colors.dart';
@@ -17,7 +16,7 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
   QuestType selectedQuestType = QuestType.main;
 
   Widget _buildQuestClassificationSwitch() {
-    Widget _buildSwitchButton({
+    Widget buildSwitchButton({
       required String label,
       required isSelected,
       required void Function() onTap,
@@ -66,14 +65,14 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
           ),
           child: Row(
             children: [
-              _buildSwitchButton(
+              buildSwitchButton(
                 label: 'Main Quest',
                 isSelected: selectedQuestType == QuestType.main,
                 onTap: () {
                   setState(() => selectedQuestType = QuestType.main);
                 },
               ),
-              _buildSwitchButton(
+              buildSwitchButton(
                 label: 'Side Quest',
                 isSelected: selectedQuestType == QuestType.side,
                 onTap: () {
@@ -87,6 +86,25 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
     );
   }
 
+  Widget _buildCategorySelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 10,
+      children: [
+        Text('Quest Category', style: QuestLogTextStyles.headerText),
+        Row(spacing: 10, children: []),
+      ],
+    );
+  }
+
+  Widget _buildMainQuestForm() {
+    return Column(children: [_buildCategorySelector()]);
+  }
+
+  Widget _buildSideQuestForm() {
+    return Column(children: [_buildCategorySelector()]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,7 +113,14 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
         padding: EdgeInsets.all(16),
         child: Column(
           spacing: 15,
-          children: [_buildQuestClassificationSwitch()],
+          children: [
+            _buildQuestClassificationSwitch(),
+
+            if (selectedQuestType == QuestType.main)
+              _buildMainQuestForm()
+            else
+              _buildSideQuestForm(),
+          ],
         ),
       ),
     );

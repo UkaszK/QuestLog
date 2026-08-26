@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/utils/stringify_quest_category.dart';
 import 'package:questlog/widgets/section_decoration.dart';
 
 class SideQuests extends StatefulWidget {
@@ -116,7 +115,7 @@ class _SideQuestsState extends State<SideQuests> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                stringifyQuestCategory(sideQuest.questCategory).toUpperCase(),
+                sideQuest.questCategory.name.toUpperCase(),
                 style: GoogleFonts.jetBrainsMono(fontSize: 10),
               ),
               Container(

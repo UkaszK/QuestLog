@@ -6,7 +6,6 @@ import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/utils/stringify_duration.dart';
-import 'package:questlog/utils/stringify_quest_category.dart';
 
 class MainQuests extends StatefulWidget {
   const MainQuests({super.key, required this.mainQuests});
@@ -88,7 +87,7 @@ class _MainQuestsState extends State<MainQuests> {
                   border: Border.all(color: QuestLogColors.accent, width: 1),
                 ),
                 child: Text(
-                  stringifyQuestCategory(mainQuest.questCategory).toUpperCase(),
+                  mainQuest.questCategory.name.toUpperCase(),
                   style: GoogleFonts.jetBrainsMono(
                     color: QuestLogColors.accent,
                     fontSize: 13,
