@@ -5,4 +5,7 @@ class QuestCategory {
 
   final String name;
   final IconData icon;
+
+  @override
+  String toString() => name;
 }

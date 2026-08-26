@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/quest_type.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
+import 'package:questlog/widgets/forms/main_quest_form.dart';
+import 'package:questlog/widgets/forms/side_quest_form.dart';
 import 'package:questlog/widgets/questlog_app_bar.dart';
 
 class AddQuestScreen extends StatefulWidget {
@@ -13,7 +15,7 @@ class AddQuestScreen extends StatefulWidget {
 }
 
 class _AddQuestScreenState extends State<AddQuestScreen> {
-  QuestType selectedQuestType = QuestType.main;
+  QuestType _selectedQuestType = QuestType.main;
 
   Widget _buildQuestClassificationSwitch() {
     Widget buildSwitchButton({
@@ -67,16 +69,16 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
             children: [
               buildSwitchButton(
                 label: 'Main Quest',
-                isSelected: selectedQuestType == QuestType.main,
+                isSelected: _selectedQuestType == QuestType.main,
                 onTap: () {
-                  setState(() => selectedQuestType = QuestType.main);
+                  setState(() => _selectedQuestType = QuestType.main);
                 },
               ),
               buildSwitchButton(
                 label: 'Side Quest',
-                isSelected: selectedQuestType == QuestType.side,
+                isSelected: _selectedQuestType == QuestType.side,
                 onTap: () {
-                  setState(() => selectedQuestType = QuestType.side);
+                  setState(() => _selectedQuestType = QuestType.side);
                 },
               ),
             ],
@@ -86,41 +88,19 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
     );
   }
 
-  Widget _buildCategorySelector() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 10,
-      children: [
-        Text('Quest Category', style: QuestLogTextStyles.headerText),
-        Row(spacing: 10, children: []),
-      ],
-    );
-  }
-
-  Widget _buildMainQuestForm() {
-    return Column(children: [_buildCategorySelector()]);
-  }
-
-  Widget _buildSideQuestForm() {
-    return Column(children: [_buildCategorySelector()]);
-  }
-
   @override
   Widget build(BuildContext context) {
+    Widget selectedForm = _selectedQuestType == QuestType.main
+        ? MainQuestForm()
+        : SideQuestForm();
+
     return Scaffold(
       appBar: QuestLogAppBar(),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
           spacing: 15,
-          children: [
-            _buildQuestClassificationSwitch(),
-
-            if (selectedQuestType == QuestType.main)
-              _buildMainQuestForm()
-            else
-              _buildSideQuestForm(),
-          ],
+          children: [_buildQuestClassificationSwitch(), selectedForm],
         ),
       ),
     );
