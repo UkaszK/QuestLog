@@ -21,35 +21,36 @@ class _MainQuestsState extends State<MainQuests> {
   bool isExpanded = false;
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          spacing: 5,
-          children: [
-            Icon(
-              Icons.calendar_month,
-              color: QuestLogColors.textPrimary,
-              size: 16,
-            ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        setState(() {
+          isExpanded = !isExpanded;
+        });
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            spacing: 5,
+            children: [
+              Icon(
+                Icons.calendar_month,
+                color: QuestLogColors.textPrimary,
+                size: 16,
+              ),
 
-            Text('MAIN QUESTS', style: QuestLogTextStyles.headerText),
-          ],
-        ),
+              Text('MAIN QUESTS', style: QuestLogTextStyles.headerText),
+            ],
+          ),
 
-        IconButton(
-          onPressed: () {
-            setState(() {
-              isExpanded = !isExpanded;
-            });
-          },
-          icon: AnimatedRotation(
+          AnimatedRotation(
             turns: isExpanded ? 0 : 0.5,
             duration: Duration(milliseconds: 200),
             child: Icon(Icons.arrow_drop_down),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -242,6 +243,7 @@ class _MainQuestsState extends State<MainQuests> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 15,
       children: [
         _buildHeader(),
 

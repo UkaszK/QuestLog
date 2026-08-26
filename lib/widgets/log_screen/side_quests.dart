@@ -18,37 +18,42 @@ class _SideQuestsState extends State<SideQuests> {
   bool isExpanded = false;
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          spacing: 5,
-          children: [
-            Icon(Icons.more_horiz, color: QuestLogColors.otherAccent, size: 16),
-            Text(
-              'SIDE QUESTS',
-              style: GoogleFonts.jetBrainsMono(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        setState(() {
+          isExpanded = !isExpanded;
+        });
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            spacing: 5,
+            children: [
+              Icon(
+                Icons.more_horiz,
                 color: QuestLogColors.otherAccent,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+                size: 16,
               ),
-            ),
-          ],
-        ),
+              Text(
+                'SIDE QUESTS',
+                style: GoogleFonts.jetBrainsMono(
+                  color: QuestLogColors.otherAccent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
 
-        IconButton(
-          onPressed: () {
-            setState(() {
-              isExpanded = !isExpanded;
-            });
-          },
-          icon: AnimatedRotation(
+          AnimatedRotation(
             turns: isExpanded ? 0 : 0.5,
             duration: Duration(milliseconds: 200),
             child: Icon(Icons.arrow_drop_down),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -159,6 +164,7 @@ class _SideQuestsState extends State<SideQuests> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 15,
       children: [
         _buildHeader(),
 
