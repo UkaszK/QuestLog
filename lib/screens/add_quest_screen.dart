@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:questlog/data/quest_type.dart';
+import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/widgets/questlog_app_bar.dart';
 
 class AddQuestScreen extends StatefulWidget {
@@ -9,11 +14,90 @@ class AddQuestScreen extends StatefulWidget {
 }
 
 class _AddQuestScreenState extends State<AddQuestScreen> {
+  QuestType selectedQuestType = QuestType.main;
+
+  Widget _buildQuestClassificationSwitch() {
+    Widget _buildSwitchButton({
+      required String label,
+      required isSelected,
+      required void Function() onTap,
+    }) {
+      Color labelColor = isSelected
+          ? QuestLogColors.accent
+          : QuestLogColors.textSecondary;
+
+      return Expanded(
+        child: Padding(
+          padding: EdgeInsetsGeometry.all(3),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(5),
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: isSelected
+                    ? QuestLogColors.textPrimary.withValues(alpha: 0.1)
+                    : Colors.transparent,
+              ),
+              child: Text(
+                label,
+                style: GoogleFonts.jetBrainsMono(
+                  color: labelColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 10,
+      children: [
+        Text('Quest Classification', style: QuestLogTextStyles.headerText),
+
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(width: 1, color: QuestLogColors.border),
+          ),
+          child: Row(
+            children: [
+              _buildSwitchButton(
+                label: 'Main Quest',
+                isSelected: selectedQuestType == QuestType.main,
+                onTap: () {
+                  setState(() => selectedQuestType = QuestType.main);
+                },
+              ),
+              _buildSwitchButton(
+                label: 'Side Quest',
+                isSelected: selectedQuestType == QuestType.side,
+                onTap: () {
+                  setState(() => selectedQuestType = QuestType.side);
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: QuestLogAppBar(),
-      body: const Center(child: Text('Add Quest')),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          spacing: 15,
+          children: [_buildQuestClassificationSwitch()],
+        ),
+      ),
     );
   }
 }
