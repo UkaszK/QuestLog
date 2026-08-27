@@ -15,7 +15,7 @@ class QuestTitleInputField extends StatelessWidget {
       spacing: 10,
       children: [
         Text('Quest Title', style: QuestLogTextStyles.headerText),
-        
+
         Container(
           decoration: BoxDecoration(
             border: Border.all(
@@ -31,6 +31,7 @@ class QuestTitleInputField extends StatelessWidget {
               fontSize: 16,
             ),
             autocorrect: false,
+            cursorColor: QuestLogColors.textSecondary,
             decoration: InputDecoration(
               counterText: '',
               hintText: 'Enter quest title...',

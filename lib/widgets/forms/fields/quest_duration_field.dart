@@ -34,6 +34,7 @@ class QuestDurationField extends StatelessWidget {
             keyboardType: TextInputType.number,
             inputFormatters: [_timeFormatter],
             textAlignVertical: TextAlignVertical.top,
+            cursorColor: QuestLogColors.textSecondary,
             style: GoogleFonts.jetBrainsMono(
               color: QuestLogColors.textPrimary,
               fontSize: 16,

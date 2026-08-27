@@ -29,6 +29,7 @@ class QuestNotesInputField extends StatelessWidget {
             minLines: 5,
             maxLines: 5,
             textAlignVertical: TextAlignVertical.top,
+            cursorColor: QuestLogColors.textSecondary,
             style: GoogleFonts.jetBrainsMono(
               color: QuestLogColors.textPrimary,
               fontSize: 16,

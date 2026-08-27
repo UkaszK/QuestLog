@@ -123,6 +123,7 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
                       focusNode: _editFocusNode,
                       autocorrect: false,
                       onFieldSubmitted: (_) => _saveEdit(index),
+                      cursorColor: QuestLogColors.textSecondary,
                       style: GoogleFonts.jetBrainsMono(fontSize: 14),
                       decoration: const InputDecoration(
                         isDense: true,
@@ -190,6 +191,7 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
           autocorrect: false,
           onFieldSubmitted: (_) => _trySaveNew(),
           maxLength: 30,
+          cursorColor: QuestLogColors.textSecondary,
           style: GoogleFonts.jetBrainsMono(fontSize: 14),
           decoration: InputDecoration(
             counterText: '',

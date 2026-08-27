@@ -169,7 +169,6 @@ final dummyMainQuests = [
     questCategory: questCategories.firstWhere((q) => q.name == 'Chores'),
     durationMin: 90,
     subTasks: ['Laundry', 'Vacuum', 'Meal prep'],
-    dueDate: DateTime(2026, 8, 23),
     priority: .low,
   ),
   MainQuest(

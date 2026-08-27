@@ -87,6 +87,8 @@ class _MainQuestsState extends State<MainQuests> {
     final color = priorityColor(priority);
     final label = priorityLabel(priority);
 
+    final dueDate = mainQuest.dueDate;
+
     final name = mainQuest.name;
     final durationString = stringifyDuration(mainQuest.durationMin);
 
@@ -164,7 +166,9 @@ class _MainQuestsState extends State<MainQuests> {
                       color: QuestLogColors.textSecondary,
                     ),
                     Text(
-                      'DEADLINE: ${mainQuest.dueDate.day}.${mainQuest.dueDate.month}.${mainQuest.dueDate.year}',
+                      dueDate == null
+                          ? 'DEADLINE: none'
+                          : 'DEADLINE: ${dueDate.day}.${dueDate.month}.${dueDate.year}',
                       style: GoogleFonts.jetBrainsMono(
                         color: QuestLogColors.textSecondary,
                         fontSize: 10,
@@ -268,7 +272,7 @@ class _MainQuestsState extends State<MainQuests> {
             children: [
               for (final mainQuest
                   in (widget.mainQuests.toList()
-                    ..sort((a, b) => a.dueDate.compareTo(b.dueDate))))
+                    ..sort((a, b) => (a.compareTo(b)))))
                 _buildMainQuest(mainQuest),
             ],
           ),

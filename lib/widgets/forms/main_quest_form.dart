@@ -3,6 +3,7 @@ import 'package:questlog/data/dummy_data.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
+import 'package:questlog/widgets/forms/fields/quest_due_date_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_duration_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_notes_input_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_priority_selector.dart';
@@ -18,21 +19,13 @@ class MainQuestForm extends StatefulWidget {
 
 class _MainQuestFormState extends State<MainQuestForm> {
   // Form
-  QuestCategory _selectedCategory = questCategories.first;
-  void _setSelectedCategory(QuestCategory newCategory) =>
-      setState(() => _selectedCategory = newCategory);
-
+  QuestCategory _questCategory = questCategories.first;
   final _titleController = TextEditingController();
   final _notesController = TextEditingController();
+  DateTime? _dueDate;
   final _durationController = TextEditingController();
-
-  QuestPriority _selectedPriority = QuestPriority.medium;
-  void _setSelectedPriority(QuestPriority newPriority) =>
-      setState(() => _selectedPriority = newPriority);
-
+  QuestPriority _questPriority = QuestPriority.medium;
   List<String> _subTasks = [];
-  void _setSubTasks(List<String> newSubTasks) =>
-      setState(() => _subTasks = newSubTasks);
 
   @override
   void dispose() {
@@ -43,12 +36,16 @@ class _MainQuestFormState extends State<MainQuestForm> {
   }
 
   void _submitForm() {
-    final category = _selectedCategory;
+    final category = _questCategory;
     final title = _titleController.text;
     final notes = _notesController.text;
+    final dueDate = _dueDate.toString();
     final duration = _durationController.text;
-    final priority = _selectedPriority;
-    debugPrint('$category | $title | $notes | $duration | $priority');
+    final priority = _questPriority;
+    final subTasks = _subTasks.join(', ');
+    debugPrint(
+      '$category | $title | $notes | $dueDate | $duration | $priority | $subTasks',
+    );
   }
 
   @override
@@ -62,25 +59,34 @@ class _MainQuestFormState extends State<MainQuestForm> {
           children: [
             FormCategorySelector(
               questCategories: questCategories,
-              selection: _selectedCategory,
-              onChange: _setSelectedCategory,
+              selection: _questCategory,
+              onChange: (questCategory) =>
+                  setState(() => _questCategory = questCategory),
             ),
 
             QuestTitleInputField(controller: _titleController),
 
             QuestNotesInputField(controller: _notesController),
 
+            QuestDueDateField(
+              selectedDate: _dueDate,
+              onChange: (date) => setState(() => _dueDate = date),
+            ),
+
             QuestDurationField(controller: _durationController),
 
             QuestPrioritySelector(
               questPriorities: QuestPriority.values,
-              selection: _selectedPriority,
-              onChange: _setSelectedPriority,
+              selection: _questPriority,
+              onChange: (priority) => setState(() => _questPriority = priority),
             ),
 
             Divider(height: 20),
 
-            QuestSubTasksField(items: _subTasks, onChange: _setSubTasks),
+            QuestSubTasksField(
+              items: _subTasks,
+              onChange: (subTasks) => setState(() => _subTasks = subTasks),
+            ),
 
             TextButton(
               onPressed: () => _submitForm(),
