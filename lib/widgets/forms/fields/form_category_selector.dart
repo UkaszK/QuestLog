@@ -16,7 +16,7 @@ class FormCategorySelector extends StatelessWidget {
   final QuestCategory selection;
   final void Function(QuestCategory) onChange;
 
-  Widget buildCategoryBox(QuestCategory questCategory) {
+  Widget _buildCategoryBox(QuestCategory questCategory) {
     bool isSelected = selection == questCategory;
     Color color = isSelected
         ? QuestLogColors.accent
@@ -61,7 +61,7 @@ class FormCategorySelector extends StatelessWidget {
             spacing: 10,
             children: [
               for (final questCategory in questCategories)
-                buildCategoryBox(questCategory),
+                _buildCategoryBox(questCategory),
             ],
           ),
         ),

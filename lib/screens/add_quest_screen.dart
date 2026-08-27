@@ -96,11 +96,19 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
 
     return Scaffold(
       appBar: QuestLogAppBar(),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 96),
-        child: Column(
-          spacing: 15,
-          children: [_buildQuestClassificationSwitch(), selectedForm],
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 96),
+          child: Column(
+            spacing: 15,
+            children: [
+              _buildQuestClassificationSwitch(),
+              Divider(height: 10),
+              selectedForm,
+            ],
+          ),
         ),
       ),
     );

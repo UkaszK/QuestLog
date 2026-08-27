@@ -3,13 +3,13 @@ import 'package:questlog/data/day.dart';
 
 class SideQuest {
   const SideQuest({
-    required this.name,
     required this.questCategory,
+    required this.name,
     required this.repeatDays,
   });
 
-  final String name;
   final QuestCategory questCategory;
+  final String name;
   final Set<Day> repeatDays;
 
   String? timeIntervalString() {

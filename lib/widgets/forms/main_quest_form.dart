@@ -60,45 +60,41 @@ class _MainQuestFormState extends State<MainQuestForm> {
   Widget build(BuildContext context) {
     final isSubmitDisabled = _titleController.text.isEmpty;
 
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Form(
-        child: Column(
-          spacing: 15,
-          children: [
-            FormCategorySelector(
-              questCategories: questCategories,
-              selection: _questCategory,
-              onChange: (questCategory) =>
-                  setState(() => _questCategory = questCategory),
-            ),
+    return Form(
+      child: Column(
+        spacing: 15,
+        children: [
+          FormCategorySelector(
+            questCategories: questCategories,
+            selection: _questCategory,
+            onChange: (questCategory) =>
+                setState(() => _questCategory = questCategory),
+          ),
 
-            QuestTitleInputField(controller: _titleController),
+          QuestTitleInputField(controller: _titleController),
 
-            QuestDueDateField(
-              selectedDate: _dueDate,
-              onChange: (date) => setState(() => _dueDate = date),
-            ),
+          QuestDueDateField(
+            selectedDate: _dueDate,
+            onChange: (date) => setState(() => _dueDate = date),
+          ),
 
-            QuestDurationField(controller: _durationController),
+          QuestDurationField(controller: _durationController),
 
-            QuestPrioritySelector(
-              questPriorities: QuestPriority.values,
-              selection: _questPriority,
-              onChange: (priority) => setState(() => _questPriority = priority),
-            ),
+          QuestPrioritySelector(
+            questPriorities: QuestPriority.values,
+            selection: _questPriority,
+            onChange: (priority) => setState(() => _questPriority = priority),
+          ),
 
-            Divider(height: 20),
+          Divider(height: 20),
 
-            QuestSubTasksField(
-              items: _subTasks,
-              onChange: (subTasks) => setState(() => _subTasks = subTasks),
-            ),
+          QuestSubTasksField(
+            items: _subTasks,
+            onChange: (subTasks) => setState(() => _subTasks = subTasks),
+          ),
 
-            FormSubmitButton(onSubmit: _submitForm, disabled: isSubmitDisabled),
-          ],
-        ),
+          FormSubmitButton(onSubmit: _submitForm, disabled: isSubmitDisabled),
+        ],
       ),
     );
   }
