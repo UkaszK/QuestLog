@@ -30,9 +30,8 @@ class _QuestLogNavigationBarState extends State<QuestLogNavigationBar> {
         ? QuestLogColors.textPrimary
         : QuestLogColors.textSecondary;
 
-    return GestureDetector(
+    return InkWell(
       onTap: () => widget.onDestinationSelected(index),
-      behavior: HitTestBehavior.opaque,
       child: SizedBox(
         width: 64,
         child: Column(
@@ -58,18 +57,18 @@ class _QuestLogNavigationBarState extends State<QuestLogNavigationBar> {
               overflow: TextOverflow.visible,
             ),
 
-            SizedBox(height: 4),
+            // SizedBox(height: 4),
 
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-              height: 2,
-              width: isSelected ? 24 : 0,
-              decoration: BoxDecoration(
-                color: QuestLogColors.textPrimary,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
+            // AnimatedContainer(
+            //   duration: const Duration(milliseconds: 200),
+            //   curve: Curves.easeInOut,
+            //   height: 2,
+            //   width: isSelected ? 24 : 0,
+            //   decoration: BoxDecoration(
+            //     color: QuestLogColors.textPrimary,
+            //     borderRadius: BorderRadius.circular(1),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -94,10 +93,7 @@ class _QuestLogNavigationBarState extends State<QuestLogNavigationBar> {
               decoration: BoxDecoration(
                 color: QuestLogColors.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: QuestLogColors.textSecondary.withValues(alpha: 0.1),
-                  width: 1,
-                ),
+                border: Border.all(color: QuestLogColors.border, width: 1),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

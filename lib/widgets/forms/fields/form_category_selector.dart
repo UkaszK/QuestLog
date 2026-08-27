@@ -26,7 +26,12 @@ class FormCategorySelector extends StatelessWidget {
       onTap: () => onChange(questCategory),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 7, horizontal: 12),
-        decoration: BoxDecoration(border: Border.all(width: 1, color: color)),
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1,
+            color: isSelected ? QuestLogColors.accent : QuestLogColors.border,
+          ),
+        ),
         child: Row(
           spacing: 5,
           children: [

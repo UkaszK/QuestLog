@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/main_quest.dart';
-import 'package:questlog/data/priority.dart';
+import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';

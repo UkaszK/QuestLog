@@ -1,4 +1,4 @@
-import 'package:questlog/data/priority.dart';
+import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/data/quest_category.dart';
 
 class MainQuest {
@@ -16,5 +16,5 @@ class MainQuest {
   final int durationMin;
   final List<({String name, bool completed})> subTasks;
   final DateTime dueDate;
-  final Priority priority;
+  final QuestPriority priority;
 }
