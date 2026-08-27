@@ -17,6 +17,8 @@ class SideQuest {
 
     if (repeatDays.length == 1) return 'Every ${repeatDays.first}';
 
+    if (repeatDays.length == 7) return 'Every day';
+
     const weekdays = {
       Day.monday,
       Day.tuesday,

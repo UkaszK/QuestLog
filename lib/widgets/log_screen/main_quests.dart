@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_priority.dart';
-import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/utils/stringify_duration.dart';
@@ -48,6 +47,35 @@ class _MainQuestsState extends State<MainQuests> {
             duration: Duration(milliseconds: 200),
             child: Icon(Icons.arrow_drop_down),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubTasksContainer(List<String> subTasks) {
+    final limit = 3;
+    bool tooLong = subTasks.length > limit;
+    var updated = tooLong ? subTasks.sublist(0, 3) : subTasks;
+
+    return Container(
+      padding: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: QuestLogColors.surface,
+        border: Border.all(color: QuestLogColors.border, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 5,
+        children: [
+          for (final subTask in updated) _buildSubTask(subTask),
+          if (tooLong)
+            Text(
+              '... ${subTasks.length - limit} more',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.textSecondary,
+                fontSize: 10,
+              ),
+            ),
         ],
       ),
     );
@@ -171,20 +199,7 @@ class _MainQuestsState extends State<MainQuests> {
             ],
           ),
 
-          Container(
-            padding: EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color: QuestLogColors.surface,
-              border: Border.all(color: QuestLogColors.border, width: 1),
-            ),
-            child: Column(
-              spacing: 5,
-              children: [
-                for (final subTask in mainQuest.subTasks)
-                  _buildSubTask(subTask),
-              ],
-            ),
-          ),
+          _buildSubTasksContainer(mainQuest.subTasks),
 
           TextButton(
             onPressed: () {},
@@ -222,14 +237,14 @@ class _MainQuestsState extends State<MainQuests> {
     );
   }
 
-  Widget _buildSubTask(SubTask subTask) {
+  Widget _buildSubTask(String subTask) {
     return Row(
       spacing: 5,
       children: [
         Icon(Icons.chevron_right, size: 16, color: QuestLogColors.accent),
 
         Text(
-          subTask.name.toUpperCase(),
+          subTask.toUpperCase(),
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textPrimary,
             fontSize: 10,
