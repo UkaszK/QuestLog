@@ -218,7 +218,7 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'SUB-TASKS',
+              'SUB-TASKS (Optional)',
               style: GoogleFonts.jetBrainsMono(
                 color: QuestLogColors.accent,
                 fontSize: 12,

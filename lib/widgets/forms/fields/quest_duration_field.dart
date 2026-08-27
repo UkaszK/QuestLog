@@ -20,7 +20,7 @@ class QuestDurationField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
       children: [
-        Text('Duration (HH:MM)', style: QuestLogTextStyles.headerText),
+        Text('Duration (HH:MM) (Optional)', style: QuestLogTextStyles.headerText),
 
         Container(
           decoration: BoxDecoration(
