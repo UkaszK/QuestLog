@@ -2,27 +2,77 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_quest.dart';
-import 'package:questlog/screens/add_assembler_quest_screen.dart';
+import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/get_time_text.dart';
 
-class Assembler extends StatelessWidget {
-  Assembler({
+class Assembler extends StatefulWidget {
+  const Assembler({
     super.key,
-    required this.day,
+    required this.baseDate,
     required this.assemblerQuests,
-    required this.isPastDay,
+    required this.displayInsertBlocks,
+    this.onSelectTimeSlot,
+    this.onUpdateTimeSlot,
   });
 
-  final DateTime day;
+  final DateTime baseDate;
   final List<AssemblerQuest> assemblerQuests;
-  final bool isPastDay;
+  final bool displayInsertBlocks;
+  final void Function(TimeSlot)? onSelectTimeSlot;
+  final void Function(TimeSlot)? onUpdateTimeSlot;
 
+  @override
+  State<StatefulWidget> createState() => _AssemblerState();
+}
+
+class _AssemblerState extends State<Assembler> {
   final double _pixelsPerMinute = 1.0;
   final double _leftOffset = 70;
   final double _rightOffset = 15;
 
-  late final DateTime baseDate = DateTime(day.year, day.month, day.day);
+  DateTime? _currentStart;
+  DateTime? _currentEnd;
+  double _dragAccumulator = 0.0;
+
+  void _resetSelectedSlot() {
+    setState(() {
+      _currentStart = null;
+      _currentEnd = null;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant Assembler oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final dayChanged = !DateUtils.isSameDay(
+      widget.baseDate,
+      oldWidget.baseDate,
+    );
+    final insertBlocksReenabled =
+        widget.displayInsertBlocks && !oldWidget.displayInsertBlocks;
+
+    if (dayChanged || insertBlocksReenabled) {
+      _resetSelectedSlot();
+    }
+  }
+
+  void _notifyTimeSlotUpdated() {
+    widget.onUpdateTimeSlot?.call((
+      startTime: _currentStart!,
+      endTime: _currentEnd!,
+    ));
+  }
+
+  void _selectSlot(DateTime start, DateTime end) {
+    setState(() {
+      _currentStart = start;
+      _currentEnd = end;
+    });
+    widget.onSelectTimeSlot?.call((startTime: start, endTime: end));
+    _notifyTimeSlotUpdated();
+  }
 
   Widget _buildTimeGrid() {
     List<Widget> gridElements = [];
@@ -36,8 +86,9 @@ class Assembler extends StatelessWidget {
       ),
     );
 
-    for (int hour = baseDate.hour; hour < 24; hour += 2) {
-      double topPosition = (hour - baseDate.hour) * 60 * _pixelsPerMinute;
+    for (int hour = widget.baseDate.hour; hour < 24; hour += 2) {
+      double topPosition =
+          (hour - widget.baseDate.hour) * 60 * _pixelsPerMinute;
 
       gridElements.add(
         Positioned(
@@ -80,20 +131,29 @@ class Assembler extends StatelessWidget {
   Widget _buildTimeBlocks(BuildContext context) {
     List<Widget> blocks = [];
 
-    final sortedQuests = List<AssemblerQuest>.from(assemblerQuests)
+    final sortedQuests = List<AssemblerQuest>.from(widget.assemblerQuests)
       ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
-    DateTime currentTracker = baseDate;
-    final endOfDay = baseDate.add(const Duration(hours: 24));
+    DateTime currentTracker = widget.baseDate;
+    final endOfDay = widget.baseDate.add(const Duration(hours: 24));
+
+    final bool showInsertBlocks =
+        widget.displayInsertBlocks && _currentStart == null;
 
     for (final quest in sortedQuests) {
-      if (!isPastDay && quest.startTime.isAfter(currentTracker)) {
+      if (showInsertBlocks && quest.startTime.isAfter(currentTracker)) {
         blocks.add(_buildInsertBlock(context, currentTracker, quest.startTime));
       }
 
-      int minutesFromStart = quest.startTime.difference(baseDate).inMinutes;
+      int minutesFromStart = quest.startTime
+          .difference(widget.baseDate)
+          .inMinutes;
       double topPosition = minutesFromStart * _pixelsPerMinute;
       double height = quest.durationInMinutes * _pixelsPerMinute;
+
+      final smallSized =
+          height < 60; // only title and one-line time text visible
+      final largeSized = height >= 80; // two-line time text and description
 
       String title = quest.questInfo.name;
       String description = quest.questInfo.subTasks
@@ -103,7 +163,7 @@ class Assembler extends StatelessWidget {
       String timeText = getTimeText(
         quest.startTime,
         quest.endTime,
-        height >= 50,
+        !smallSized,
       );
 
       blocks.add(
@@ -127,7 +187,7 @@ class Assembler extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 10,
-                    vertical: height < 40 ? 4 : 10,
+                    vertical: smallSized ? 4 : 10,
                   ),
                   decoration: BoxDecoration(
                     border: Border.all(color: statusColor, width: 1),
@@ -138,7 +198,9 @@ class Assembler extends StatelessWidget {
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: smallSized
+                              ? CrossAxisAlignment.center
+                              : CrossAxisAlignment.start,
                           children: [
                             Flexible(
                               child: Text(
@@ -165,7 +227,7 @@ class Assembler extends StatelessWidget {
                           ],
                         ),
 
-                        if (height >= 70 && description.isNotEmpty) ...[
+                        if (largeSized && description.isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
                             description,
@@ -189,15 +251,19 @@ class Assembler extends StatelessWidget {
       currentTracker = quest.endTime;
     }
 
-    if (!isPastDay && currentTracker.isBefore(endOfDay)) {
+    if (showInsertBlocks && currentTracker.isBefore(endOfDay)) {
       blocks.add(_buildInsertBlock(context, currentTracker, endOfDay));
+    }
+
+    if (_currentStart != null && _currentEnd != null) {
+      blocks.add(_buildInteractiveSlotBlock());
     }
 
     return Stack(clipBehavior: Clip.none, children: blocks);
   }
 
   Widget _buildInsertBlock(BuildContext context, DateTime start, DateTime end) {
-    int minutesFromStart = start.difference(baseDate).inMinutes;
+    int minutesFromStart = start.difference(widget.baseDate).inMinutes;
     int duration = end.difference(start).inMinutes;
 
     double topPosition = minutesFromStart * _pixelsPerMinute;
@@ -206,7 +272,7 @@ class Assembler extends StatelessWidget {
 
     String timeText = getTimeText(start, end, false);
 
-    bool isSmallBlock = height < 50;
+    bool smallSized = height < 60;
 
     Color color = QuestLogColors.textSecondary.withValues(alpha: 0.3);
 
@@ -227,26 +293,19 @@ class Assembler extends StatelessWidget {
           Expanded(
             child: GestureDetector(
               behavior: .opaque,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddAssemblerQuestScreen(),
-                  ),
-                );
-              },
+              onTap: () => _selectSlot(start, end),
               child: DottedBorder(
                 options: RectDottedBorderOptions(strokeWidth: 1, color: color),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   alignment: Alignment.center,
                   child: Text(
                     '+ INSERT BLOCK ($timeText)',
-                    maxLines: isSmallBlock ? 1 : 2,
+                    maxLines: smallSized ? 1 : 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.jetBrainsMono(
                       color: color,
-                      fontSize: isSmallBlock ? 10 : 12,
+                      fontSize: smallSized ? 10 : 12,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -259,13 +318,193 @@ class Assembler extends StatelessWidget {
     );
   }
 
+  Widget _buildInteractiveSlotBlock() {
+    int minutesFromStart = _currentStart!.difference(widget.baseDate).inMinutes;
+    int duration = _currentEnd!.difference(_currentStart!).inMinutes;
+
+    double topPosition = minutesFromStart * _pixelsPerMinute;
+    double height = duration * _pixelsPerMinute;
+
+    final smallSized = height < 60; // one-line time text
+    final largeSized = height >= 120; // two-line text text and add quest button
+
+    String timeText = getTimeText(_currentStart!, _currentEnd!, !smallSized);
+
+    return Positioned(
+      top: topPosition,
+      left: _leftOffset,
+      right: _rightOffset,
+      height: height,
+      child: Container(
+        decoration: BoxDecoration(
+          color: QuestLogColors.accent.withValues(alpha: 0.1),
+          border: Border.all(color: QuestLogColors.accent, width: 2),
+        ),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onVerticalDragStart: (_) => _dragAccumulator = 0.0,
+                onVerticalDragUpdate: (details) {
+                  _dragAccumulator += details.delta.dy;
+                  if (_dragAccumulator.abs() >= 1.0) {
+                    int mins = _dragAccumulator.truncate();
+                    _dragAccumulator -= mins;
+                    setState(() {
+                      final newStart = _currentStart!.add(
+                        Duration(minutes: mins),
+                      );
+                      if (newStart.isBefore(widget.baseDate)) {
+                        final duration = _currentEnd!.difference(
+                          _currentStart!,
+                        );
+                        _currentStart = widget.baseDate;
+                        _currentEnd = widget.baseDate.add(duration);
+                      } else {
+                        _currentStart = newStart;
+                        _currentEnd = _currentEnd!.add(Duration(minutes: mins));
+                      }
+                    });
+                    _notifyTimeSlotUpdated();
+                  }
+                },
+
+                child: height >= 30
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            timeText,
+                            style: GoogleFonts.jetBrainsMono(
+                              color: QuestLogColors.accent,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          if (largeSized) ...[
+                            const SizedBox(height: 8),
+
+                            OutlinedButton.icon(
+                              icon: const Icon(Icons.add, size: 16),
+                              label: Text(
+                                'QUEST',
+                                style: GoogleFonts.jetBrainsMono(fontSize: 12),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: QuestLogColors.accent,
+                                side: const BorderSide(
+                                  color: QuestLogColors.accent,
+                                ),
+                              ),
+                              onPressed: () {
+                                // TODO open sheet for adding a main quest
+                              },
+                            ),
+                          ],
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ),
+
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeUpDown,
+                child: GestureDetector(
+                  onVerticalDragStart: (_) => _dragAccumulator = 0.0,
+                  onVerticalDragUpdate: (details) {
+                    _dragAccumulator += details.delta.dy;
+                    if (_dragAccumulator.abs() >= 1.0) {
+                      int mins = _dragAccumulator.truncate();
+                      _dragAccumulator -= mins;
+                      setState(() {
+                        var newStart = _currentStart!.add(
+                          Duration(minutes: mins),
+                        );
+
+                        if (!newStart.isBefore(widget.baseDate) &&
+                            newStart.isBefore(
+                              _currentEnd!.subtract(
+                                const Duration(minutes: 15),
+                              ),
+                            )) {
+                          _currentStart = newStart;
+                        }
+                      });
+                      _notifyTimeSlotUpdated();
+                    }
+                  },
+
+                  child: Container(
+                    height: 15,
+                    color: Colors.transparent,
+                    child: const Center(
+                      child: Icon(
+                        Icons.drag_handle,
+                        size: 16,
+                        color: QuestLogColors.accent,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeUpDown,
+                child: GestureDetector(
+                  onVerticalDragStart: (_) => _dragAccumulator = 0.0,
+                  onVerticalDragUpdate: (details) {
+                    _dragAccumulator += details.delta.dy;
+                    if (_dragAccumulator.abs() >= 1.0) {
+                      int mins = _dragAccumulator.truncate();
+                      _dragAccumulator -= mins;
+                      setState(() {
+                        var newEnd = _currentEnd!.add(Duration(minutes: mins));
+                        if (newEnd.isAfter(
+                          _currentStart!.add(const Duration(minutes: 15)),
+                        )) {
+                          _currentEnd = newEnd;
+                        }
+                      });
+                      _notifyTimeSlotUpdated();
+                    }
+                  },
+                  child: Container(
+                    height: 15,
+                    color: Colors.transparent,
+                    child: const Center(
+                      child: Icon(
+                        Icons.drag_handle,
+                        size: 16,
+                        color: QuestLogColors.accent,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.only(top: 30, bottom: 180),
+      padding: EdgeInsets.only(top: 30, bottom: 150),
       child: SizedBox(
         width: double.infinity,
-        height: (24 - baseDate.hour) * 60 * _pixelsPerMinute,
+        height: (24 - widget.baseDate.hour) * 60 * _pixelsPerMinute,
         child: Stack(children: [_buildTimeGrid(), _buildTimeBlocks(context)]),
       ),
     );

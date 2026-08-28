@@ -25,7 +25,7 @@ class _DayPickerState extends State<DayPicker> {
   @override
   void initState() {
     super.initState();
-    _baseDate = widget.selectedDay;
+    _baseDate = _resetDay(widget.selectedDay);
   }
 
   void _shiftDays(int offset) {
@@ -33,6 +33,12 @@ class _DayPickerState extends State<DayPicker> {
       _baseDate = _baseDate.add(Duration(days: offset));
       widget.onDaySelected(_baseDate);
     });
+  }
+
+  DateTime _resetDay(DateTime selection) {
+    final updated = DateTime(selection.year, selection.month, selection.day);
+
+    return updated;
   }
 
   List<Map<String, dynamic>> get availableDays {
