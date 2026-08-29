@@ -12,17 +12,19 @@ class Assembler extends StatefulWidget {
     required this.baseDate,
     required this.assemblerQuests,
     required this.displayInsertBlocks,
-    this.hasOverlap = false,
-    this.onSelectTimeSlot,
-    this.onUpdateTimeSlot,
+    required this.hasOverlap,
+    required this.onSelectTimeSlot,
+    required this.onUpdateTimeSlot,
+    required this.onSelectExistingQuest,
   });
 
   final DateTime baseDate;
   final List<AssemblerQuest> assemblerQuests;
   final bool displayInsertBlocks;
   final bool hasOverlap;
-  final void Function(TimeSlot)? onSelectTimeSlot;
-  final void Function(TimeSlot)? onUpdateTimeSlot;
+  final void Function(TimeSlot) onSelectTimeSlot;
+  final void Function(TimeSlot) onUpdateTimeSlot;
+  final void Function(AssemblerQuest) onSelectExistingQuest;
 
   @override
   State<StatefulWidget> createState() => _AssemblerState();
@@ -36,11 +38,13 @@ class _AssemblerState extends State<Assembler> {
   DateTime? _currentStart;
   DateTime? _currentEnd;
   double _dragAccumulator = 0.0;
+  AssemblerQuest? _editingQuest;
 
   void _resetSelectedSlot() {
     setState(() {
       _currentStart = null;
       _currentEnd = null;
+      _editingQuest = null;
     });
   }
 
@@ -61,10 +65,7 @@ class _AssemblerState extends State<Assembler> {
   }
 
   void _notifyTimeSlotUpdated() {
-    widget.onUpdateTimeSlot?.call((
-      startTime: _currentStart!,
-      endTime: _currentEnd!,
-    ));
+    widget.onUpdateTimeSlot((startTime: _currentStart!, endTime: _currentEnd!));
   }
 
   void _selectSlot(DateTime start, DateTime end) {
@@ -72,7 +73,17 @@ class _AssemblerState extends State<Assembler> {
       _currentStart = start;
       _currentEnd = end;
     });
-    widget.onSelectTimeSlot?.call((startTime: start, endTime: end));
+    widget.onSelectTimeSlot((startTime: start, endTime: end));
+    _notifyTimeSlotUpdated();
+  }
+
+  void _selectExistingQuest(AssemblerQuest assemblerQuest) {
+    setState(() {
+      _currentStart = assemblerQuest.startTime;
+      _currentEnd = assemblerQuest.endTime;
+      _editingQuest = assemblerQuest;
+    });
+    widget.onSelectExistingQuest(assemblerQuest);
     _notifyTimeSlotUpdated();
   }
 
@@ -133,8 +144,9 @@ class _AssemblerState extends State<Assembler> {
   Widget _buildTimeBlocks(BuildContext context) {
     List<Widget> blocks = [];
 
-    final sortedQuests = List<AssemblerQuest>.from(widget.assemblerQuests)
-      ..sort((a, b) => a.startTime.compareTo(b.startTime));
+    final sortedAssemblerQuests = List<AssemblerQuest>.from(
+      widget.assemblerQuests,
+    )..sort((a, b) => a.startTime.compareTo(b.startTime));
 
     DateTime currentTracker = widget.baseDate;
     final endOfDay = widget.baseDate.add(const Duration(hours: 24));
@@ -142,29 +154,37 @@ class _AssemblerState extends State<Assembler> {
     final bool showInsertBlocks =
         widget.displayInsertBlocks && _currentStart == null;
 
-    for (final quest in sortedQuests) {
-      if (showInsertBlocks && quest.startTime.isAfter(currentTracker)) {
-        blocks.add(_buildInsertBlock(context, currentTracker, quest.startTime));
+    for (final assemblerQuest in sortedAssemblerQuests) {
+      if (showInsertBlocks &&
+          assemblerQuest.startTime.isAfter(currentTracker)) {
+        blocks.add(
+          _buildInsertBlock(context, currentTracker, assemblerQuest.startTime),
+        );
       }
 
-      int minutesFromStart = quest.startTime
+      if (identical(_editingQuest, assemblerQuest)) {
+        currentTracker = assemblerQuest.endTime;
+        continue;
+      }
+
+      int minutesFromStart = assemblerQuest.startTime
           .difference(widget.baseDate)
           .inMinutes;
       double topPosition = minutesFromStart * _pixelsPerMinute;
-      double height = quest.durationInMinutes * _pixelsPerMinute;
+      double height = assemblerQuest.durationInMinutes * _pixelsPerMinute;
 
       final smallSized =
           height < 60; // only title and one-line time text visible
       final largeSized = height >= 80; // two-line time text and description
 
-      String title = quest.questInfo.name;
-      String description = quest.questInfo.subTasks
+      String title = assemblerQuest.questInfo.name;
+      String description = assemblerQuest.questInfo.subTasks
           .map((el) => el.name)
           .join(', ');
-      Color statusColor = quest.statusColor;
+      Color statusColor = assemblerQuest.statusColor;
       String timeText = getTimeText(
-        quest.startTime,
-        quest.endTime,
+        assemblerQuest.startTime,
+        assemblerQuest.endTime,
         !smallSized,
       );
 
@@ -186,62 +206,65 @@ class _AssemblerState extends State<Assembler> {
 
               // The actual quest block
               Expanded(
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: smallSized ? 4 : 10,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: statusColor, width: 1),
-                  ),
-                  child: ClipRect(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: smallSized
-                              ? CrossAxisAlignment.center
-                              : CrossAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.jetBrainsMono(
-                                  color: statusColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => _selectExistingQuest(assemblerQuest),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: smallSized ? 4 : 10,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: statusColor, width: 1),
+                    ),
+                    child: ClipRect(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: smallSized
+                                ? CrossAxisAlignment.center
+                                : CrossAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.jetBrainsMono(
+                                    color: statusColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
-                            ),
 
+                              Text(
+                                timeText,
+                                textAlign: TextAlign.right,
+                                style: GoogleFonts.jetBrainsMono(
+                                  color: QuestLogColors.textPrimary,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          if (largeSized && description.isNotEmpty) ...[
+                            const SizedBox(height: 4),
                             Text(
-                              timeText,
-                              textAlign: TextAlign.right,
+                              description,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                color: QuestLogColors.textPrimary,
-                                fontSize: 10,
-                                fontFamily: 'monospace',
+                                color: QuestLogColors.textSecondary,
+                                fontSize: 12,
                               ),
                             ),
                           ],
-                        ),
-
-                        if (largeSized && description.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            description,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: QuestLogColors.textSecondary,
-                              fontSize: 12,
-                            ),
-                          ),
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -250,7 +273,7 @@ class _AssemblerState extends State<Assembler> {
           ),
         ),
       );
-      currentTracker = quest.endTime;
+      currentTracker = assemblerQuest.endTime;
     }
 
     if (showInsertBlocks && currentTracker.isBefore(endOfDay)) {

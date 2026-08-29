@@ -11,7 +11,10 @@ class LogScreen extends StatelessWidget {
 
   List<AssemblerQuest> get _assemblerQuests {
     return dailyAssemblerQuests
-        .where((quest) => DateUtils.isSameDay(quest.startTime, DateTime.now()))
+        .where(
+          (assemblerQuest) =>
+              DateUtils.isSameDay(assemblerQuest.startTime, DateTime.now()),
+        )
         .toList();
   }
 
@@ -25,7 +28,9 @@ class LogScreen extends StatelessWidget {
           DailyAssembler(assemblerQuests: _assemblerQuests),
           ActiveProtocol(
             activeQuest: _assemblerQuests.firstWhere(
-              (quest) => quest.status == .active || quest.status == .pending,
+              (assemblerQuest) =>
+                  assemblerQuest.status == QuestStatus.active ||
+                  assemblerQuest.status == QuestStatus.pending,
             ),
           ),
           SideQuests(sideQuests: dummySideQuests),

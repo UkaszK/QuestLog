@@ -22,10 +22,14 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
   DateTime _selectedDay = DateTime.now();
   TimeSlot? _selectedTimeSlot;
   MainQuest? _assembledMainQuest;
+  AssemblerQuest? _editingQuest;
 
   List<AssemblerQuest> get _selectedDayQuests {
     return dailyAssemblerQuests
-        .where((quest) => DateUtils.isSameDay(quest.startTime, _selectedDay))
+        .where(
+          (assemblerQuest) =>
+              DateUtils.isSameDay(assemblerQuest.startTime, _selectedDay),
+        )
         .toList();
   }
 
@@ -42,9 +46,10 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
   bool get _hasOverlap {
     if (_selectedTimeSlot == null) return false;
     return _selectedDayQuests.any(
-      (quest) =>
-          _selectedTimeSlot!.startTime.isBefore(quest.endTime) &&
-          _selectedTimeSlot!.endTime.isAfter(quest.startTime),
+      (assemblerQuest) =>
+          !identical(assemblerQuest, _editingQuest) &&
+          _selectedTimeSlot!.startTime.isBefore(assemblerQuest.endTime) &&
+          _selectedTimeSlot!.endTime.isAfter(assemblerQuest.startTime),
     );
   }
 
@@ -52,12 +57,19 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     setState(() {
       _selectedTimeSlot = null;
       _assembledMainQuest = null;
+      _editingQuest = null;
     });
   }
 
   void _updateSelectedTimeSlot(TimeSlot slot) {
     setState(() {
       _selectedTimeSlot = slot;
+    });
+  }
+
+  void _handleSelectExistingQuest(AssemblerQuest quest) {
+    setState(() {
+      _editingQuest = quest;
     });
   }
 
@@ -71,6 +83,14 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     setState(() {
       _assembledMainQuest = null;
     });
+  }
+
+  void _handleSave() {
+    if (_editingQuest != null) {
+      _handleSaveEditedQuest();
+    } else {
+      _handleSaveAssembledQuest();
+    }
   }
 
   void _handleSaveAssembledQuest() {
@@ -96,19 +116,44 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
       dailyAssemblerQuests.add(newAssemblerQuest);
       _resetTimeSlot();
     });
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Quest "${_assembledMainQuest!.name}" added to schedule'),
-        duration: const Duration(seconds: 2),
-      ),
+  void _handleSaveEditedQuest() {
+    if (_selectedTimeSlot == null || _editingQuest == null) return;
+    if (_hasOverlap) return;
+
+    final updatedQuest = AssemblerQuest(
+      questInfo: _editingQuest!.questInfo,
+      startTime: _selectedTimeSlot!.startTime,
+      endTime: _selectedTimeSlot!.endTime,
+      status: _editingQuest!.status,
     );
+
+    setState(() {
+      final index = dailyAssemblerQuests.indexOf(_editingQuest!);
+      if (index != -1) {
+        dailyAssemblerQuests[index] = updatedQuest;
+      }
+      _resetTimeSlot();
+    });
+  }
+
+  void _handleDeleteEditedQuest() {
+    if (_editingQuest == null) return;
+
+    setState(() {
+      dailyAssemblerQuests.remove(_editingQuest);
+      _resetTimeSlot();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final bool hasTimeSlot = _selectedTimeSlot != null;
-    final bool hasAssembledQuest = _assembledMainQuest != null;
+    final bool hasAssembledQuest =
+        _assembledMainQuest != null || _editingQuest != null;
+    final String assembledQuestName =
+        _assembledMainQuest?.name ?? _editingQuest?.questInfo.name ?? '';
     final DateTime baseDate = DateTime(
       _selectedDay.year,
       _selectedDay.month,
@@ -152,6 +197,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
                     hasOverlap: _hasOverlap,
                     onSelectTimeSlot: _updateSelectedTimeSlot,
                     onUpdateTimeSlot: _updateSelectedTimeSlot,
+                    onSelectExistingQuest: _handleSelectExistingQuest,
                   ),
                 ],
               ),
@@ -187,10 +233,12 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
                         dummyMainQuests,
                       ),
                       onQuestAssembled: _handleQuestAssembled,
-                      assembledQuestName: _assembledMainQuest?.name,
-                      onSave: _handleSaveAssembledQuest,
+                      assembledQuestName: assembledQuestName,
+                      onSave: _handleSave,
                       onClearQuest: _handleQuestCleared,
                       hasOverlap: _hasOverlap,
+                      isEditingExistingQuest: _editingQuest != null,
+                      onDelete: _handleDeleteEditedQuest,
                     )
                   : const SizedBox.shrink(key: ValueKey('slot-bar-empty')),
             ),

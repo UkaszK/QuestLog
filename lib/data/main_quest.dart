@@ -30,6 +30,7 @@ class MainQuest implements Comparable<MainQuest> {
     if (other.dueDate == null) {
       return -1;
     }
+
     return dueDate!.compareTo(other.dueDate!);
   }
 

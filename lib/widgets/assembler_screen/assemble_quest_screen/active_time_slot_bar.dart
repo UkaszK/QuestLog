@@ -16,7 +16,9 @@ class ActiveTimeSlotBar extends StatelessWidget {
     required this.assembledQuestName,
     required this.onSave,
     required this.onClearQuest,
-    this.hasOverlap = false,
+    required this.hasOverlap,
+    required this.isEditingExistingQuest,
+    required this.onDelete,
   });
 
   final String timeSlotText;
@@ -24,10 +26,12 @@ class ActiveTimeSlotBar extends StatelessWidget {
   final bool hasAssembledQuest;
   final Map<QuestCategory, List<MainQuest>> mainQuestsByCategory;
   final void Function(MainQuest) onQuestAssembled;
-  final String? assembledQuestName;
+  final String assembledQuestName;
   final VoidCallback onSave;
   final VoidCallback onClearQuest;
   final bool hasOverlap;
+  final bool isEditingExistingQuest;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +117,7 @@ class ActiveTimeSlotBar extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            assembledQuestName!,
+                            assembledQuestName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.jetBrainsMono(
@@ -144,17 +148,30 @@ class ActiveTimeSlotBar extends StatelessWidget {
                     onPressed: hasOverlap ? null : onSave,
                   ),
                   const SizedBox(width: 8),
-                  InkWell(
-                    onTap: onClearQuest,
-                    child: const Padding(
-                      padding: EdgeInsets.all(4),
-                      child: Icon(
-                        Icons.close,
-                        size: 18,
-                        color: QuestLogColors.textSecondary,
+                  if (isEditingExistingQuest)
+                    InkWell(
+                      onTap: onDelete,
+                      child: const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.delete_outline,
+                          size: 18,
+                          color: QuestLogColors.danger,
+                        ),
+                      ),
+                    )
+                  else
+                    InkWell(
+                      onTap: onClearQuest,
+                      child: const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.close,
+                          size: 18,
+                          color: QuestLogColors.textSecondary,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
 
