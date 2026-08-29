@@ -157,6 +157,13 @@ final dummySideQuests = [
 
 final dummyMainQuests = [
   MainQuest(
+    name: 'Work',
+    questCategory: questCategories.firstWhere((q) => q.name == 'Work'),
+    durationMin: 240,
+    subTasks: [],
+    priority: .normal,
+  ),
+  MainQuest(
     name: 'Launch Product Sprint',
     questCategory: questCategories.firstWhere((q) => q.name == 'Work'),
     durationMin: 150,
@@ -185,7 +192,7 @@ final dummyMainQuests = [
     durationMin: 45,
     subTasks: ['Read chapter', 'Take notes', 'Summarize insights'],
     dueDate: DateTime(2026, 8, 21),
-    priority: .medium,
+    priority: .normal,
   ),
   MainQuest(
     name: 'Health Check-In',

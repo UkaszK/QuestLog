@@ -23,7 +23,7 @@ class _MainQuestFormState extends State<MainQuestForm> {
   final _titleController = TextEditingController();
   DateTime? _dueDate;
   final _durationController = TextEditingController();
-  QuestPriority _questPriority = QuestPriority.medium;
+  QuestPriority _questPriority = QuestPriority.normal;
   List<String> _subTasks = [];
 
   @override

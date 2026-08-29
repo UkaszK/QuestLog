@@ -12,6 +12,7 @@ class Assembler extends StatefulWidget {
     required this.baseDate,
     required this.assemblerQuests,
     required this.displayInsertBlocks,
+    this.hasOverlap = false,
     this.onSelectTimeSlot,
     this.onUpdateTimeSlot,
   });
@@ -19,6 +20,7 @@ class Assembler extends StatefulWidget {
   final DateTime baseDate;
   final List<AssemblerQuest> assemblerQuests;
   final bool displayInsertBlocks;
+  final bool hasOverlap;
   final void Function(TimeSlot)? onSelectTimeSlot;
   final void Function(TimeSlot)? onUpdateTimeSlot;
 
@@ -272,6 +274,7 @@ class _AssemblerState extends State<Assembler> {
 
     String timeText = getTimeText(start, end, false);
 
+    bool tinySized = height < 25;
     bool smallSized = height < 60;
 
     Color color = QuestLogColors.textSecondary.withValues(alpha: 0.3);
@@ -299,16 +302,18 @@ class _AssemblerState extends State<Assembler> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   alignment: Alignment.center,
-                  child: Text(
-                    '+ INSERT BLOCK ($timeText)',
-                    maxLines: smallSized ? 1 : 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.jetBrainsMono(
-                      color: color,
-                      fontSize: smallSized ? 10 : 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: !tinySized
+                      ? Text(
+                          '+ INSERT BLOCK ($timeText)',
+                          maxLines: smallSized ? 1 : 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.jetBrainsMono(
+                            color: color,
+                            fontSize: smallSized ? 10 : 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
               ),
             ),
@@ -326,9 +331,12 @@ class _AssemblerState extends State<Assembler> {
     double height = duration * _pixelsPerMinute;
 
     final smallSized = height < 60; // one-line time text
-    final largeSized = height >= 120; // two-line text text and add quest button
 
     String timeText = getTimeText(_currentStart!, _currentEnd!, !smallSized);
+
+    final slotColor = widget.hasOverlap
+        ? QuestLogColors.danger
+        : QuestLogColors.accent;
 
     return Positioned(
       top: topPosition,
@@ -337,8 +345,8 @@ class _AssemblerState extends State<Assembler> {
       height: height,
       child: Container(
         decoration: BoxDecoration(
-          color: QuestLogColors.accent.withValues(alpha: 0.1),
-          border: Border.all(color: QuestLogColors.accent, width: 2),
+          color: slotColor.withValues(alpha: 0.1),
+          border: Border.all(color: slotColor, width: 2),
         ),
         child: Stack(
           children: [
@@ -377,31 +385,10 @@ class _AssemblerState extends State<Assembler> {
                           Text(
                             timeText,
                             style: GoogleFonts.jetBrainsMono(
-                              color: QuestLogColors.accent,
+                              color: slotColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-
-                          if (largeSized) ...[
-                            const SizedBox(height: 8),
-
-                            OutlinedButton.icon(
-                              icon: const Icon(Icons.add, size: 16),
-                              label: Text(
-                                'QUEST',
-                                style: GoogleFonts.jetBrainsMono(fontSize: 12),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: QuestLogColors.accent,
-                                side: const BorderSide(
-                                  color: QuestLogColors.accent,
-                                ),
-                              ),
-                              onPressed: () {
-                                // TODO open sheet for adding a main quest
-                              },
-                            ),
-                          ],
                         ],
                       )
                     : const SizedBox.shrink(),

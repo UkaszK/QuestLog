@@ -1,5 +1,6 @@
 import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/data/quest_category.dart';
+import 'package:questlog/utils/stringify_duration.dart';
 
 class MainQuest implements Comparable<MainQuest> {
   const MainQuest({
@@ -30,5 +31,12 @@ class MainQuest implements Comparable<MainQuest> {
       return -1;
     }
     return dueDate!.compareTo(other.dueDate!);
+  }
+
+  String get durationText => stringifyDuration(durationMin);
+
+  @override
+  String toString() {
+    return name;
   }
 }

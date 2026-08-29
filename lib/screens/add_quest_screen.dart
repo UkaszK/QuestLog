@@ -21,7 +21,7 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
     Widget buildSwitchButton({
       required String label,
       required isSelected,
-      required void Function() onTap,
+      required VoidCallback onTap,
     }) {
       Color labelColor = isSelected
           ? QuestLogColors.accent

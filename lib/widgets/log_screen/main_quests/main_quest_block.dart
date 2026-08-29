@@ -3,52 +3,31 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/theme/questlog_text_styles.dart';
-import 'package:questlog/utils/stringify_duration.dart';
 
-class MainQuests extends StatefulWidget {
-  const MainQuests({super.key, required this.mainQuests});
+class MainQuestBlock extends StatelessWidget {
+  const MainQuestBlock({
+    super.key,
+    required this.mainQuest,
+    required this.onAssemble,
+  });
 
-  final List<MainQuest> mainQuests;
+  final MainQuest mainQuest;
+  final void Function(MainQuest) onAssemble;
 
-  @override
-  State<MainQuests> createState() => _MainQuestsState();
-}
+  Widget _buildSubTask(String subTask) {
+    return Row(
+      spacing: 5,
+      children: [
+        Icon(Icons.chevron_right, size: 16, color: QuestLogColors.accent),
 
-class _MainQuestsState extends State<MainQuests> {
-  bool isExpanded = false;
-
-  Widget _buildHeader() {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        setState(() {
-          isExpanded = !isExpanded;
-        });
-      },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            spacing: 5,
-            children: [
-              Icon(
-                Icons.calendar_month,
-                color: QuestLogColors.textPrimary,
-                size: 16,
-              ),
-
-              Text('MAIN QUESTS', style: QuestLogTextStyles.headerText),
-            ],
+        Text(
+          subTask.toUpperCase(),
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.textPrimary,
+            fontSize: 10,
           ),
-
-          AnimatedRotation(
-            turns: isExpanded ? 0 : 0.5,
-            duration: Duration(milliseconds: 200),
-            child: Icon(Icons.arrow_drop_down),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -81,7 +60,8 @@ class _MainQuestsState extends State<MainQuests> {
     );
   }
 
-  Widget _buildMainQuest(MainQuest mainQuest) {
+  @override
+  Widget build(BuildContext context) {
     final priority = mainQuest.priority;
     final icon = priorityIcon(priority);
     final color = priorityColor(priority);
@@ -90,10 +70,10 @@ class _MainQuestsState extends State<MainQuests> {
     final dueDate = mainQuest.dueDate;
 
     final name = mainQuest.name;
-    final durationString = stringifyDuration(mainQuest.durationMin);
+    final durationString = mainQuest.durationText;
 
     return Container(
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         border: Border(
           right: BorderSide(width: 1, color: QuestLogColors.accent),
@@ -167,7 +147,7 @@ class _MainQuestsState extends State<MainQuests> {
                     ),
                     Text(
                       dueDate == null
-                          ? 'DEADLINE: none'
+                          ? 'DEADLINE: -'
                           : 'DEADLINE: ${dueDate.day}.${dueDate.month}.${dueDate.year}',
                       style: GoogleFonts.jetBrainsMono(
                         color: QuestLogColors.textSecondary,
@@ -203,10 +183,11 @@ class _MainQuestsState extends State<MainQuests> {
             ],
           ),
 
-          _buildSubTasksContainer(mainQuest.subTasks),
+          if (mainQuest.subTasks.isNotEmpty)
+            _buildSubTasksContainer(mainQuest.subTasks),
 
           TextButton(
-            onPressed: () {},
+            onPressed: () => onAssemble(mainQuest),
             style: TextButton.styleFrom(
               padding: EdgeInsets.all(10),
               backgroundColor: QuestLogColors.accentLessOpacity,
@@ -238,50 +219,6 @@ class _MainQuestsState extends State<MainQuests> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSubTask(String subTask) {
-    return Row(
-      spacing: 5,
-      children: [
-        Icon(Icons.chevron_right, size: 16, color: QuestLogColors.accent),
-
-        Text(
-          subTask.toUpperCase(),
-          style: GoogleFonts.jetBrainsMono(
-            color: QuestLogColors.textPrimary,
-            fontSize: 10,
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      spacing: 15,
-      children: [
-        _buildHeader(),
-
-        AnimatedCrossFade(
-          firstChild: SizedBox.shrink(),
-          secondChild: Column(
-            spacing: 10,
-            children: [
-              for (final mainQuest
-                  in (widget.mainQuests.toList()
-                    ..sort((a, b) => (a.compareTo(b)))))
-                _buildMainQuest(mainQuest),
-            ],
-          ),
-          crossFadeState: isExpanded
-              ? CrossFadeState.showSecond
-              : CrossFadeState.showFirst,
-          duration: Duration(milliseconds: 250),
-        ),
-      ],
     );
   }
 }

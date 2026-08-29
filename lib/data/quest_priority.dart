@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
-enum QuestPriority { low, medium, high }
+enum QuestPriority { low, normal, high }
 
 String priorityLabel(QuestPriority questPriority) {
   return switch (questPriority) {
     .low => 'Low',
-    .medium => 'Medium',
+    .normal => 'Medium',
     .high => 'High',
   };
 }
@@ -14,7 +14,7 @@ String priorityLabel(QuestPriority questPriority) {
 Color priorityColor(QuestPriority questPriority) {
   return switch (questPriority) {
     .low => QuestLogColors.success,
-    .medium => QuestLogColors.info,
+    .normal => QuestLogColors.info,
     .high => QuestLogColors.warning,
   };
 }
@@ -22,7 +22,7 @@ Color priorityColor(QuestPriority questPriority) {
 IconData priorityIcon(QuestPriority questPriority) {
   return switch (questPriority) {
     .low => Icons.low_priority,
-    .medium => Icons.check,
+    .normal => Icons.check,
     .high => Icons.priority_high,
   };
 }

@@ -3,7 +3,7 @@ import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/dummy_data.dart';
 import 'package:questlog/widgets/log_screen/active_protocol.dart';
 import 'package:questlog/widgets/log_screen/daily_assembler.dart';
-import 'package:questlog/widgets/log_screen/main_quests.dart';
+import 'package:questlog/widgets/log_screen/main_quests/main_quests.dart';
 import 'package:questlog/widgets/log_screen/side_quests.dart';
 
 class LogScreen extends StatelessWidget {

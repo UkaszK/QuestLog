@@ -17,7 +17,7 @@ class QuestlogSwitch<T> extends StatelessWidget {
   Widget _buildSwitchButton({
     required String label,
     required isSelected,
-    required void Function() onTap,
+    required VoidCallback onTap,
   }) {
     Color labelColor = isSelected
         ? QuestLogColors.accent
