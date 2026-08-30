@@ -60,7 +60,7 @@ class _MainQuestSelectionSheetState extends State<MainQuestSelectionSheet> {
           InkWell(
             onTap: () => _toggleCategory(questCategory),
             child: Container(
-              alignment: .centerLeft,
+              alignment: AlignmentGeometry.centerLeft,
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(

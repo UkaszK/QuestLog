@@ -14,7 +14,7 @@ class MainQuests extends StatefulWidget {
 }
 
 class _MainQuestsState extends State<MainQuests> {
-  bool isExpanded = false;
+  bool isExpanded = true;
 
   Widget _buildHeader() {
     return GestureDetector(
@@ -53,24 +53,27 @@ class _MainQuestsState extends State<MainQuests> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 15,
       children: [
         _buildHeader(),
 
         AnimatedCrossFade(
           firstChild: SizedBox.shrink(),
-          secondChild: Column(
-            spacing: 10,
-            children: [
-              for (final mainQuest
-                  in (widget.mainQuests.toList()
-                    ..sort((a, b) => (a.compareTo(b)))))
-                MainQuestBlock(
-                  mainQuest: mainQuest,
-                  onAssemble: (mainQuest) {},
-                ),
-            ],
-          ),
+          secondChild: widget.mainQuests.isNotEmpty
+              ? Column(
+                  spacing: 10,
+                  children: [
+                    for (final mainQuest
+                        in (widget.mainQuests.toList()
+                          ..sort((a, b) => (a.compareTo(b)))))
+                      MainQuestBlock(
+                        mainQuest: mainQuest,
+                        onAssemble: (mainQuest) {},
+                      ),
+                  ],
+                )
+              : Text('There are no Main Quests.'),
           crossFadeState: isExpanded
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,

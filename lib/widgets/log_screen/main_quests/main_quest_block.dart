@@ -97,12 +97,12 @@ class MainQuestBlock extends StatelessWidget {
         ),
       ),
       child: Column(
-        crossAxisAlignment: .start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 10,
         children: [
           Row(
-            mainAxisAlignment: .spaceBetween,
-            crossAxisAlignment: .start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: EdgeInsets.all(5),
@@ -115,7 +115,7 @@ class MainQuestBlock extends StatelessWidget {
                   style: GoogleFonts.jetBrainsMono(
                     color: QuestLogColors.accent,
                     fontSize: 13,
-                    fontWeight: .w800,
+                    fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -142,13 +142,13 @@ class MainQuestBlock extends StatelessWidget {
             name,
             style: TextStyle(
               color: QuestLogColors.textPrimary,
-              fontWeight: .bold,
+              fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
           ),
 
           Row(
-            mainAxisAlignment: .spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Row(
@@ -183,7 +183,7 @@ class MainQuestBlock extends StatelessWidget {
               ),
             ),
             child: Row(
-              mainAxisAlignment: .center,
+              mainAxisAlignment: MainAxisAlignment.center,
               spacing: 5,
               children: [
                 Icon(
@@ -197,7 +197,7 @@ class MainQuestBlock extends StatelessWidget {
                   style: GoogleFonts.jetBrainsMono(
                     color: QuestLogColors.accent,
                     fontSize: 12,
-                    fontWeight: .w900,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ],

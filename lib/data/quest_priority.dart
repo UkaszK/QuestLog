@@ -8,25 +8,25 @@ enum QuestPriority {
 
   String get label {
     return switch (this) {
-      .low => 'Low',
-      .normal => 'Medium',
-      .high => 'High',
+      QuestPriority.low => 'Low',
+      QuestPriority.normal => 'Medium',
+      QuestPriority.high => 'High',
     };
   }
 
   Color get color {
     return switch (this) {
-      .low => QuestLogColors.success,
-      .normal => QuestLogColors.info,
-      .high => QuestLogColors.warning,
+      QuestPriority.low => QuestLogColors.success,
+      QuestPriority.normal => QuestLogColors.info,
+      QuestPriority.high => QuestLogColors.warning,
     };
   }
 
   IconData get icon {
     return switch (this) {
-      .low => Icons.low_priority,
-      .normal => Icons.check,
-      .high => Icons.priority_high,
+      QuestPriority.low => Icons.low_priority,
+      QuestPriority.normal => Icons.check,
+      QuestPriority.high => Icons.priority_high,
     };
   }
 }

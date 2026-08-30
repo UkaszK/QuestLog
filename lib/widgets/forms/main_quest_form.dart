@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:questlog/data/dummy_data.dart';
+import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/main_quest.dart';
+import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
@@ -45,15 +46,13 @@ class _MainQuestFormState extends State<MainQuestForm> {
   void _submitForm() {
     final newMainQuest = MainQuest(
       name: _titleController.text.trim(),
-      questCategory: _questCategory,
+      questCategoryName: _questCategory.name,
       dueDate: _dueDate,
       priority: _questPriority,
       subTasks: _subTasks,
     );
 
-    setState(() {
-      dummyMainQuests.add(newMainQuest);
-    });
+    IsarDataStore.addMainQuest(newMainQuest);
 
     Navigator.of(context).pop();
   }

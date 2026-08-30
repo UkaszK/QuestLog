@@ -322,7 +322,7 @@ class _AssemblerState extends State<Assembler> {
           ),
           Expanded(
             child: GestureDetector(
-              behavior: .opaque,
+              behavior: HitTestBehavior.opaque,
               onTap: () => _selectSlot(start, end),
               child: DottedBorder(
                 options: RectDottedBorderOptions(strokeWidth: 1, color: color),

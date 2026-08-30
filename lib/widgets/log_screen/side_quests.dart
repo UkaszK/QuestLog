@@ -14,7 +14,7 @@ class SideQuests extends StatefulWidget {
 }
 
 class _SideQuestsState extends State<SideQuests> {
-  bool isExpanded = false;
+  bool isExpanded = true;
 
   Widget _buildHeader() {
     return GestureDetector(
@@ -163,19 +163,22 @@ class _SideQuestsState extends State<SideQuests> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 15,
       children: [
         _buildHeader(),
 
         AnimatedCrossFade(
           firstChild: SizedBox.shrink(),
-          secondChild: Column(
-            spacing: 10,
-            children: [
-              for (final sideQuest in widget.sideQuests)
-                _buildSideQuest(sideQuest),
-            ],
-          ),
+          secondChild: widget.sideQuests.isNotEmpty
+              ? Column(
+                  spacing: 10,
+                  children: [
+                    for (final sideQuest in widget.sideQuests)
+                      _buildSideQuest(sideQuest),
+                  ],
+                )
+              : Text('There are no Side Quests.'),
           crossFadeState: isExpanded
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,

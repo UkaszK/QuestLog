@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
+import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/data/quest_category.dart';
 
+part 'main_quest.g.dart';
+
+@collection
 class MainQuest implements Comparable<MainQuest> {
-  const MainQuest({
-    required this.questCategory,
+  MainQuest({
+    required this.questCategoryName,
     required this.name,
     this.dueDate,
     required this.priority,
     required this.subTasks,
   });
 
-  final QuestCategory questCategory;
+  Id id = Isar.autoIncrement;
+
+  final String questCategoryName;
   final String name;
   final DateTime? dueDate;
+  @enumerated
   final QuestPriority priority;
   final List<String> subTasks;
+
+  @ignore
+  QuestCategory get questCategory =>
+      questCategories.firstWhere((c) => c.name == questCategoryName);
 
   @override
   int compareTo(MainQuest other) {

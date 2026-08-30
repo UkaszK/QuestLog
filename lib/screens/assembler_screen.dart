@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/data/assembler_quest.dart';
-import 'package:questlog/data/dummy_data.dart';
+import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/main_quest.dart';
+import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_info.dart';
+import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/utils/get_main_quests_by_category.dart';
 import 'package:questlog/utils/get_time_text.dart';
@@ -25,7 +27,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
   AssemblerQuest? _editingQuest;
 
   List<AssemblerQuest> get _selectedDayQuests {
-    return dailyAssemblerQuests
+    return IsarDataStore.getAllAssemblerQuests()
         .where(
           (assemblerQuest) =>
               DateUtils.isSameDay(assemblerQuest.startTime, _selectedDay),
@@ -99,9 +101,9 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
 
     final questInfo = QuestInfo(
       name: _assembledMainQuest!.name,
-      questCategory: _assembledMainQuest!.questCategory,
+      questCategoryName: _assembledMainQuest!.questCategoryName,
       subTasks: _assembledMainQuest!.subTasks
-          .map((subTask) => (name: subTask, completed: false))
+          .map((subTask) => SubTask(name: subTask, completed: false))
           .toList(),
     );
 
@@ -113,8 +115,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     );
 
     setState(() {
-      dailyAssemblerQuests.add(newAssemblerQuest);
-      // dummyMainQuests.remove(_assembledMainQuest);
+      IsarDataStore.addAssemblerQuest(newAssemblerQuest);
       _resetTimeSlot();
     });
   }
@@ -131,10 +132,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     );
 
     setState(() {
-      final index = dailyAssemblerQuests.indexOf(_editingQuest!);
-      if (index != -1) {
-        dailyAssemblerQuests[index] = updatedQuest;
-      }
+      IsarDataStore.updateAssemblerQuest(_editingQuest!.id, updatedQuest);
       _resetTimeSlot();
     });
   }
@@ -143,7 +141,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     if (_editingQuest == null) return;
 
     setState(() {
-      dailyAssemblerQuests.remove(_editingQuest);
+      IsarDataStore.deleteAssemblerQuest(_editingQuest!);
       _resetTimeSlot();
     });
   }
@@ -183,7 +181,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
                         _resetTimeSlot();
                       });
                     },
-                    assemblerQuests: dailyAssemblerQuests,
+                    assemblerQuests: IsarDataStore.getAllAssemblerQuests(),
                   ),
                   AssemblerTitle(),
 
@@ -232,7 +230,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
                       hasAssembledQuest: hasAssembledQuest,
                       mainQuestsByCategory: getMainQuestsByCategory(
                         questCategories,
-                        dummyMainQuests,
+                        IsarDataStore.getAllMainQuests(),
                       ),
                       onQuestAssembled: _handleQuestAssembled,
                       assembledQuestName: assembledQuestName,
