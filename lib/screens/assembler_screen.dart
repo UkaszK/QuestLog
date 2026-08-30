@@ -114,6 +114,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
 
     setState(() {
       dailyAssemblerQuests.add(newAssemblerQuest);
+      // dummyMainQuests.remove(_assembledMainQuest);
       _resetTimeSlot();
     });
   }

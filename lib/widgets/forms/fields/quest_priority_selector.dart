@@ -18,9 +18,8 @@ class QuestPrioritySelector extends StatelessWidget {
 
   Widget _buildPriorityBox(QuestPriority questPriority) {
     bool isSelected = questPriority == selection;
-    String label = priorityLabel(questPriority);
-    Color color = priorityColor(questPriority);
-    // IconData iconData = priorityIcon(questPriority);
+    String label = questPriority.label;
+    Color color = questPriority.color;
 
     return Expanded(
       child: InkWell(

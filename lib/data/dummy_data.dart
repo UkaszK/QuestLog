@@ -4,7 +4,10 @@ import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/quest_info.dart';
 import 'package:questlog/data/side_quest.dart';
-import 'package:questlog/utils/set_time.dart';
+
+DateTime _setTime(DateTime date, int hour, int minute) {
+  return DateTime(date.year, date.month, date.day, hour, minute);
+}
 
 final questCategories = [
   QuestCategory(name: 'Chores', icon: Icons.cleaning_services),
@@ -31,8 +34,8 @@ final dailyAssemblerQuests = [
         (name: 'Choose priorities', completed: true),
       ],
     ),
-    startTime: setTime(DateTime.now().subtract(const Duration(days: 1)), 9, 0),
-    endTime: setTime(DateTime.now().subtract(const Duration(days: 1)), 10, 30),
+    startTime: _setTime(DateTime.now().subtract(const Duration(days: 1)), 9, 0),
+    endTime: _setTime(DateTime.now().subtract(const Duration(days: 1)), 10, 30),
     status: QuestStatus.completed,
   ),
   AssemblerQuest(
@@ -41,8 +44,8 @@ final dailyAssemblerQuests = [
       questCategory: questCategories.firstWhere((q) => q.name == 'Chores'),
       subTasks: [],
     ),
-    startTime: setTime(DateTime.now().subtract(Duration(days: 1)), 16, 0),
-    endTime: setTime(DateTime.now().subtract(Duration(days: 1)), 17, 0),
+    startTime: _setTime(DateTime.now().subtract(Duration(days: 1)), 16, 0),
+    endTime: _setTime(DateTime.now().subtract(Duration(days: 1)), 17, 0),
     status: QuestStatus.completed,
   ),
   AssemblerQuest(
@@ -51,8 +54,8 @@ final dailyAssemblerQuests = [
       questCategory: questCategories.firstWhere((q) => q.name == 'Personal'),
       subTasks: [],
     ),
-    startTime: setTime(DateTime.now(), 7, 0),
-    endTime: setTime(DateTime.now(), 8, 0),
+    startTime: _setTime(DateTime.now(), 7, 0),
+    endTime: _setTime(DateTime.now(), 8, 0),
     status: QuestStatus.completed,
   ),
   AssemblerQuest(
@@ -61,8 +64,8 @@ final dailyAssemblerQuests = [
       questCategory: questCategories.firstWhere((q) => q.name == 'Work'),
       subTasks: [],
     ),
-    startTime: setTime(DateTime.now(), 8, 0),
-    endTime: setTime(DateTime.now(), 12, 0),
+    startTime: _setTime(DateTime.now(), 8, 0),
+    endTime: _setTime(DateTime.now(), 12, 0),
     status: QuestStatus.pending,
   ),
   AssemblerQuest(
@@ -75,8 +78,8 @@ final dailyAssemblerQuests = [
         (name: 'Stretch', completed: false),
       ],
     ),
-    startTime: setTime(DateTime.now(), 12, 30),
-    endTime: setTime(DateTime.now(), 15, 0),
+    startTime: _setTime(DateTime.now(), 12, 30),
+    endTime: _setTime(DateTime.now(), 15, 0),
     status: QuestStatus.active,
   ),
   AssemblerQuest(
@@ -89,8 +92,8 @@ final dailyAssemblerQuests = [
         (name: 'Send follow-up', completed: false),
       ],
     ),
-    startTime: setTime(DateTime.now(), 18, 0),
-    endTime: setTime(DateTime.now(), 19, 0),
+    startTime: _setTime(DateTime.now(), 18, 0),
+    endTime: _setTime(DateTime.now(), 19, 0),
     status: QuestStatus.open,
   ),
   AssemblerQuest(
@@ -103,8 +106,8 @@ final dailyAssemblerQuests = [
         (name: 'Read a chapter', completed: false),
       ],
     ),
-    startTime: setTime(DateTime.now(), 22, 0),
-    endTime: setTime(DateTime.now(), 22, 30),
+    startTime: _setTime(DateTime.now(), 22, 0),
+    endTime: _setTime(DateTime.now(), 22, 30),
     status: QuestStatus.open,
   ),
   AssemblerQuest(
@@ -116,8 +119,8 @@ final dailyAssemblerQuests = [
         (name: 'Set sprint goals', completed: false),
       ],
     ),
-    startTime: setTime(DateTime.now().add(const Duration(days: 1)), 9, 30),
-    endTime: setTime(DateTime.now().add(const Duration(days: 1)), 11, 0),
+    startTime: _setTime(DateTime.now().add(const Duration(days: 1)), 9, 30),
+    endTime: _setTime(DateTime.now().add(const Duration(days: 1)), 11, 0),
     status: QuestStatus.open,
   ),
   AssemblerQuest(
@@ -126,8 +129,8 @@ final dailyAssemblerQuests = [
       questCategory: questCategories.firstWhere((q) => q.name == 'Fitness'),
       subTasks: [],
     ),
-    startTime: setTime(DateTime.now().add(const Duration(days: 1)), 18, 30),
-    endTime: setTime(DateTime.now().add(const Duration(days: 1)), 19, 15),
+    startTime: _setTime(DateTime.now().add(const Duration(days: 1)), 18, 30),
+    endTime: _setTime(DateTime.now().add(const Duration(days: 1)), 19, 15),
     status: QuestStatus.pending,
   ),
 ];
@@ -166,35 +169,35 @@ final dummyMainQuests = [
     name: 'Launch Product Sprint',
     questCategory: questCategories.firstWhere((q) => q.name == 'Work'),
     subTasks: ['Define goals', 'Prioritize tasks', 'Ship MVP'],
-    dueDate: setTime(DateTime.now(), 0, 0),
+    dueDate: _setTime(DateTime.now(), 0, 0),
     priority: .high,
   ),
   MainQuest(
     name: 'Weekend Reset',
     questCategory: questCategories.firstWhere((q) => q.name == 'Chores'),
     subTasks: ['Laundry', 'Vacuum', 'Meal prep'],
-    dueDate: setTime(DateTime.now().add(Duration(days: 2)), 0, 0),
+    dueDate: _setTime(DateTime.now().add(Duration(days: 2)), 0, 0),
     priority: .low,
   ),
   MainQuest(
     name: 'Marathon Training',
     questCategory: questCategories.firstWhere((q) => q.name == 'Fitness'),
     subTasks: ['Warm-up', 'Run intervals', 'Stretch'],
-    dueDate: setTime(DateTime.now().subtract(Duration(days: 2)), 0, 0),
+    dueDate: _setTime(DateTime.now().subtract(Duration(days: 2)), 0, 0),
     priority: .high,
   ),
   MainQuest(
     name: 'Reading Streak',
     questCategory: questCategories.firstWhere((q) => q.name == 'Learning'),
     subTasks: ['Read chapter', 'Take notes', 'Summarize insights'],
-    dueDate: setTime(DateTime.now().subtract(Duration(days: 1)), 0, 0),
+    dueDate: _setTime(DateTime.now().subtract(Duration(days: 1)), 0, 0),
     priority: .normal,
   ),
   MainQuest(
     name: 'Health Check-In',
     questCategory: questCategories.firstWhere((q) => q.name == 'Health'),
     subTasks: ['Drink water', 'Go for a walk', 'Eat Fruit', 'Plan sleep'],
-    dueDate: setTime(DateTime.now().add(Duration(days: 1)), 0, 0),
+    dueDate: _setTime(DateTime.now().add(Duration(days: 1)), 0, 0),
     priority: .low,
   ),
 ];

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/main_quest.dart';
-import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
 class MainQuestBlock extends StatelessWidget {
@@ -81,9 +80,9 @@ class MainQuestBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final priority = mainQuest.priority;
-    final icon = priorityIcon(priority);
-    final color = priorityColor(priority);
-    final label = priorityLabel(priority);
+    final icon = priority.icon;
+    final color = priority.color;
+    final label = priority.label;
 
     final name = mainQuest.name;
 

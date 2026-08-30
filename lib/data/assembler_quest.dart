@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:questlog/data/quest_info.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/get_time_text.dart';
-import 'package:questlog/utils/stringify_duration.dart';
 import 'package:questlog/utils/stringify_time_of_date.dart';
 
 enum QuestStatus { open, completed, active, pending }
@@ -33,13 +32,11 @@ class AssemblerQuest {
     return switch (status) {
       QuestStatus.completed => 'COMPLETED',
       QuestStatus.pending => 'PENDING',
-      _ =>
-        '${stringifyTimeOfDate(startTime)} -\n${stringifyTimeOfDate(endTime)}',
+      _ => '${startTime.toHHMM()} -\n${endTime.toHHMM()}',
     };
   }
 
   int get durationInMinutes => endTime.difference(startTime).inMinutes;
   Color get statusColor => getStatusColor(status);
-  String get durationText => stringifyDuration(durationInMinutes);
   String get timeText => getTimeText(startTime, endTime);
 }
