@@ -14,6 +14,24 @@ class MainQuestBlock extends StatelessWidget {
   final MainQuest mainQuest;
   final void Function(MainQuest) onAssemble;
 
+  Color get dueTextColor {
+    final dueDate = mainQuest.dueDate;
+
+    if (dueDate == null) {
+      return QuestLogColors.textSecondary;
+    }
+
+    if (dueDate.isBefore(DateTime.now())) {
+      return QuestLogColors.warning;
+    }
+
+    if (DateUtils.isSameDay(dueDate, DateTime.now())) {
+      return QuestLogColors.info;
+    }
+
+    return QuestLogColors.textSecondary;
+  }
+
   Widget _buildSubTask(String subTask) {
     return Row(
       spacing: 5,
@@ -67,10 +85,7 @@ class MainQuestBlock extends StatelessWidget {
     final color = priorityColor(priority);
     final label = priorityLabel(priority);
 
-    final dueDate = mainQuest.dueDate;
-
     final name = mainQuest.name;
-    final durationString = mainQuest.durationText;
 
     return Container(
       padding: EdgeInsets.all(16),
@@ -140,39 +155,11 @@ class MainQuestBlock extends StatelessWidget {
                 child: Row(
                   spacing: 5,
                   children: [
-                    Icon(
-                      Icons.calendar_today,
-                      size: 12,
-                      color: QuestLogColors.textSecondary,
-                    ),
+                    Icon(Icons.calendar_today, size: 12, color: dueTextColor),
                     Text(
-                      dueDate == null
-                          ? 'DEADLINE: -'
-                          : 'DEADLINE: ${dueDate.day}.${dueDate.month}.${dueDate.year}',
+                      'DEADLINE: ${mainQuest.dueText}',
                       style: GoogleFonts.jetBrainsMono(
-                        color: QuestLogColors.textSecondary,
-                        fontSize: 10,
-                      ),
-                      textAlign: TextAlign.start,
-                    ),
-                  ],
-                ),
-              ),
-
-              Expanded(
-                child: Row(
-                  spacing: 5,
-                  children: [
-                    Icon(
-                      Icons.timer_outlined,
-                      size: 12,
-                      color: QuestLogColors.textSecondary,
-                    ),
-
-                    Text(
-                      'Duration: ${durationString}H',
-                      style: GoogleFonts.jetBrainsMono(
-                        color: QuestLogColors.textSecondary,
+                        color: dueTextColor,
                         fontSize: 10,
                       ),
                       textAlign: TextAlign.start,
