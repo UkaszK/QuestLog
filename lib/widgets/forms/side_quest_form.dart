@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/dummy_data.dart';
 import 'package:questlog/data/quest_category.dart';
+import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_day_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_submit_button.dart';
@@ -38,10 +39,17 @@ class _SideQuestFormState extends State<SideQuestForm> {
   }
 
   void _submitForm() {
-    final category = _questCategory;
-    final title = _titleController.text;
-    final repeatDays = _repeatDays;
-    debugPrint('$category | $title | ${repeatDays.join(', ')}');
+    final newSideQuest = SideQuest(
+      questCategory: _questCategory,
+      name: _titleController.text.trim(),
+      repeatDays: _repeatDays,
+    );
+
+    setState(() {
+      dummySideQuests.add(newSideQuest);
+    });
+
+    Navigator.of(context).pop();
   }
 
   @override

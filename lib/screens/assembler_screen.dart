@@ -194,6 +194,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
                     baseDate: baseDate,
                     assemblerQuests: _selectedDayQuests,
                     displayInsertBlocks: !_isPastDay && !hasTimeSlot,
+                    isPastDay: _isPastDay,
                     hasOverlap: _hasOverlap,
                     onSelectTimeSlot: _updateSelectedTimeSlot,
                     onUpdateTimeSlot: _updateSelectedTimeSlot,

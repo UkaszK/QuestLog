@@ -12,6 +12,7 @@ class Assembler extends StatefulWidget {
     required this.baseDate,
     required this.assemblerQuests,
     required this.displayInsertBlocks,
+    required this.isPastDay,
     required this.hasOverlap,
     required this.onSelectTimeSlot,
     required this.onUpdateTimeSlot,
@@ -21,6 +22,7 @@ class Assembler extends StatefulWidget {
   final DateTime baseDate;
   final List<AssemblerQuest> assemblerQuests;
   final bool displayInsertBlocks;
+  final bool isPastDay;
   final bool hasOverlap;
   final void Function(TimeSlot) onSelectTimeSlot;
   final void Function(TimeSlot) onUpdateTimeSlot;
@@ -208,7 +210,9 @@ class _AssemblerState extends State<Assembler> {
               Expanded(
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => _selectExistingQuest(assemblerQuest),
+                  onTap: widget.isPastDay
+                      ? null
+                      : () => _selectExistingQuest(assemblerQuest),
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 10,

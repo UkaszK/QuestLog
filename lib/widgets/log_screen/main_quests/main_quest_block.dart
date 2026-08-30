@@ -21,12 +21,12 @@ class MainQuestBlock extends StatelessWidget {
       return QuestLogColors.textSecondary;
     }
 
-    if (dueDate.isBefore(DateTime.now())) {
-      return QuestLogColors.warning;
-    }
-
     if (DateUtils.isSameDay(dueDate, DateTime.now())) {
       return QuestLogColors.info;
+    }
+
+    if (dueDate.isBefore(DateTime.now())) {
+      return QuestLogColors.warning;
     }
 
     return QuestLogColors.textSecondary;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/data/dummy_data.dart';
+import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_submit_button.dart';
 import 'package:questlog/widgets/forms/fields/quest_due_date_field.dart';
-import 'package:questlog/widgets/forms/fields/quest_duration_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_priority_selector.dart';
 import 'package:questlog/widgets/forms/fields/quest_sub_tasks_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_title_input_field.dart';
@@ -22,7 +22,6 @@ class _MainQuestFormState extends State<MainQuestForm> {
   QuestCategory _questCategory = questCategories.first;
   final _titleController = TextEditingController();
   DateTime? _dueDate;
-  final _durationController = TextEditingController();
   QuestPriority _questPriority = QuestPriority.normal;
   List<String> _subTasks = [];
 
@@ -40,20 +39,23 @@ class _MainQuestFormState extends State<MainQuestForm> {
   void dispose() {
     _titleController.removeListener(_onTitleChanged);
     _titleController.dispose();
-    _durationController.dispose();
     super.dispose();
   }
 
   void _submitForm() {
-    final category = _questCategory;
-    final title = _titleController.text;
-    final dueDate = _dueDate.toString();
-    final duration = _durationController.text;
-    final priority = _questPriority;
-    final subTasks = _subTasks.join(', ');
-    debugPrint(
-      '$category | $title | $dueDate | $duration | $priority | $subTasks',
+    final newMainQuest = MainQuest(
+      name: _titleController.text.trim(),
+      questCategory: _questCategory,
+      dueDate: _dueDate,
+      priority: _questPriority,
+      subTasks: _subTasks,
     );
+
+    setState(() {
+      dummyMainQuests.add(newMainQuest);
+    });
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -77,8 +79,6 @@ class _MainQuestFormState extends State<MainQuestForm> {
             selectedDate: _dueDate,
             onChange: (date) => setState(() => _dueDate = date),
           ),
-
-          QuestDurationField(controller: _durationController),
 
           QuestPrioritySelector(
             questPriorities: QuestPriority.values,
