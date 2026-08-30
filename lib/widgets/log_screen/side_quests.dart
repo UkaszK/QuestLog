@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/utils/stringify_quest_category.dart';
 import 'package:questlog/widgets/section_decoration.dart';
 
 class SideQuests extends StatefulWidget {
@@ -15,40 +14,45 @@ class SideQuests extends StatefulWidget {
 }
 
 class _SideQuestsState extends State<SideQuests> {
-  bool isExpanded = false;
+  bool isExpanded = true;
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          spacing: 5,
-          children: [
-            Icon(Icons.more_horiz, color: QuestLogColors.otherAccent, size: 16),
-            Text(
-              'SIDE QUESTS',
-              style: GoogleFonts.jetBrainsMono(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        setState(() {
+          isExpanded = !isExpanded;
+        });
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            spacing: 5,
+            children: [
+              Icon(
+                Icons.more_horiz,
                 color: QuestLogColors.otherAccent,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+                size: 16,
               ),
-            ),
-          ],
-        ),
+              Text(
+                'SIDE QUESTS',
+                style: GoogleFonts.jetBrainsMono(
+                  color: QuestLogColors.otherAccent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
 
-        IconButton(
-          onPressed: () {
-            setState(() {
-              isExpanded = !isExpanded;
-            });
-          },
-          icon: AnimatedRotation(
+          AnimatedRotation(
             turns: isExpanded ? 0 : 0.5,
             duration: Duration(milliseconds: 200),
             child: Icon(Icons.arrow_drop_down),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -111,7 +115,7 @@ class _SideQuestsState extends State<SideQuests> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                stringifyQuestCategory(sideQuest.questCategory).toUpperCase(),
+                sideQuest.questCategory.name.toUpperCase(),
                 style: GoogleFonts.jetBrainsMono(fontSize: 10),
               ),
               Container(
@@ -159,18 +163,22 @@ class _SideQuestsState extends State<SideQuests> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 15,
       children: [
         _buildHeader(),
 
         AnimatedCrossFade(
           firstChild: SizedBox.shrink(),
-          secondChild: Column(
-            spacing: 10,
-            children: [
-              for (final sideQuest in widget.sideQuests)
-                _buildSideQuest(sideQuest),
-            ],
-          ),
+          secondChild: widget.sideQuests.isNotEmpty
+              ? Column(
+                  spacing: 10,
+                  children: [
+                    for (final sideQuest in widget.sideQuests)
+                      _buildSideQuest(sideQuest),
+                  ],
+                )
+              : Text('There are no Side Quests.'),
           crossFadeState: isExpanded
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,

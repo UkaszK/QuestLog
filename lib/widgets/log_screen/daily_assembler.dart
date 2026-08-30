@@ -4,7 +4,6 @@ import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/widgets/section_decoration.dart';
-import 'package:questlog/utils/quest_category_icon.dart';
 
 class DailyAssembler extends StatelessWidget {
   const DailyAssembler({super.key, required this.assemblerQuests});
@@ -13,6 +12,20 @@ class DailyAssembler extends StatelessWidget {
 
   Widget _buildHeader() {
     return Text('DAILY ASSEMBLER', style: QuestLogTextStyles.headerText);
+  }
+
+  Widget _buildQuestsContainer(List<AssemblerQuest> quests) {
+    return SingleChildScrollView(
+      physics: ScrollPhysics(parent: ClampingScrollPhysics()),
+      scrollDirection: Axis.horizontal,
+      child: IntrinsicHeight(
+        child: Row(
+          spacing: 10,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [for (final data in quests) _buildQuestContainer(data)],
+        ),
+      ),
+    );
   }
 
   Widget _buildQuestContainer(AssemblerQuest assemblerQuest) {
@@ -27,16 +40,14 @@ class DailyAssembler extends StatelessWidget {
       decoration: SectionDecoration(),
       child: Column(
         spacing: 3,
-        mainAxisAlignment: .spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             spacing: 20,
-            mainAxisAlignment: .spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(
-                getQuestCategoryIcon(assemblerQuest.questInfo.questCategory),
-              ),
+              Icon(assemblerQuest.questInfo.questCategory.icon),
 
               Icon(Icons.circle, color: questColor, size: 10),
             ],
@@ -71,6 +82,39 @@ class DailyAssembler extends StatelessWidget {
     );
   }
 
+  Widget _buildEmptyContainer() {
+    return Container(
+      alignment: AlignmentGeometry.center,
+      padding: EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: QuestLogColors.border),
+      ),
+      child: Column(
+        spacing: 10,
+        children: [
+          Text(
+            'NO ACTIVE ROUTINES',
+            style: GoogleFonts.jetBrainsMono(
+              color: QuestLogColors.textSecondary,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              letterSpacing: 2,
+            ),
+          ),
+
+          Text(
+            'INITIALIZE YOUR DAY IN THE ASSEMBLER',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.jetBrainsMono(
+              color: QuestLogColors.textSecondary,
+              fontSize: 10,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final sortedQuests = List<AssemblerQuest>.from(assemblerQuests)
@@ -83,20 +127,9 @@ class DailyAssembler extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-
-          SingleChildScrollView(
-            physics: ScrollPhysics(parent: ClampingScrollPhysics()),
-            scrollDirection: Axis.horizontal,
-            child: IntrinsicHeight(
-              child: Row(
-                spacing: 10,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  for (final data in sortedQuests) _buildQuestContainer(data),
-                ],
-              ),
-            ),
-          ),
+          sortedQuests.isNotEmpty
+              ? _buildQuestsContainer(sortedQuests)
+              : _buildEmptyContainer(),
         ],
       ),
     );

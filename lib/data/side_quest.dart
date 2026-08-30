@@ -1,21 +1,37 @@
+import 'package:isar/isar.dart';
+import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/day.dart';
 
+part 'side_quest.g.dart';
+
+@collection
 class SideQuest {
-  const SideQuest({
+  SideQuest({
+    required this.questCategoryName,
     required this.name,
-    required this.questCategory,
-    required this.repeatDays,
+    required this.repeatDaysList,
   });
 
+  Id id = Isar.autoIncrement;
+
+  final String questCategoryName;
   final String name;
-  final QuestCategory questCategory;
-  final Set<Day> repeatDays;
+
+  @enumerated
+  final List<Day> repeatDaysList;
+
+  @ignore
+  Set<Day> get repeatDays => repeatDaysList.toSet();
+
+  @ignore
+  QuestCategory get questCategory =>
+      questCategories.firstWhere((c) => c.name == questCategoryName);
 
   String? timeIntervalString() {
     if (repeatDays.isEmpty) return null;
-
-    if (repeatDays.length == 1) return 'Every ${repeatDays.first}';
+    if (repeatDays.length == 1) return 'Every ${repeatDays.first.label}';
+    if (repeatDays.length == 7) return 'Every day';
 
     const weekdays = {
       Day.monday,

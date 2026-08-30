@@ -1,20 +1,74 @@
-import 'package:questlog/data/priority.dart';
+import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
+import 'package:questlog/data/quest_categories.dart';
+import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/data/quest_category.dart';
 
-class MainQuest {
-  const MainQuest({
+part 'main_quest.g.dart';
+
+@collection
+class MainQuest implements Comparable<MainQuest> {
+  MainQuest({
+    required this.questCategoryName,
     required this.name,
-    required this.questCategory,
-    required this.durationMin,
-    required this.subTasks,
-    required this.dueDate,
+    this.dueDate,
     required this.priority,
+    required this.subTasks,
   });
 
+  Id id = Isar.autoIncrement;
+
+  final String questCategoryName;
   final String name;
-  final QuestCategory questCategory;
-  final int durationMin;
-  final List<({String name, bool completed})> subTasks;
-  final DateTime dueDate;
-  final Priority priority;
+  final DateTime? dueDate;
+  @enumerated
+  final QuestPriority priority;
+  final List<String> subTasks;
+
+  @ignore
+  QuestCategory get questCategory =>
+      questCategories.firstWhere((c) => c.name == questCategoryName);
+
+  @override
+  int compareTo(MainQuest other) {
+    if (dueDate == null && other.dueDate == null) {
+      return name.compareTo(other.name);
+    }
+    if (dueDate == null) {
+      return 1;
+    }
+    if (other.dueDate == null) {
+      return -1;
+    }
+
+    return dueDate!.compareTo(other.dueDate!);
+  }
+
+  @override
+  String toString() {
+    return name;
+  }
+
+  String get dueText {
+    if (dueDate == null) {
+      return '-';
+    }
+
+    if (DateUtils.isSameDay(dueDate!, DateTime.now())) {
+      return 'TODAY';
+    }
+
+    if (DateUtils.isSameDay(
+      DateTime.now().subtract(Duration(days: 1)),
+      dueDate,
+    )) {
+      return 'YESTERDAY';
+    }
+
+    if (DateUtils.isSameDay(DateTime.now().add(Duration(days: 1)), dueDate)) {
+      return 'TOMORROW';
+    }
+
+    return '${dueDate!.day}.${dueDate!.month}.${dueDate!.year}';
+  }
 }

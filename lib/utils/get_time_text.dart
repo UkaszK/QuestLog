@@ -5,5 +5,5 @@ String getTimeText(
   DateTime end, [
   bool automaticLineBreak = true,
 ]) {
-  return '${stringifyTimeOfDate(start)} -${automaticLineBreak ? '\n' : ' '}${stringifyTimeOfDate(end)}';
+  return '${start.toHHMM()} -${automaticLineBreak ? '\n' : ' '}${end.toHHMM()}';
 }

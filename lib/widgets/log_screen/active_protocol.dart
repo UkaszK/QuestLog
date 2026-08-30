@@ -13,7 +13,7 @@ class ActiveProtocol extends StatelessWidget {
 
   Widget _buildSubTask(SubTask subTask) {
     return Container(
-      width: .infinity,
+      width: double.infinity,
       decoration: SectionDecoration(),
       child: Row(
         children: [
@@ -45,12 +45,12 @@ class ActiveProtocol extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPending = activeQuest.status == .pending;
+    final isPending = activeQuest.status == QuestStatus.pending;
     final subTasks = activeQuest.questInfo.subTasks;
     final hasSubTasks = subTasks.isNotEmpty;
 
     return Container(
-      width: .infinity,
+      width: double.infinity,
       padding: EdgeInsets.all(15),
       decoration: SectionDecoration(),
       child: Column(
@@ -59,7 +59,7 @@ class ActiveProtocol extends StatelessWidget {
           Text('ACTIVE PROTOCOL', style: QuestLogTextStyles.headerText),
 
           Row(
-            mainAxisAlignment: .spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 activeQuest.questInfo.name.toUpperCase(),
@@ -81,7 +81,7 @@ class ActiveProtocol extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(top: 3, bottom: 10),
               child: Row(
-                crossAxisAlignment: .center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 spacing: 5,
                 children: [
                   Icon(Icons.warning, size: 14, color: QuestLogColors.warning),
@@ -105,7 +105,7 @@ class ActiveProtocol extends StatelessWidget {
             ),
 
           SizedBox(
-            width: .infinity,
+            width: double.infinity,
             child: TextButton(
               onPressed: () {},
               style: TextButton.styleFrom(
@@ -121,7 +121,7 @@ class ActiveProtocol extends StatelessWidget {
                 style: GoogleFonts.jetBrainsMono(
                   color: QuestLogColors.accent,
                   fontSize: 12,
-                  fontWeight: .w900,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),

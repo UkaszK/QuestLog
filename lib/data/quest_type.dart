@@ -1,0 +1,1 @@
+enum QuestType { main, side }
