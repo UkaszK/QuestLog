@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/section_decoration.dart';
 
 class SideQuests extends StatefulWidget {
   const SideQuests({super.key, required this.sideQuests});
@@ -60,7 +59,10 @@ class _SideQuestsState extends State<SideQuests> {
     final isRepetitive = sideQuest.repeatDays.isNotEmpty;
 
     return Container(
-      decoration: SectionDecoration(),
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: QuestLogColors.border),
+        color: QuestLogColors.surface,
+      ),
       padding: EdgeInsets.all(10),
       child: Column(
         spacing: 10,

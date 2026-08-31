@@ -4,17 +4,23 @@ import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
-import 'package:questlog/widgets/section_decoration.dart';
 
 class ActiveProtocol extends StatelessWidget {
-  const ActiveProtocol({super.key, required this.activeQuest});
+  const ActiveProtocol({
+    super.key,
+    required this.assemblerQuest,
+    required this.onCompleteQuest,
+  });
 
-  final AssemblerQuest activeQuest;
+  final AssemblerQuest assemblerQuest;
+  final void Function(AssemblerQuest) onCompleteQuest;
 
   Widget _buildSubTask(SubTask subTask) {
     return Container(
       width: double.infinity,
-      decoration: SectionDecoration(),
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: QuestLogColors.border),
+      ),
       child: Row(
         children: [
           SizedBox(
@@ -43,16 +49,43 @@ class ActiveProtocol extends StatelessWidget {
     );
   }
 
+  Widget _buildCompleteButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: TextButton(
+        onPressed: () => onCompleteQuest(assemblerQuest),
+        style: TextButton.styleFrom(
+          backgroundColor: QuestLogColors.accentLessOpacity,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(width: 1, color: QuestLogColors.accent),
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
+
+        child: Text(
+          'COMPLETE',
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.accent,
+            fontSize: 12,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isPending = activeQuest.status == QuestStatus.pending;
-    final subTasks = activeQuest.questInfo.subTasks;
+    final isPending = assemblerQuest.status == QuestStatus.pending;
+    final subTasks = assemblerQuest.questInfo.subTasks;
     final hasSubTasks = subTasks.isNotEmpty;
 
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(15),
-      decoration: SectionDecoration(),
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: QuestLogColors.border),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -62,7 +95,7 @@ class ActiveProtocol extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                activeQuest.questInfo.name.toUpperCase(),
+                assemblerQuest.questInfo.name.toUpperCase(),
                 style: TextStyle(
                   fontSize: 16,
                   color: QuestLogColors.textPrimary,
@@ -71,7 +104,7 @@ class ActiveProtocol extends StatelessWidget {
                 ),
               ),
               Text(
-                activeQuest.timeLabel(),
+                assemblerQuest.timeLabel,
                 style: QuestLogTextStyles.normalText,
               ),
             ],
@@ -104,28 +137,9 @@ class ActiveProtocol extends StatelessWidget {
               ],
             ),
 
-          SizedBox(
-            width: double.infinity,
-            child: TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                backgroundColor: QuestLogColors.accentLessOpacity,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1, color: QuestLogColors.accent),
-                  borderRadius: BorderRadius.zero,
-                ),
-              ),
+          if (!hasSubTasks && !isPending) SizedBox(height: 10),
 
-              child: Text(
-                'COMPLETE',
-                style: GoogleFonts.jetBrainsMono(
-                  color: QuestLogColors.accent,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-          ),
+          _buildCompleteButton(),
         ],
       ),
     );

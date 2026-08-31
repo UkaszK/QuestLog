@@ -183,7 +183,7 @@ class _AssemblerState extends State<Assembler> {
       String description = assemblerQuest.questInfo.subTasks
           .map((el) => el.name)
           .join(', ');
-      Color statusColor = assemblerQuest.statusColor;
+      Color statusColor = assemblerQuest.status.color;
       String timeText = getTimeText(
         assemblerQuest.startTime,
         assemblerQuest.endTime,

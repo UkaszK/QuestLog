@@ -3,12 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/theme/questlog_text_styles.dart';
-import 'package:questlog/widgets/section_decoration.dart';
 
 class DailyAssembler extends StatelessWidget {
-  const DailyAssembler({super.key, required this.assemblerQuests});
+  const DailyAssembler({
+    super.key,
+    required this.assemblerQuests,
+    required this.onCompleteQuest,
+  });
 
   final List<AssemblerQuest> assemblerQuests;
+  final void Function(AssemblerQuest) onCompleteQuest;
 
   Widget _buildHeader() {
     return Text('DAILY ASSEMBLER', style: QuestLogTextStyles.headerText);
@@ -32,52 +36,60 @@ class DailyAssembler extends StatelessWidget {
     final isPendingOrCompleted =
         assemblerQuest.status == QuestStatus.pending ||
         assemblerQuest.status == QuestStatus.completed;
-    final questColor = assemblerQuest.statusColor;
+    final questColor = assemblerQuest.status.color;
 
-    return Container(
+    return Ink(
       width: 100,
-      padding: EdgeInsets.all(10),
-      decoration: SectionDecoration(),
-      child: Column(
-        spacing: 3,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            spacing: 20,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(assemblerQuest.questInfo.questCategory.icon),
-
-              Icon(Icons.circle, color: questColor, size: 10),
-            ],
-          ),
-          Column(
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: QuestLogColors.border),
+        color: QuestLogColors.surface,
+      ),
+      child: InkWell(
+        onTap: () => onCompleteQuest(assemblerQuest),
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Column(
             spacing: 3,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                assemblerQuest.timeLabel(),
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 12,
-                  color: isPendingOrCompleted
-                      ? questColor
-                      : QuestLogColors.textSecondary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Row(
+                spacing: 20,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(assemblerQuest.questInfo.questCategory.icon),
 
-              Text(
-                assemblerQuest.questInfo.name,
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: QuestLogColors.textPrimary,
-                ),
+                  Icon(Icons.circle, color: questColor, size: 10),
+                ],
+              ),
+              Column(
+                spacing: 3,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    assemblerQuest.timeLabel,
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 12,
+                      color: isPendingOrCompleted
+                          ? questColor
+                          : QuestLogColors.textSecondary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  Text(
+                    assemblerQuest.questInfo.name,
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: QuestLogColors.textPrimary,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

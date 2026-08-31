@@ -111,7 +111,6 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
       questInfo: questInfo,
       startTime: _selectedTimeSlot!.startTime,
       endTime: _selectedTimeSlot!.endTime,
-      status: QuestStatus.open,
     );
 
     setState(() {
@@ -128,7 +127,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
       questInfo: _editingQuest!.questInfo,
       startTime: _selectedTimeSlot!.startTime,
       endTime: _selectedTimeSlot!.endTime,
-      status: _editingQuest!.status,
+      completed: _editingQuest!.completed,
     );
 
     setState(() {
