@@ -49,7 +49,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     if (_selectedTimeSlot == null) return false;
     return _selectedDayQuests.any(
       (assemblerQuest) =>
-          !identical(assemblerQuest, _editingQuest) &&
+          !(assemblerQuest.id == _editingQuest?.id) &&
           _selectedTimeSlot!.startTime.isBefore(assemblerQuest.endTime) &&
           _selectedTimeSlot!.endTime.isAfter(assemblerQuest.startTime),
     );
