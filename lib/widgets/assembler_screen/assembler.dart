@@ -164,7 +164,7 @@ class _AssemblerState extends State<Assembler> {
         );
       }
 
-      if (identical(_editingQuest, assemblerQuest)) {
+      if (_editingQuest?.id == assemblerQuest.id) {
         currentTracker = assemblerQuest.endTime;
         continue;
       }
