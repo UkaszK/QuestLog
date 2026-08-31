@@ -70,10 +70,7 @@ class ActiveProtocol extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              Text(
-                activeQuest.timeLabel(),
-                style: QuestLogTextStyles.normalText,
-              ),
+              Text(activeQuest.timeLabel, style: QuestLogTextStyles.normalText),
             ],
           ),
 

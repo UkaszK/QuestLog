@@ -8,7 +8,21 @@ import 'package:questlog/utils/stringify_time_of_date.dart';
 
 part 'assembler_quest.g.dart';
 
-enum QuestStatus { open, completed, active, pending }
+enum QuestStatus {
+  open,
+  completed,
+  active,
+  pending;
+
+  Color get color {
+    return switch (this) {
+      QuestStatus.open => QuestLogColors.textSecondary,
+      QuestStatus.completed => QuestLogColors.success,
+      QuestStatus.active => QuestLogColors.accent,
+      QuestStatus.pending => QuestLogColors.warning,
+    };
+  }
+}
 
 @collection
 class AssemblerQuest {
@@ -16,7 +30,7 @@ class AssemblerQuest {
     required this.questInfo,
     required this.startTime,
     required this.endTime,
-    required this.status,
+    this.completed = false,
   });
 
   Id id = Isar.autoIncrement;
@@ -24,20 +38,30 @@ class AssemblerQuest {
   final QuestInfo questInfo;
   final DateTime startTime;
   final DateTime endTime;
+  final bool completed;
 
-  @enumerated
-  final QuestStatus status;
+  @ignore
+  QuestStatus get status {
+    if (completed) return QuestStatus.completed;
 
-  static Color getStatusColor(QuestStatus status) {
-    return switch (status) {
-      QuestStatus.open => QuestLogColors.textSecondary,
-      QuestStatus.completed => QuestLogColors.success,
-      QuestStatus.active => QuestLogColors.accent,
-      QuestStatus.pending => QuestLogColors.warning,
-    };
+    final now = DateTime.now();
+    if (startTime.isBefore(now) && endTime.isAfter(now)) {
+      return QuestStatus.active;
+    }
+
+    if (endTime.isBefore(now)) {
+      return QuestStatus.pending;
+    }
+
+    if (startTime.isAfter(now)) {
+      return QuestStatus.open;
+    }
+
+    return QuestStatus.completed;
   }
 
-  String timeLabel() {
+  @ignore
+  String get timeLabel {
     return switch (status) {
       QuestStatus.completed => 'COMPLETED',
       QuestStatus.pending => 'PENDING',
@@ -45,12 +69,9 @@ class AssemblerQuest {
     };
   }
 
-  @ignore // ANPASSUNG
+  @ignore
   int get durationInMinutes => endTime.difference(startTime).inMinutes;
 
-  @ignore // ANPASSUNG
-  Color get statusColor => getStatusColor(status);
-
-  @ignore // ANPASSUNG
+  @ignore
   String get timeText => getTimeText(startTime, endTime);
 }

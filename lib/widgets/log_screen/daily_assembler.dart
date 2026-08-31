@@ -32,7 +32,7 @@ class DailyAssembler extends StatelessWidget {
     final isPendingOrCompleted =
         assemblerQuest.status == QuestStatus.pending ||
         assemblerQuest.status == QuestStatus.completed;
-    final questColor = assemblerQuest.statusColor;
+    final questColor = assemblerQuest.status.color;
 
     return Container(
       width: 100,
@@ -57,7 +57,7 @@ class DailyAssembler extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                assemblerQuest.timeLabel(),
+                assemblerQuest.timeLabel,
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 12,
                   color: isPendingOrCompleted
