@@ -10,16 +10,45 @@ import 'package:questlog/widgets/log_screen/daily_assembler.dart';
 import 'package:questlog/widgets/log_screen/main_quests/main_quests.dart';
 import 'package:questlog/widgets/log_screen/side_quests.dart';
 
-class LogScreen extends StatelessWidget {
+class LogScreen extends StatefulWidget {
   const LogScreen({super.key});
 
-  List<AssemblerQuest> get _assemblerQuests {
+  @override
+  State<StatefulWidget> createState() => _LogScreenState();
+}
+
+class _LogScreenState extends State<LogScreen> {
+  List<AssemblerQuest> _assemblerQuests = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _assemblerQuests = _fetchAssemblerQuests();
+  }
+
+  List<AssemblerQuest> _fetchAssemblerQuests() {
     return IsarDataStore.getAllAssemblerQuests()
         .where(
           (assemblerQuest) =>
               DateUtils.isSameDay(assemblerQuest.startTime, DateTime.now()),
         )
         .toList();
+  }
+
+  void _handleCompleteQuest(AssemblerQuest assemblerQuest) {
+    IsarDataStore.updateAssemblerQuest(
+      assemblerQuest.id,
+      AssemblerQuest(
+        questInfo: assemblerQuest.questInfo,
+        startTime: assemblerQuest.startTime,
+        endTime: assemblerQuest.endTime,
+        completed: !assemblerQuest.completed,
+      ),
+    );
+
+    setState(() {
+      _assemblerQuests = _fetchAssemblerQuests();
+    });
   }
 
   @override
@@ -38,8 +67,11 @@ class LogScreen extends StatelessWidget {
       child: Column(
         spacing: 25,
         children: [
-          DailyAssembler(assemblerQuests: _assemblerQuests),
-          if (activeQuest != null) ActiveProtocol(activeQuest: activeQuest),
+          DailyAssembler(
+            assemblerQuests: _assemblerQuests,
+            onCompleteQuest: _handleCompleteQuest,
+          ),
+          if (activeQuest != null) ActiveProtocol(assemblerQuest: activeQuest, onCompleteQuest: _handleCompleteQuest),
           if (sideQuests.isNotEmpty) SideQuests(sideQuests: sideQuests),
           if (mainQuests.isNotEmpty) MainQuests(mainQuests: mainQuests),
 
