@@ -38,6 +38,7 @@ class _AssemblerState extends State<Assembler> {
   final double _pixelsPerMinute = 1.0;
   final double _leftOffset = 70;
   final double _rightOffset = 15;
+  final int _dragStepMinutes = 5;
 
   DateTime? _currentStart;
   DateTime? _currentEnd;
@@ -45,6 +46,14 @@ class _AssemblerState extends State<Assembler> {
   AssemblerQuest? _editingQuest;
 
   late final _endOfDay = widget.baseDate.add(Duration(hours: 23, minutes: 59));
+
+  // Rounds to the nearest 5-minute mark of the day (e.g. 07:13 -> 07:15).
+  DateTime _snapToDragStep(DateTime time) {
+    final minutesSinceBase = time.difference(widget.baseDate).inMinutes;
+    final snapped =
+        (minutesSinceBase / _dragStepMinutes).round() * _dragStepMinutes;
+    return widget.baseDate.add(Duration(minutes: snapped));
+  }
 
   void _resetSelectedSlot() {
     setState(() {
@@ -396,27 +405,28 @@ class _AssemblerState extends State<Assembler> {
                 onVerticalDragStart: (_) => _dragAccumulator = 0.0,
                 onVerticalDragUpdate: (details) {
                   _dragAccumulator += details.delta.dy;
-                  if (_dragAccumulator.abs() >= 1.0) {
-                    int mins = _dragAccumulator.truncate();
+                  if (_dragAccumulator.abs() >= _dragStepMinutes) {
+                    int steps = (_dragAccumulator / _dragStepMinutes)
+                        .truncate();
+                    int mins = steps * _dragStepMinutes;
                     _dragAccumulator -= mins;
                     setState(() {
-                      final newStart = _currentStart!.add(
-                        Duration(minutes: mins),
-                      );
-                      final newEnd = _currentEnd!.add(Duration(minutes: mins));
                       final currentDuration = _currentEnd!.difference(
                         _currentStart!,
                       );
+                      var newStart = _snapToDragStep(
+                        _currentStart!.add(Duration(minutes: mins)),
+                      );
+                      var newEnd = newStart.add(currentDuration);
                       if (newStart.isBefore(widget.baseDate)) {
-                        _currentStart = widget.baseDate;
-                        _currentEnd = widget.baseDate.add(currentDuration);
+                        newStart = widget.baseDate;
+                        newEnd = widget.baseDate.add(currentDuration);
                       } else if (newEnd.isAfter(_endOfDay)) {
-                        _currentEnd = _endOfDay;
-                        _currentStart = _endOfDay.subtract(currentDuration);
-                      } else {
-                        _currentStart = newStart;
-                        _currentEnd = newEnd;
+                        newEnd = _endOfDay;
+                        newStart = _endOfDay.subtract(currentDuration);
                       }
+                      _currentStart = newStart;
+                      _currentEnd = newEnd;
                     });
                     _notifyTimeSlotUpdated();
                   }
@@ -447,13 +457,18 @@ class _AssemblerState extends State<Assembler> {
                 onVerticalDragStart: (_) => _dragAccumulator = 0.0,
                 onVerticalDragUpdate: (details) {
                   _dragAccumulator += details.delta.dy;
-                  if (_dragAccumulator.abs() >= 1.0) {
-                    int mins = _dragAccumulator.truncate();
+                  if (_dragAccumulator.abs() >= _dragStepMinutes) {
+                    int steps = (_dragAccumulator / _dragStepMinutes)
+                        .truncate();
+                    int mins = steps * _dragStepMinutes;
                     _dragAccumulator -= mins;
                     setState(() {
-                      var newStart = _currentStart!.add(
-                        Duration(minutes: mins),
+                      var newStart = _snapToDragStep(
+                        _currentStart!.add(Duration(minutes: mins)),
                       );
+                      if (newStart.isBefore(widget.baseDate)) {
+                        newStart = widget.baseDate;
+                      }
 
                       if (!newStart.isBefore(widget.baseDate) &&
                           newStart.isBefore(
@@ -488,16 +503,17 @@ class _AssemblerState extends State<Assembler> {
                 onVerticalDragStart: (_) => _dragAccumulator = 0.0,
                 onVerticalDragUpdate: (details) {
                   _dragAccumulator += details.delta.dy;
-                  if (_dragAccumulator.abs() >= 1.0) {
-                    int mins = _dragAccumulator.truncate();
+                  if (_dragAccumulator.abs() >= _dragStepMinutes) {
+                    int steps = (_dragAccumulator / _dragStepMinutes)
+                        .truncate();
+                    int mins = steps * _dragStepMinutes;
                     _dragAccumulator -= mins;
-                    final endOfDay = widget.baseDate.add(
-                      const Duration(hours: 23, minutes: 59),
-                    );
                     setState(() {
-                      var newEnd = _currentEnd!.add(Duration(minutes: mins));
-                      if (newEnd.isAfter(endOfDay)) {
-                        newEnd = endOfDay;
+                      var newEnd = _snapToDragStep(
+                        _currentEnd!.add(Duration(minutes: mins)),
+                      );
+                      if (newEnd.isAfter(_endOfDay)) {
+                        newEnd = _endOfDay;
                       }
                       if (newEnd.isAfter(
                         _currentStart!.add(const Duration(minutes: 15)),
