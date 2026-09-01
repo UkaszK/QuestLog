@@ -7,7 +7,6 @@ import 'package:questlog/data/quest_info.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/utils/get_main_quests_by_category.dart';
-import 'package:questlog/utils/get_time_text.dart';
 import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/active_time_slot_bar.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
 import 'package:questlog/widgets/assembler_screen/assembler_title.dart';
@@ -159,90 +158,92 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     );
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(
-                top: 20,
-                left: 16,
-                right: 16,
-                bottom: 20,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DayPicker(
-                    selectedDay: _selectedDay,
-                    onDaySelected: (value) {
-                      setState(() {
-                        _selectedDay = value;
-                        _resetTimeSlot();
-                      });
-                    },
-                    assemblerQuests: IsarDataStore.getAllAssemblerQuests(),
-                  ),
-                  AssemblerTitle(),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  top: 20,
+                  left: 16,
+                  right: 16,
+                  bottom: 20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DayPicker(
+                      selectedDay: _selectedDay,
+                      onDaySelected: (value) {
+                        setState(() {
+                          _selectedDay = value;
+                          _resetTimeSlot();
+                        });
+                      },
+                      assemblerQuests: IsarDataStore.getAllAssemblerQuests(),
+                    ),
+                    AssemblerTitle(),
 
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  const Divider(height: 1),
+                    const Divider(height: 1),
 
-                  Assembler(
-                    baseDate: baseDate,
-                    assemblerQuests: _selectedDayQuests,
-                    displayInsertBlocks: !_isPastDay && !hasTimeSlot,
-                    isPastDay: _isPastDay,
-                    hasOverlap: _hasOverlap,
-                    onSelectTimeSlot: _updateSelectedTimeSlot,
-                    onUpdateTimeSlot: _updateSelectedTimeSlot,
-                    onSelectExistingQuest: _handleSelectExistingQuest,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              transitionBuilder: (child, animation) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, -1),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
-              child: hasTimeSlot
-                  ? ActiveTimeSlotBar(
-                      key: const ValueKey('active-slot-bar'),
-                      timeSlotText: getTimeText(
-                        _selectedTimeSlot!.startTime,
-                        _selectedTimeSlot!.endTime,
-                        false,
-                      ),
-                      onReset: _resetTimeSlot,
-                      hasAssembledQuest: hasAssembledQuest,
-                      mainQuestsByCategory: getMainQuestsByCategory(
-                        questCategories,
-                        IsarDataStore.getAllMainQuests(),
-                      ),
-                      onQuestAssembled: _handleQuestAssembled,
-                      assembledQuestName: assembledQuestName,
-                      onSave: _handleSave,
-                      onClearQuest: _handleQuestCleared,
+                    Assembler(
+                      baseDate: baseDate,
+                      assemblerQuests: _selectedDayQuests,
+                      displayInsertBlocks: !_isPastDay && !hasTimeSlot,
+                      isPastDay: _isPastDay,
                       hasOverlap: _hasOverlap,
-                      isEditingExistingQuest: _editingQuest != null,
-                      onDelete: _handleDeleteEditedQuest,
-                    )
-                  : const SizedBox.shrink(key: ValueKey('slot-bar-empty')),
+                      selectedTimeSlot: _selectedTimeSlot,
+                      onSelectTimeSlot: _updateSelectedTimeSlot,
+                      onUpdateTimeSlot: _updateSelectedTimeSlot,
+                      onSelectExistingQuest: _handleSelectExistingQuest,
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                transitionBuilder: (child, animation) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0, -1),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  );
+                },
+                child: hasTimeSlot
+                    ? ActiveTimeSlotBar(
+                        key: const ValueKey('active-slot-bar'),
+                        timeSlot: _selectedTimeSlot!,
+                        onReset: _resetTimeSlot,
+                        hasAssembledQuest: hasAssembledQuest,
+                        mainQuestsByCategory: getMainQuestsByCategory(
+                          questCategories,
+                          IsarDataStore.getAllMainQuests(),
+                        ),
+                        onQuestAssembled: _handleQuestAssembled,
+                        assembledQuestName: assembledQuestName,
+                        onSave: _handleSave,
+                        onClearQuest: _handleQuestCleared,
+                        hasOverlap: _hasOverlap,
+                        isEditingExistingQuest: _editingQuest != null,
+                        onDelete: _handleDeleteEditedQuest,
+                        onUpdateTimeSlot: _updateSelectedTimeSlot,
+                      )
+                    : const SizedBox.shrink(key: ValueKey('slot-bar-empty')),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
