@@ -45,7 +45,8 @@ class _AssemblerState extends State<Assembler> {
   double _dragAccumulator = 0.0;
   AssemblerQuest? _editingQuest;
 
-  late final _endOfDay = widget.baseDate.add(Duration(hours: 23, minutes: 59));
+  DateTime get _endOfDay =>
+      widget.baseDate.add(Duration(hours: 23, minutes: 59));
 
   // Rounds to the nearest 5-minute mark of the day (e.g. 07:13 -> 07:15).
   DateTime _snapToDragStep(DateTime time) {
