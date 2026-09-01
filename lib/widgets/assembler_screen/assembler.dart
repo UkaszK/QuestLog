@@ -14,6 +14,7 @@ class Assembler extends StatefulWidget {
     required this.displayInsertBlocks,
     required this.isPastDay,
     required this.hasOverlap,
+    this.selectedTimeSlot,
     required this.onSelectTimeSlot,
     required this.onUpdateTimeSlot,
     required this.onSelectExistingQuest,
@@ -24,6 +25,7 @@ class Assembler extends StatefulWidget {
   final bool displayInsertBlocks;
   final bool isPastDay;
   final bool hasOverlap;
+  final TimeSlot? selectedTimeSlot;
   final void Function(TimeSlot) onSelectTimeSlot;
   final void Function(TimeSlot) onUpdateTimeSlot;
   final void Function(AssemblerQuest) onSelectExistingQuest;
@@ -36,11 +38,23 @@ class _AssemblerState extends State<Assembler> {
   final double _pixelsPerMinute = 1.0;
   final double _leftOffset = 70;
   final double _rightOffset = 15;
+  final int _dragStepMinutes = 5;
 
   DateTime? _currentStart;
   DateTime? _currentEnd;
   double _dragAccumulator = 0.0;
   AssemblerQuest? _editingQuest;
+
+  DateTime get _endOfDay =>
+      widget.baseDate.add(Duration(hours: 23, minutes: 59));
+
+  // Rounds to the nearest 5-minute mark of the day (e.g. 07:13 -> 07:15).
+  DateTime _snapToDragStep(DateTime time) {
+    final minutesSinceBase = time.difference(widget.baseDate).inMinutes;
+    final snapped =
+        (minutesSinceBase / _dragStepMinutes).round() * _dragStepMinutes;
+    return widget.baseDate.add(Duration(minutes: snapped));
+  }
 
   void _resetSelectedSlot() {
     setState(() {
@@ -63,6 +77,13 @@ class _AssemblerState extends State<Assembler> {
 
     if (dayChanged || insertBlocksReenabled) {
       _resetSelectedSlot();
+    } else if (widget.selectedTimeSlot != null &&
+        (widget.selectedTimeSlot!.startTime != _currentStart ||
+            widget.selectedTimeSlot!.endTime != _currentEnd)) {
+      setState(() {
+        _currentStart = widget.selectedTimeSlot!.startTime;
+        _currentEnd = widget.selectedTimeSlot!.endTime;
+      });
     }
   }
 
@@ -151,7 +172,9 @@ class _AssemblerState extends State<Assembler> {
     )..sort((a, b) => a.startTime.compareTo(b.startTime));
 
     DateTime currentTracker = widget.baseDate;
-    final endOfDay = widget.baseDate.add(const Duration(hours: 24));
+    final endOfDay = widget.baseDate.add(
+      const Duration(hours: 23, minutes: 59),
+    );
 
     final bool showInsertBlocks =
         widget.displayInsertBlocks && _currentStart == null;
@@ -383,23 +406,28 @@ class _AssemblerState extends State<Assembler> {
                 onVerticalDragStart: (_) => _dragAccumulator = 0.0,
                 onVerticalDragUpdate: (details) {
                   _dragAccumulator += details.delta.dy;
-                  if (_dragAccumulator.abs() >= 1.0) {
-                    int mins = _dragAccumulator.truncate();
+                  if (_dragAccumulator.abs() >= _dragStepMinutes) {
+                    int steps = (_dragAccumulator / _dragStepMinutes)
+                        .truncate();
+                    int mins = steps * _dragStepMinutes;
                     _dragAccumulator -= mins;
                     setState(() {
-                      final newStart = _currentStart!.add(
-                        Duration(minutes: mins),
+                      final currentDuration = _currentEnd!.difference(
+                        _currentStart!,
                       );
+                      var newStart = _snapToDragStep(
+                        _currentStart!.add(Duration(minutes: mins)),
+                      );
+                      var newEnd = newStart.add(currentDuration);
                       if (newStart.isBefore(widget.baseDate)) {
-                        final duration = _currentEnd!.difference(
-                          _currentStart!,
-                        );
-                        _currentStart = widget.baseDate;
-                        _currentEnd = widget.baseDate.add(duration);
-                      } else {
-                        _currentStart = newStart;
-                        _currentEnd = _currentEnd!.add(Duration(minutes: mins));
+                        newStart = widget.baseDate;
+                        newEnd = widget.baseDate.add(currentDuration);
+                      } else if (newEnd.isAfter(_endOfDay)) {
+                        newEnd = _endOfDay;
+                        newStart = _endOfDay.subtract(currentDuration);
                       }
+                      _currentStart = newStart;
+                      _currentEnd = newEnd;
                     });
                     _notifyTimeSlotUpdated();
                   }
@@ -426,42 +454,42 @@ class _AssemblerState extends State<Assembler> {
               top: 0,
               left: 0,
               right: 0,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.resizeUpDown,
-                child: GestureDetector(
-                  onVerticalDragStart: (_) => _dragAccumulator = 0.0,
-                  onVerticalDragUpdate: (details) {
-                    _dragAccumulator += details.delta.dy;
-                    if (_dragAccumulator.abs() >= 1.0) {
-                      int mins = _dragAccumulator.truncate();
-                      _dragAccumulator -= mins;
-                      setState(() {
-                        var newStart = _currentStart!.add(
-                          Duration(minutes: mins),
-                        );
+              child: GestureDetector(
+                onVerticalDragStart: (_) => _dragAccumulator = 0.0,
+                onVerticalDragUpdate: (details) {
+                  _dragAccumulator += details.delta.dy;
+                  if (_dragAccumulator.abs() >= _dragStepMinutes) {
+                    int steps = (_dragAccumulator / _dragStepMinutes)
+                        .truncate();
+                    int mins = steps * _dragStepMinutes;
+                    _dragAccumulator -= mins;
+                    setState(() {
+                      var newStart = _snapToDragStep(
+                        _currentStart!.add(Duration(minutes: mins)),
+                      );
+                      if (newStart.isBefore(widget.baseDate)) {
+                        newStart = widget.baseDate;
+                      }
 
-                        if (!newStart.isBefore(widget.baseDate) &&
-                            newStart.isBefore(
-                              _currentEnd!.subtract(
-                                const Duration(minutes: 15),
-                              ),
-                            )) {
-                          _currentStart = newStart;
-                        }
-                      });
-                      _notifyTimeSlotUpdated();
-                    }
-                  },
+                      if (!newStart.isBefore(widget.baseDate) &&
+                          newStart.isBefore(
+                            _currentEnd!.subtract(const Duration(minutes: 15)),
+                          )) {
+                        _currentStart = newStart;
+                      }
+                    });
+                    _notifyTimeSlotUpdated();
+                  }
+                },
 
-                  child: Container(
-                    height: 15,
-                    color: Colors.transparent,
-                    child: const Center(
-                      child: Icon(
-                        Icons.drag_handle,
-                        size: 16,
-                        color: QuestLogColors.accent,
-                      ),
+                child: Container(
+                  height: 15,
+                  color: Colors.transparent,
+                  child: const Center(
+                    child: Icon(
+                      Icons.drag_handle,
+                      size: 16,
+                      color: QuestLogColors.accent,
                     ),
                   ),
                 ),
@@ -472,35 +500,39 @@ class _AssemblerState extends State<Assembler> {
               bottom: 0,
               left: 0,
               right: 0,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.resizeUpDown,
-                child: GestureDetector(
-                  onVerticalDragStart: (_) => _dragAccumulator = 0.0,
-                  onVerticalDragUpdate: (details) {
-                    _dragAccumulator += details.delta.dy;
-                    if (_dragAccumulator.abs() >= 1.0) {
-                      int mins = _dragAccumulator.truncate();
-                      _dragAccumulator -= mins;
-                      setState(() {
-                        var newEnd = _currentEnd!.add(Duration(minutes: mins));
-                        if (newEnd.isAfter(
-                          _currentStart!.add(const Duration(minutes: 15)),
-                        )) {
-                          _currentEnd = newEnd;
-                        }
-                      });
-                      _notifyTimeSlotUpdated();
-                    }
-                  },
-                  child: Container(
-                    height: 15,
-                    color: Colors.transparent,
-                    child: const Center(
-                      child: Icon(
-                        Icons.drag_handle,
-                        size: 16,
-                        color: QuestLogColors.accent,
-                      ),
+              child: GestureDetector(
+                onVerticalDragStart: (_) => _dragAccumulator = 0.0,
+                onVerticalDragUpdate: (details) {
+                  _dragAccumulator += details.delta.dy;
+                  if (_dragAccumulator.abs() >= _dragStepMinutes) {
+                    int steps = (_dragAccumulator / _dragStepMinutes)
+                        .truncate();
+                    int mins = steps * _dragStepMinutes;
+                    _dragAccumulator -= mins;
+                    setState(() {
+                      var newEnd = _snapToDragStep(
+                        _currentEnd!.add(Duration(minutes: mins)),
+                      );
+                      if (newEnd.isAfter(_endOfDay)) {
+                        newEnd = _endOfDay;
+                      }
+                      if (newEnd.isAfter(
+                        _currentStart!.add(const Duration(minutes: 15)),
+                      )) {
+                        _currentEnd = newEnd;
+                      }
+                    });
+                    _notifyTimeSlotUpdated();
+                  }
+                },
+                child: Container(
+                  height: 15,
+                  color: Colors.transparent,
+                  child: const Center(
+                    child: Icon(
+                      Icons.drag_handle,
+                      size: 16,
+                      color: QuestLogColors.accent,
                     ),
                   ),
                 ),

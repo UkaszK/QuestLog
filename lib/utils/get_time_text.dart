@@ -1,4 +1,4 @@
-import 'package:questlog/utils/stringify_time_of_date.dart';
+import 'package:questlog/utils/DateTime/to_hhmm.dart';
 
 String getTimeText(
   DateTime start,
