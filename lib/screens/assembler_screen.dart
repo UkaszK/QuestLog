@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/main_quest.dart';
@@ -6,6 +7,7 @@ import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_info.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/data/time_slot.dart';
+import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/get_main_quests_by_category.dart';
 import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/active_time_slot_bar.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
@@ -112,10 +114,69 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
       endTime: _selectedTimeSlot!.endTime,
     );
 
+    _showDeleteJustAssembledQuestDialog(
+      newAssemblerQuest,
+      _assembledMainQuest!,
+    );
+
     setState(() {
       IsarDataStore.addAssemblerQuest(newAssemblerQuest);
       _resetTimeSlot();
     });
+  }
+
+  Future<void> _showDeleteJustAssembledQuestDialog(
+    AssemblerQuest assemblerQuest,
+    MainQuest assembledMainQuest,
+  ) async {
+    final bool? shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: QuestLogColors.surface,
+        title: Text(
+          'Quest Assembled',
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.textPrimary,
+            fontSize: 14,
+          ),
+        ),
+        content: Text(
+          'Do you want to delete Main Quest "${assemblerQuest.questInfo.name}"?',
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.textSecondary,
+            fontSize: 12,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(
+              'Keep',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.accent,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              'Delete',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.danger,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete == true && mounted) {
+      setState(() {
+        IsarDataStore.deleteMainQuest(assembledMainQuest);
+      });
+    }
   }
 
   void _handleSaveEditedQuest() {
