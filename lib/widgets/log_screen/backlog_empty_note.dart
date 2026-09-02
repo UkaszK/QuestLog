@@ -40,6 +40,8 @@ class _BacklogEmptyNoteState extends State<BacklogEmptyNote>
     return Column(
       spacing: 16,
       children: [
+        SizedBox(height: 30),
+
         Text(
           'BACKLOG EMPTY',
           style: GoogleFonts.jetBrainsMono(

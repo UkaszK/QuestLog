@@ -71,7 +71,11 @@ class _LogScreenState extends State<LogScreen> {
             assemblerQuests: _assemblerQuests,
             onCompleteQuest: _handleCompleteQuest,
           ),
-          if (activeQuest != null) ActiveProtocol(assemblerQuest: activeQuest, onCompleteQuest: _handleCompleteQuest),
+          if (activeQuest != null)
+            ActiveProtocol(
+              assemblerQuest: activeQuest,
+              onCompleteQuest: _handleCompleteQuest,
+            ),
           if (sideQuests.isNotEmpty) SideQuests(sideQuests: sideQuests),
           if (mainQuests.isNotEmpty) MainQuests(mainQuests: mainQuests),
 
