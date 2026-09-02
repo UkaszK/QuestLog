@@ -141,7 +141,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
           ),
         ),
         content: Text(
-          'Do you want to delete Main Quest "${assemblerQuest.questInfo.name}"?',
+          'Do you want to delete "${assemblerQuest.questInfo.name}" from your Main Quest backlog?',
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textSecondary,
             fontSize: 12,
