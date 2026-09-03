@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:questlog/data/assembler_quest.dart';
+import 'package:questlog/data/assembler_side_quest.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/side_quest.dart';
 
@@ -14,7 +15,8 @@ class IsarDataStore {
     instance = await Isar.open([
       MainQuestSchema,
       SideQuestSchema,
-      AssemblerQuestSchema,
+      AssemblerMainQuestSchema,
+      AssemblerSideQuestSchema,
     ], directory: dir.path);
   }
 
@@ -43,25 +45,51 @@ class IsarDataStore {
   }
 
   // AssemblerQuest
-  static List<AssemblerQuest> getAllAssemblerQuests() =>
-      instance.assemblerQuests.where().findAllSync();
+  static List<AssemblerMainQuest> getAllAssemblerQuests() =>
+      instance.assemblerMainQuests.where().findAllSync();
 
-  static void addAssemblerQuest(AssemblerQuest assemblerQuest) {
+  static void addAssemblerQuest(AssemblerMainQuest assemblerQuest) {
     instance.writeTxnSync(
-      () => instance.assemblerQuests.putSync(assemblerQuest),
+      () => instance.assemblerMainQuests.putSync(assemblerQuest),
     );
   }
 
-  static void updateAssemblerQuest(int id, AssemblerQuest assemblerQuest) {
+  static void updateAssemblerQuest(int id, AssemblerMainQuest assemblerQuest) {
     assemblerQuest.id = id;
     instance.writeTxnSync(
-      () => instance.assemblerQuests.putSync(assemblerQuest),
+      () => instance.assemblerMainQuests.putSync(assemblerQuest),
     );
   }
 
-  static void deleteAssemblerQuest(AssemblerQuest assemblerQuest) {
+  static void deleteAssemblerQuest(AssemblerMainQuest assemblerQuest) {
     instance.writeTxnSync(
-      () => instance.assemblerQuests.deleteSync(assemblerQuest.id),
+      () => instance.assemblerMainQuests.deleteSync(assemblerQuest.id),
+    );
+  }
+
+  // AssemblerSideQuest
+  static List<AssemblerSideQuest> getAllAssemblerSideQuests() =>
+      instance.assemblerSideQuests.where().findAllSync();
+
+  static void addAssemblerSideQuest(AssemblerSideQuest assemblerSideQuest) {
+    instance.writeTxnSync(
+      () => instance.assemblerSideQuests.putSync(assemblerSideQuest),
+    );
+  }
+
+  static void updateAssemblerSideQuest(
+    int id,
+    AssemblerSideQuest assemblerSideQuest,
+  ) {
+    assemblerSideQuest.id = id;
+    instance.writeTxnSync(
+      () => instance.assemblerSideQuests.putSync(assemblerSideQuest),
+    );
+  }
+
+  static void deleteAssemblerSideQuest(AssemblerSideQuest assemblerSideQuest) {
+    instance.writeTxnSync(
+      () => instance.assemblerSideQuests.deleteSync(assemblerSideQuest.id),
     );
   }
 }

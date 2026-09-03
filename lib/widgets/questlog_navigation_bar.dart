@@ -56,19 +56,6 @@ class _QuestLogNavigationBarState extends State<QuestLogNavigationBar> {
               maxLines: 1,
               overflow: TextOverflow.visible,
             ),
-
-            // SizedBox(height: 4),
-
-            // AnimatedContainer(
-            //   duration: const Duration(milliseconds: 200),
-            //   curve: Curves.easeInOut,
-            //   height: 2,
-            //   width: isSelected ? 24 : 0,
-            //   decoration: BoxDecoration(
-            //     color: QuestLogColors.textPrimary,
-            //     borderRadius: BorderRadius.circular(1),
-            //   ),
-            // ),
           ],
         ),
       ),
@@ -99,8 +86,8 @@ class _QuestLogNavigationBarState extends State<QuestLogNavigationBar> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildNavItem(
-                    icon: Icon(Icons.assignment),
-                    label: 'LOG',
+                    icon: Icon(Icons.dashboard),
+                    label: 'DASHBOARD',
                     index: 0,
                   ),
                   _buildNavItem(
@@ -117,8 +104,8 @@ class _QuestLogNavigationBarState extends State<QuestLogNavigationBar> {
                     index: 2,
                   ),
                   _buildNavItem(
-                    icon: ThemedSvgIcon('assets/icons/settings.svg'),
-                    label: 'SETTINGS',
+                    icon: Icon(Icons.assignment),
+                    label: 'BACKLOG',
                     index: 3,
                   ),
                 ],

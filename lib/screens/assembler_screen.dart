@@ -4,7 +4,6 @@ import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_categories.dart';
-import 'package:questlog/data/quest_info.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/theme/questlog_colors.dart';
@@ -25,9 +24,9 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
   DateTime _selectedDay = DateTime.now();
   TimeSlot? _selectedTimeSlot;
   MainQuest? _assembledMainQuest;
-  AssemblerQuest? _editingQuest;
+  AssemblerMainQuest? _editingQuest;
 
-  List<AssemblerQuest> get _selectedDayQuests {
+  List<AssemblerMainQuest> get _selectedDayQuests {
     return IsarDataStore.getAllAssemblerQuests()
         .where(
           (assemblerQuest) =>
@@ -70,7 +69,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     });
   }
 
-  void _handleSelectExistingQuest(AssemblerQuest quest) {
+  void _handleSelectExistingQuest(AssemblerMainQuest quest) {
     setState(() {
       _editingQuest = quest;
     });
@@ -100,16 +99,13 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     if (_selectedTimeSlot == null || _assembledMainQuest == null) return;
     if (_hasOverlap) return;
 
-    final questInfo = QuestInfo(
+    final newAssemblerQuest = AssemblerMainQuest(
+      mainQuestId: _assembledMainQuest!.id,
       name: _assembledMainQuest!.name,
       questCategoryName: _assembledMainQuest!.questCategoryName,
       subTasks: _assembledMainQuest!.subTasks
           .map((subTask) => SubTask(name: subTask, completed: false))
           .toList(),
-    );
-
-    final newAssemblerQuest = AssemblerQuest(
-      questInfo: questInfo,
       startTime: _selectedTimeSlot!.startTime,
       endTime: _selectedTimeSlot!.endTime,
     );
@@ -126,7 +122,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
   }
 
   Future<void> _showDeleteJustAssembledQuestDialog(
-    AssemblerQuest assemblerQuest,
+    AssemblerMainQuest assemblerQuest,
     MainQuest assembledMainQuest,
   ) async {
     final bool? shouldDelete = await showDialog<bool>(
@@ -141,7 +137,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
           ),
         ),
         content: Text(
-          'Do you want to delete "${assemblerQuest.questInfo.name}" from your Main Quest backlog?',
+          'Do you want to delete "${assemblerQuest.name}" from your Main Quest backlog?',
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textSecondary,
             fontSize: 12,
@@ -183,8 +179,11 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     if (_selectedTimeSlot == null || _editingQuest == null) return;
     if (_hasOverlap) return;
 
-    final updatedQuest = AssemblerQuest(
-      questInfo: _editingQuest!.questInfo,
+    final updatedQuest = AssemblerMainQuest(
+      mainQuestId: _editingQuest!.mainQuestId,
+      name: _editingQuest!.name,
+      questCategoryName: _editingQuest!.questCategoryName,
+      subTasks: _editingQuest!.subTasks,
       startTime: _selectedTimeSlot!.startTime,
       endTime: _selectedTimeSlot!.endTime,
       completed: _editingQuest!.completed,
@@ -211,7 +210,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
     final bool hasAssembledQuest =
         _assembledMainQuest != null || _editingQuest != null;
     final String assembledQuestName =
-        _assembledMainQuest?.name ?? _editingQuest?.questInfo.name ?? '';
+        _assembledMainQuest?.name ?? _editingQuest?.name ?? '';
     final DateTime baseDate = DateTime(
       _selectedDay.year,
       _selectedDay.month,

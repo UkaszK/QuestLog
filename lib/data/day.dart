@@ -7,6 +7,8 @@ enum Day {
   saturday,
   sunday;
 
+  static Day fromDateTime(DateTime date) => Day.values[date.weekday - 1];
+
   String get label {
     return switch (this) {
       Day.monday => 'Monday',

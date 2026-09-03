@@ -5,6 +5,7 @@ import 'package:questlog/data/day.dart';
 
 part 'side_quest.g.dart';
 
+// Recurring template a habit is defined from; each day creates an AssemblerSideQuest.
 @collection
 class SideQuest {
   SideQuest({

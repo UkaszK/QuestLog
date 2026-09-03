@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:questlog/screens/add_quest_screen.dart';
 import 'package:questlog/screens/analytics_screen.dart';
 import 'package:questlog/screens/assembler_screen.dart';
-import 'package:questlog/screens/log_screen.dart';
-import 'package:questlog/screens/settings_screen.dart';
+import 'package:questlog/screens/backlog_screen.dart';
+import 'package:questlog/screens/dashboard_screen.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/questlog_app_bar.dart';
 import 'package:questlog/widgets/questlog_navigation_bar.dart';
@@ -19,10 +19,10 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _pages = [
-    LogScreen(),
+    DashboardScreen(),
     AssemblerScreen(),
     AnalyticsScreen(),
-    SettingsScreen(),
+    BacklogScreen(),
   ];
 
   void _onItemTapped(int index) {

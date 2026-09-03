@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/log_screen/main_quests/main_quest_block.dart';
+import 'package:questlog/widgets/backlog_screen/main_quest_block.dart';
 
 class MainQuestSelectionSheet extends StatefulWidget {
   const MainQuestSelectionSheet({

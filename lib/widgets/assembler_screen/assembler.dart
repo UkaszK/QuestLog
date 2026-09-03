@@ -21,14 +21,14 @@ class Assembler extends StatefulWidget {
   });
 
   final DateTime baseDate;
-  final List<AssemblerQuest> assemblerQuests;
+  final List<AssemblerMainQuest> assemblerQuests;
   final bool displayInsertBlocks;
   final bool isPastDay;
   final bool hasOverlap;
   final TimeSlot? selectedTimeSlot;
   final void Function(TimeSlot) onSelectTimeSlot;
   final void Function(TimeSlot) onUpdateTimeSlot;
-  final void Function(AssemblerQuest) onSelectExistingQuest;
+  final void Function(AssemblerMainQuest) onSelectExistingQuest;
 
   @override
   State<StatefulWidget> createState() => _AssemblerState();
@@ -43,7 +43,7 @@ class _AssemblerState extends State<Assembler> {
   DateTime? _currentStart;
   DateTime? _currentEnd;
   double _dragAccumulator = 0.0;
-  AssemblerQuest? _editingQuest;
+  AssemblerMainQuest? _editingQuest;
 
   DateTime get _endOfDay =>
       widget.baseDate.add(Duration(hours: 23, minutes: 59));
@@ -100,7 +100,7 @@ class _AssemblerState extends State<Assembler> {
     _notifyTimeSlotUpdated();
   }
 
-  void _selectExistingQuest(AssemblerQuest assemblerQuest) {
+  void _selectExistingQuest(AssemblerMainQuest assemblerQuest) {
     setState(() {
       _currentStart = assemblerQuest.startTime;
       _currentEnd = assemblerQuest.endTime;
@@ -167,7 +167,7 @@ class _AssemblerState extends State<Assembler> {
   Widget _buildTimeBlocks(BuildContext context) {
     List<Widget> blocks = [];
 
-    final sortedAssemblerQuests = List<AssemblerQuest>.from(
+    final sortedAssemblerQuests = List<AssemblerMainQuest>.from(
       widget.assemblerQuests,
     )..sort((a, b) => a.startTime.compareTo(b.startTime));
 
@@ -202,8 +202,8 @@ class _AssemblerState extends State<Assembler> {
           height < 60; // only title and one-line time text visible
       final largeSized = height >= 80; // two-line time text and description
 
-      String title = assemblerQuest.questInfo.name;
-      String description = assemblerQuest.questInfo.subTasks
+      String title = assemblerQuest.name;
+      String description = assemblerQuest.subTasks
           .map((el) => el.name)
           .join(', ');
       Color statusColor = assemblerQuest.status.color;

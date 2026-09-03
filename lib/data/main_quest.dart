@@ -6,6 +6,7 @@ import 'package:questlog/data/quest_category.dart';
 
 part 'main_quest.g.dart';
 
+// Backlog template a quest is defined from; scheduling creates an AssemblerQuest.
 @collection
 class MainQuest implements Comparable<MainQuest> {
   MainQuest({
