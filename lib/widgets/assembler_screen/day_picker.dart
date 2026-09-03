@@ -13,7 +13,7 @@ class DayPicker extends StatefulWidget {
 
   final DateTime selectedDay;
   final ValueChanged<DateTime> onDaySelected;
-  final List<AssemblerQuest> assemblerQuests;
+  final List<AssemblerMainQuest> assemblerQuests;
 
   @override
   State<DayPicker> createState() => _DayPickerState();
