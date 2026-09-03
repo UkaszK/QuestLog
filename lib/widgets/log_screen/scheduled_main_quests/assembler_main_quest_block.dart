@@ -5,8 +5,8 @@ import 'package:questlog/data/quest_status.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
-class AssemblerQuestBlock extends StatelessWidget {
-  const AssemblerQuestBlock({
+class AssemblerMainQuestBlock extends StatelessWidget {
+  const AssemblerMainQuestBlock({
     super.key,
     required this.assemblerQuest,
     required this.onCheckQuest,
@@ -152,7 +152,7 @@ class AssemblerQuestBlock extends StatelessWidget {
           Divider(height: 17, color: QuestLogColors.border),
 
           Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 30),
             child: Row(
               children: [
                 for (final subTask in assemblerQuest.subTasks)

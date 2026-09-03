@@ -5,25 +5,25 @@ import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/get_time_text.dart';
-import 'package:questlog/widgets/log_screen/scheduled_main_quests/assembler_quest_block.dart';
+import 'package:questlog/widgets/log_screen/scheduled_main_quests/assembler_main_quest_block.dart';
 
-class AssemblerQuests extends StatefulWidget {
-  const AssemblerQuests({
+class AssemblerMainQuests extends StatefulWidget {
+  const AssemblerMainQuests({
     super.key,
-    required this.assemblerQuests,
-    required this.onCheckQuest,
+    required this.assemblerMainQuests,
+    required this.onCheckAssemblerMainQuest,
     required this.onCheckSubTask,
   });
 
-  final List<AssemblerMainQuest> assemblerQuests;
-  final void Function(AssemblerMainQuest, bool) onCheckQuest;
+  final List<AssemblerMainQuest> assemblerMainQuests;
+  final void Function(AssemblerMainQuest, bool) onCheckAssemblerMainQuest;
   final void Function(AssemblerMainQuest, SubTask, bool) onCheckSubTask;
 
   @override
-  State<AssemblerQuests> createState() => _AssemblerQuestsState();
+  State<AssemblerMainQuests> createState() => _AssemblerMainQuestsState();
 }
 
-class _AssemblerQuestsState extends State<AssemblerQuests> {
+class _AssemblerMainQuestsState extends State<AssemblerMainQuests> {
   Widget _buildHeader(String? timelineText) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,11 +118,11 @@ class _AssemblerQuestsState extends State<AssemblerQuests> {
     DateTime? timelineEnd;
     String? timelineText;
 
-    if (widget.assemblerQuests.isNotEmpty) {
-      timelineStart = widget.assemblerQuests
+    if (widget.assemblerMainQuests.isNotEmpty) {
+      timelineStart = widget.assemblerMainQuests
           .map((aq) => aq.startTime)
           .reduce((a, b) => a.isBefore(b) ? a : b);
-      timelineEnd = widget.assemblerQuests
+      timelineEnd = widget.assemblerMainQuests
           .map((aq) => aq.endTime)
           .reduce((a, b) => a.isAfter(b) ? a : b);
     }
@@ -139,12 +139,12 @@ class _AssemblerQuestsState extends State<AssemblerQuests> {
 
         Divider(height: 1),
 
-        if (widget.assemblerQuests.isNotEmpty) ...[
-          for (final assemblerQuest in widget.assemblerQuests)
-            AssemblerQuestBlock(
+        if (widget.assemblerMainQuests.isNotEmpty) ...[
+          for (final assemblerQuest in widget.assemblerMainQuests)
+            AssemblerMainQuestBlock(
               assemblerQuest: assemblerQuest,
               onCheckQuest: (newValue) =>
-                  widget.onCheckQuest(assemblerQuest, newValue),
+                  widget.onCheckAssemblerMainQuest(assemblerQuest, newValue),
               onCheckSubTask: (subTask, newValue) =>
                   widget.onCheckSubTask(assemblerQuest, subTask, newValue),
             ),

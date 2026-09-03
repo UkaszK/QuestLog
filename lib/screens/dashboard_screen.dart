@@ -5,7 +5,7 @@ import 'package:questlog/data/assembler_side_quest.dart';
 import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/data/sub_task.dart';
-import 'package:questlog/widgets/log_screen/scheduled_main_quests/assembler_quests.dart';
+import 'package:questlog/widgets/log_screen/scheduled_main_quests/assembler_main_quests.dart';
 import 'package:questlog/widgets/log_screen/side_quests/side_quests.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -158,9 +158,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         spacing: 25,
         children: [
-          AssemblerQuests(
-            assemblerQuests: _assemblerMainQuests,
-            onCheckQuest: _handleCheckAssemblerQuest,
+          AssemblerMainQuests(
+            assemblerMainQuests: _assemblerMainQuests,
+            onCheckAssemblerMainQuest: _handleCheckAssemblerQuest,
             onCheckSubTask: _handleCheckSubTask,
           ),
           SideQuests(
