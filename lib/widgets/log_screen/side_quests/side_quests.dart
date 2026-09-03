@@ -24,38 +24,66 @@ class SideQuests extends StatefulWidget {
 
 class _SideQuestsState extends State<SideQuests> {
   bool isExpanded = true;
+  bool _showTodayOnly = false;
 
   Widget _buildHeader() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Icon(Icons.checklist, color: QuestLogColors.otherAccent, size: 14),
-            const SizedBox(width: 10),
-            Text(
-              'SIDE QUESTS',
-              style: GoogleFonts.jetBrainsMono(
+        Expanded(
+          child: Row(
+            children: [
+              Icon(
+                Icons.checklist,
                 color: QuestLogColors.otherAccent,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+                size: 14,
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Text(
+                'SIDE QUESTS',
+                style: GoogleFonts.jetBrainsMono(
+                  color: QuestLogColors.otherAccent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
 
-        Text(
-          'UNSCHEDULED',
-          style: GoogleFonts.jetBrainsMono(
-            color: QuestLogColors.textSecondary,
-            fontSize: 10,
+        SegmentedButton<bool>(
+          segments: const [
+            ButtonSegment(value: false, label: Text('ALL')),
+            ButtonSegment(value: true, label: Text('TODAY')),
+          ],
+          selected: {_showTodayOnly},
+          showSelectedIcon: false,
+          style: ButtonStyle(
+            shape: const WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(3)),
+              ),
+            ),
+            visualDensity: VisualDensity(
+              horizontal: VisualDensity.minimumDensity,
+              vertical: VisualDensity.minimumDensity,
+            ),
+            textStyle: WidgetStatePropertyAll(
+              GoogleFonts.jetBrainsMono(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
+            ),
           ),
+          onSelectionChanged: (selection) {
+            setState(() => _showTodayOnly = selection.first);
+          },
         ),
       ],
     );
   }
 
-  Widget _buildEmptyBlock() {
+  Widget _buildEmptyBlock({required bool hasSideQuests}) {
     return Container(
       color: QuestLogColors.surface,
       child: DottedBorder(
@@ -86,7 +114,9 @@ class _SideQuestsState extends State<SideQuests> {
               ),
               const SizedBox(height: 16),
               Text(
-                'NO SIDE QUESTS LOGGED',
+                hasSideQuests
+                    ? 'NO SIDE QUESTS DUE TODAY'
+                    : 'NO SIDE QUESTS LOGGED',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.jetBrainsMono(
                   color: QuestLogColors.otherAccent,
@@ -97,7 +127,9 @@ class _SideQuestsState extends State<SideQuests> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Add recurring routines, habits, or quick tasks to check off throughout the day',
+                hasSideQuests
+                    ? 'Switch to all side quests to view your other recurring routines and tasks'
+                    : 'Add recurring routines, habits, or quick tasks to check off throughout the day',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.jetBrainsMono(
                   color: QuestLogColors.textSecondary,
@@ -114,15 +146,21 @@ class _SideQuestsState extends State<SideQuests> {
   @override
   Widget build(BuildContext context) {
     final today = Day.fromDateTime(DateTime.now());
+    final displayedSideQuests = _showTodayOnly
+        ? widget.sideQuests
+              .where((sideQuest) => sideQuest.repeatDays.contains(today))
+              .toList()
+        : widget.sideQuests;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 10,
       children: [
         _buildHeader(),
+        const SizedBox(height: 5),
         Divider(height: 1),
-        if (widget.sideQuests.isNotEmpty) ...[
-          for (final sideQuest in widget.sideQuests)
+        if (displayedSideQuests.isNotEmpty) ...[
+          for (final sideQuest in displayedSideQuests) ...[
+            const SizedBox(height: 10),
             SideQuestBlock(
               sideQuest: sideQuest,
               completed: widget.completedSideQuestIds.contains(sideQuest.id),
@@ -130,8 +168,11 @@ class _SideQuestsState extends State<SideQuests> {
               onCheckSideQuest: (newValue) =>
                   widget.onCheckSideQuest(sideQuest, newValue),
             ),
-        ] else
-          _buildEmptyBlock(),
+          ],
+        ] else ...[
+          const SizedBox(height: 10),
+          _buildEmptyBlock(hasSideQuests: widget.sideQuests.isNotEmpty),
+        ],
       ],
     );
   }
