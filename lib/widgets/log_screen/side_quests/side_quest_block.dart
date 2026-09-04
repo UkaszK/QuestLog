@@ -19,6 +19,8 @@ class SideQuestBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? timeIntervalString = sideQuest.timeIntervalString();
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -46,6 +48,8 @@ class SideQuestBlock extends StatelessWidget {
               children: [
                 Text(
                   sideQuest.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.jetBrainsMono(
                     color: completed
                         ? QuestLogColors.textSecondary
@@ -56,18 +60,53 @@ class SideQuestBlock extends StatelessWidget {
                   ),
                 ),
 
-                Text(
-                  sideQuest.questCategoryName.toUpperCase(),
-                  style: GoogleFonts.jetBrainsMono(
-                    color: QuestLogColors.textSecondary,
-                    fontSize: 10,
-                  ),
+                const SizedBox(height: 3),
+
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        sideQuest.questCategoryName.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.jetBrainsMono(
+                          color: QuestLogColors.textSecondary,
+                          fontSize: 10,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    ),
+                    if (timeIntervalString != null) ...[
+                      const SizedBox(width: 5),
+
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: QuestLogColors.accentLessOpacity,
+                            width: 1,
+                          ),
+                          color: QuestLogColors.otherAccentLessOpacity,
+                        ),
+                        child: Text(
+                          timeIntervalString.toUpperCase(),
+                          style: GoogleFonts.jetBrainsMono(
+                            color: QuestLogColors.otherAccent,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
           ),
 
-          if (scheduledToday)
+          const SizedBox(width: 10),
+
+          if (scheduledToday) ...[
             Container(
               padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
@@ -83,6 +122,7 @@ class SideQuestBlock extends StatelessWidget {
                 ),
               ),
             ),
+          ],
         ],
       ),
     );
