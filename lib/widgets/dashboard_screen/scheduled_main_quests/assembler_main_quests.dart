@@ -5,7 +5,7 @@ import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/get_time_text.dart';
-import 'package:questlog/widgets/log_screen/scheduled_main_quests/assembler_main_quest_block.dart';
+import 'package:questlog/widgets/dashboard_screen/scheduled_main_quests/assembler_main_quest_block.dart';
 
 class AssemblerMainQuests extends StatefulWidget {
   const AssemblerMainQuests({

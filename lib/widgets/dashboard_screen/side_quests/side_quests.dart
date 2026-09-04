@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/log_screen/side_quests/side_quest_block.dart';
+import 'package:questlog/widgets/dashboard_screen/side_quests/side_quest_block.dart';
 
 class SideQuests extends StatefulWidget {
   const SideQuests({

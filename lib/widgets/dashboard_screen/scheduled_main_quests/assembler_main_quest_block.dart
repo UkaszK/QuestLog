@@ -20,40 +20,37 @@ class AssemblerMainQuestBlock extends StatelessWidget {
   Widget _buildSubTask(SubTask subTask) {
     final checked = subTask.completed;
 
-    return Expanded(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 16,
-            height: 16,
-            child: Checkbox(
-              value: checked,
-              onChanged: (newValue) =>
-                  onCheckSubTask(subTask, newValue ?? false),
-              activeColor: QuestLogColors.otherAccent,
-              side: BorderSide(color: QuestLogColors.border, width: 1),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 16,
+          height: 16,
+          child: Checkbox(
+            value: checked,
+            onChanged: (newValue) => onCheckSubTask(subTask, newValue ?? false),
+            activeColor: QuestLogColors.otherAccent,
+            side: BorderSide(color: QuestLogColors.border, width: 1),
+          ),
+        ),
+
+        const SizedBox(width: 10),
+
+        Expanded(
+          child: Text(
+            subTask.name,
+            softWrap: true,
+            style: GoogleFonts.jetBrainsMono(
+              color: checked
+                  ? QuestLogColors.textSecondary
+                  : QuestLogColors.textPrimary,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              decoration: checked ? TextDecoration.lineThrough : null,
             ),
           ),
-
-          const SizedBox(width: 10),
-
-          Expanded(
-            child: Text(
-              subTask.name,
-              softWrap: true,
-              style: GoogleFonts.jetBrainsMono(
-                color: checked
-                    ? QuestLogColors.textSecondary
-                    : QuestLogColors.textPrimary,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                decoration: checked ? TextDecoration.lineThrough : null,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -149,14 +146,16 @@ class AssemblerMainQuestBlock extends StatelessWidget {
             ],
           ),
 
-          Divider(height: 17, color: QuestLogColors.border),
+          Divider(color: QuestLogColors.border),
 
           Padding(
             padding: EdgeInsetsGeometry.symmetric(horizontal: 30),
-            child: Row(
+            child: Column(
+              spacing: 10,
               children: [
-                for (final subTask in assemblerQuest.subTasks)
+                for (final subTask in assemblerQuest.subTasks) ...[
                   _buildSubTask(subTask),
+                ],
               ],
             ),
           ),
