@@ -2,11 +2,13 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/assembler_side_quest.dart';
+import 'package:questlog/data/day.dart';
 import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/data/sub_task.dart';
-import 'package:questlog/widgets/log_screen/scheduled_main_quests/assembler_main_quests.dart';
-import 'package:questlog/widgets/log_screen/side_quests/side_quests.dart';
+import 'package:questlog/widgets/dashboard_screen/daily_progress/dashboard_daily_progress.dart';
+import 'package:questlog/widgets/dashboard_screen/scheduled_main_quests/assembler_main_quests.dart';
+import 'package:questlog/widgets/dashboard_screen/side_quests/side_quests.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -146,6 +148,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  int get tasksDone {
+    if (_assemblerMainQuests.isEmpty) return 0;
+    int mainTasksCount = _assemblerMainQuests.fold(0, (total, quest) {
+      final completedSubTasks = quest.subTasks
+          .where((subTask) => subTask.completed)
+          .length;
+      return total + completedSubTasks + (quest.completed ? 1 : 0);
+    });
+
+    int sideTasksCount = _todayAssemblerSideQuests
+        .where(
+          (element) => _sideQuests
+              .firstWhere((other) => element.sideQuestId == other.id)
+              .repeatDays
+              .contains(Day.fromDateTime(DateTime.now())),
+        )
+        .length;
+
+    return mainTasksCount + sideTasksCount;
+  }
+
+  int get tasksPlanned {
+    int mainTasksCount = _assemblerMainQuests.fold(0, (total, quest) {
+      return total + quest.subTasks.length + 1;
+    });
+
+    int sideTasksCount = _sideQuests
+        .where(
+          (element) =>
+              element.repeatDays.contains(Day.fromDateTime(DateTime.now())),
+        )
+        .length;
+
+    return mainTasksCount + sideTasksCount;
+  }
+
   @override
   Widget build(BuildContext context) {
     final completedSideQuestIds = _todayAssemblerSideQuests
@@ -158,6 +196,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         spacing: 25,
         children: [
+          if (_assemblerMainQuests.isNotEmpty)
+            DashboardDailyProgress(
+              tasksDone: tasksDone,
+              tasksPlanned: tasksPlanned,
+            ),
+
           AssemblerMainQuests(
             assemblerMainQuests: _assemblerMainQuests,
             onCheckAssemblerMainQuest: _handleCheckAssemblerQuest,

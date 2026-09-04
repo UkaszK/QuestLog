@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/data/isar_data_store.dart';
-import 'package:questlog/widgets/log_screen/backlog_empty_note.dart';
+import 'package:questlog/widgets/backlog_screen/backlog_empty_note.dart';
 
 class BacklogScreen extends StatelessWidget {
   const BacklogScreen({super.key});
