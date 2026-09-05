@@ -1,55 +1,18 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/data/assembler_side_quest.dart';
-import 'package:questlog/data/day.dart';
 import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/data/sub_task.dart';
+import 'package:questlog/providers/quest_providers.dart';
 import 'package:questlog/widgets/dashboard_screen/daily_progress/dashboard_daily_progress.dart';
 import 'package:questlog/widgets/dashboard_screen/scheduled_main_quests/assembler_main_quests.dart';
 import 'package:questlog/widgets/dashboard_screen/side_quests/side_quests.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends State<DashboardScreen> {
-  List<AssemblerMainQuest> _assemblerMainQuests = [];
-  List<SideQuest> _sideQuests = [];
-  List<AssemblerSideQuest> _todayAssemblerSideQuests = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _assemblerMainQuests = _fetchAssemblerMainQuests();
-    _sideQuests = IsarDataStore.getAllSideQuests();
-    _todayAssemblerSideQuests = _fetchTodayAssemblerSideQuests();
-  }
-
-  List<AssemblerMainQuest> _fetchAssemblerMainQuests() {
-    return IsarDataStore.getAllAssemblerQuests()
-        .where(
-          (assemblerQuest) =>
-              DateUtils.isSameDay(assemblerQuest.startTime, DateTime.now()),
-        )
-        .sorted(((a, b) => a.compareTo(b)))
-        .toList();
-  }
-
-  List<AssemblerSideQuest> _fetchTodayAssemblerSideQuests() {
-    return IsarDataStore.getAllAssemblerSideQuests()
-        .where(
-          (assemblerSideQuest) => DateUtils.isSameDay(
-            assemblerSideQuest.occurrenceDate,
-            DateTime.now(),
-          ),
-        )
-        .toList();
-  }
 
   void _handleCheckAssemblerQuest(
     AssemblerMainQuest assemblerQuest,
@@ -72,10 +35,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       assemblerQuest.id,
       updatedAssemblerQuest,
     );
-
-    setState(() {
-      _assemblerMainQuests = _fetchAssemblerMainQuests();
-    });
   }
 
   void _handleCheckSubTask(
@@ -108,15 +67,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
       assemblerQuest.id,
       updatedAssemblerQuest,
     );
-
-    setState(() {
-      _assemblerMainQuests = _fetchAssemblerMainQuests();
-    });
   }
 
-  void _handleCheckSideQuest(SideQuest sideQuest, bool newValue) {
+  void _handleCheckSideQuest(
+    SideQuest sideQuest,
+    bool newValue,
+    List<AssemblerSideQuest> assemblerSideQuestCollection,
+  ) {
     final now = DateTime.now();
-    final existing = _todayAssemblerSideQuests.firstWhereOrNull(
+    final existing = assemblerSideQuestCollection.firstWhereOrNull(
       (assemblerSideQuest) => assemblerSideQuest.sideQuestId == sideQuest.id,
     );
 
@@ -142,75 +101,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
         IsarDataStore.addAssemblerSideQuest(updatedAssemblerSideQuest);
       }
     }
-
-    setState(() {
-      _todayAssemblerSideQuests = _fetchTodayAssemblerSideQuests();
-    });
-  }
-
-  int get tasksDone {
-    if (_assemblerMainQuests.isEmpty) return 0;
-    int mainTasksCount = _assemblerMainQuests.fold(0, (total, quest) {
-      final completedSubTasks = quest.subTasks
-          .where((subTask) => subTask.completed)
-          .length;
-      return total + completedSubTasks + (quest.completed ? 1 : 0);
-    });
-
-    int sideTasksCount = _todayAssemblerSideQuests
-        .where(
-          (element) => _sideQuests
-              .firstWhere((other) => element.sideQuestId == other.id)
-              .repeatDays
-              .contains(Day.fromDateTime(DateTime.now())),
-        )
-        .length;
-
-    return mainTasksCount + sideTasksCount;
-  }
-
-  int get tasksPlanned {
-    int mainTasksCount = _assemblerMainQuests.fold(0, (total, quest) {
-      return total + quest.subTasks.length + 1;
-    });
-
-    int sideTasksCount = _sideQuests
-        .where(
-          (element) =>
-              element.repeatDays.contains(Day.fromDateTime(DateTime.now())),
-        )
-        .length;
-
-    return mainTasksCount + sideTasksCount;
   }
 
   @override
-  Widget build(BuildContext context) {
-    final completedSideQuestIds = _todayAssemblerSideQuests
+  Widget build(BuildContext context, WidgetRef ref) {
+    final today = DateTime.now();
+
+    final todayAssemblerMainQuests = ref.watch(
+      assemblerMainQuestsForDayProvider(today),
+    );
+
+    final todayAssemblerSideQuests = ref.watch(
+      assemblerSideQuestsForDayProvider(today),
+    );
+
+    final completedSideQuestIds = todayAssemblerSideQuests
         .where((assemblerSideQuest) => assemblerSideQuest.completed)
         .map((assemblerSideQuest) => assemblerSideQuest.sideQuestId)
         .toSet();
+
+    final sideQuestsAsync = ref.watch(sideQuestsProvider);
+
+    final dailyProgress = ref.watch(dailyProgressForDayProvider(today));
 
     return SingleChildScrollView(
       padding: EdgeInsets.only(top: 16, right: 16, left: 16, bottom: 150),
       child: Column(
         spacing: 25,
         children: [
-          if (_assemblerMainQuests.isNotEmpty)
+          if (todayAssemblerMainQuests.isNotEmpty ||
+              todayAssemblerSideQuests.isNotEmpty)
             DashboardDailyProgress(
-              tasksDone: tasksDone,
-              tasksPlanned: tasksPlanned,
+              tasksDone: dailyProgress.tasksDone,
+              tasksPlanned: dailyProgress.tasksPlanned,
             ),
 
           AssemblerMainQuests(
-            assemblerMainQuests: _assemblerMainQuests,
+            assemblerMainQuests: todayAssemblerMainQuests,
             onCheckAssemblerMainQuest: _handleCheckAssemblerQuest,
             onCheckSubTask: _handleCheckSubTask,
           ),
-          SideQuests(
-            sideQuests: _sideQuests,
-            completedSideQuestIds: completedSideQuestIds,
-            onCheckSideQuest: _handleCheckSideQuest,
+
+          sideQuestsAsync.when(
+            data: (sideQuests) {
+              return SideQuests(
+                sideQuests: sideQuests,
+                completedSideQuestIds: completedSideQuestIds,
+                onCheckSideQuest: (sideQuest, newValue) =>
+                    _handleCheckSideQuest(
+                      sideQuest,
+                      newValue,
+                      todayAssemblerSideQuests,
+                    ),
+              );
+            },
+            error: (_, _) => const SizedBox.shrink(),
+            loading: () => const SizedBox.shrink(),
           ),
         ],
       ),
