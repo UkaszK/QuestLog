@@ -9,14 +9,11 @@ import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/side_quest.dart';
+import 'package:questlog/providers/main_quest_providers.dart';
 
 // ==========================================
 // Base Stream Providers (Live DB Watchers)
 // ==========================================
-
-final mainQuestsProvider = StreamProvider<List<MainQuest>>((ref) {
-  return IsarDataStore.watchAllMainQuests();
-});
 
 final sideQuestsProvider = StreamProvider<List<SideQuest>>((ref) {
   return IsarDataStore.watchAllSideQuests();

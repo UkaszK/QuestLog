@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:questlog/data/main_quest.dart';
-import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/screens/main_quest_selection_sheet.dart';
 import 'package:questlog/theme/questlog_colors.dart';
@@ -14,7 +13,6 @@ class ActiveTimeSlotBar extends StatefulWidget {
     required this.timeSlot,
     required this.onReset,
     required this.hasAssembledQuest,
-    required this.mainQuestsByCategory,
     required this.onQuestAssembled,
     required this.assembledQuestName,
     required this.onSave,
@@ -28,7 +26,6 @@ class ActiveTimeSlotBar extends StatefulWidget {
   final TimeSlot timeSlot;
   final VoidCallback onReset;
   final bool hasAssembledQuest;
-  final Map<QuestCategory, List<MainQuest>> mainQuestsByCategory;
   final void Function(MainQuest) onQuestAssembled;
   final String assembledQuestName;
   final VoidCallback onSave;
@@ -414,7 +411,6 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
                     controller = showBottomSheet(
                       context: context,
                       builder: (context) => MainQuestSelectionSheet(
-                        mainQuestsByCategory: widget.mainQuestsByCategory,
                         onAssemble: (mainQuest) {
                           widget.onQuestAssembled(mainQuest);
                           controller.close();

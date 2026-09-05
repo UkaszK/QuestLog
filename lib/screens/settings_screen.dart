@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:questlog/screens/test_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -13,15 +12,6 @@ class SettingsScreen extends StatelessWidget {
           Text(
             'QuestLog',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const TestScreen()),
-              );
-            },
-            child: Text('Test'),
           ),
         ],
       ),

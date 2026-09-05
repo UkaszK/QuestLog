@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:questlog/data/isar_data_store.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/quest_priority.dart';
+import 'package:questlog/providers/main_quest_providers.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_submit_button.dart';
 import 'package:questlog/widgets/forms/fields/quest_due_date_field.dart';
@@ -11,14 +12,14 @@ import 'package:questlog/widgets/forms/fields/quest_priority_selector.dart';
 import 'package:questlog/widgets/forms/fields/quest_sub_tasks_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_title_input_field.dart';
 
-class MainQuestForm extends StatefulWidget {
+class MainQuestForm extends ConsumerStatefulWidget {
   const MainQuestForm({super.key});
 
   @override
-  State<StatefulWidget> createState() => _MainQuestFormState();
+  ConsumerState<MainQuestForm> createState() => _MainQuestFormState();
 }
 
-class _MainQuestFormState extends State<MainQuestForm> {
+class _MainQuestFormState extends ConsumerState<MainQuestForm> {
   // Form
   QuestCategory _questCategory = questCategories.first;
   final _titleController = TextEditingController();
@@ -52,7 +53,7 @@ class _MainQuestFormState extends State<MainQuestForm> {
       subTasks: _subTasks,
     );
 
-    IsarDataStore.addMainQuest(newMainQuest);
+    ref.read(mainQuestControllerProvider.notifier).add(newMainQuest);
 
     Navigator.of(context).pop();
   }

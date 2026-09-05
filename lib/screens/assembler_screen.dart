@@ -185,7 +185,6 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
                             timeSlot: selectedTimeSlot,
                             onReset: notifier.resetTimeSlot,
                             hasAssembledQuest: hasAssembledQuest,
-                            mainQuestsByCategory: state.mainQuestsByCategory,
                             onQuestAssembled: notifier.handleMainQuestAssembled,
                             assembledQuestName: assembledQuestName,
                             onSave: () {
