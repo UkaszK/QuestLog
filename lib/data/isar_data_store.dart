@@ -24,6 +24,9 @@ class IsarDataStore {
   static List<MainQuest> getAllMainQuests() =>
       instance.mainQuests.where().findAllSync();
 
+  static Stream<List<MainQuest>> watchAllMainQuests() =>
+      instance.mainQuests.where().watch(fireImmediately: true);
+
   static void addMainQuest(MainQuest mainQuest) {
     instance.writeTxnSync(() => instance.mainQuests.putSync(mainQuest));
   }
@@ -36,6 +39,9 @@ class IsarDataStore {
   static List<SideQuest> getAllSideQuests() =>
       instance.sideQuests.where().findAllSync();
 
+  static Stream<List<SideQuest>> watchAllSideQuests() =>
+      instance.sideQuests.where().watch(fireImmediately: true);
+
   static void addSideQuest(SideQuest sideQuest) {
     instance.writeTxnSync(() => instance.sideQuests.putSync(sideQuest));
   }
@@ -44,9 +50,12 @@ class IsarDataStore {
     instance.writeTxnSync(() => instance.sideQuests.deleteSync(sideQuest.id));
   }
 
-  // AssemblerQuest
+  // AssemblerMainQuest
   static List<AssemblerMainQuest> getAllAssemblerQuests() =>
       instance.assemblerMainQuests.where().findAllSync();
+
+  static Stream<List<AssemblerMainQuest>> watchAllAssemblerMainQuests() =>
+      instance.assemblerMainQuests.where().watch(fireImmediately: true);
 
   static void addAssemblerQuest(AssemblerMainQuest assemblerQuest) {
     instance.writeTxnSync(
@@ -70,6 +79,9 @@ class IsarDataStore {
   // AssemblerSideQuest
   static List<AssemblerSideQuest> getAllAssemblerSideQuests() =>
       instance.assemblerSideQuests.where().findAllSync();
+
+  static Stream<List<AssemblerSideQuest>> watchAllAssemblerSideQuests() =>
+      instance.assemblerSideQuests.where().watch(fireImmediately: true);
 
   static void addAssemblerSideQuest(AssemblerSideQuest assemblerSideQuest) {
     instance.writeTxnSync(
