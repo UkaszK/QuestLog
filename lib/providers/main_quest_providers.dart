@@ -6,15 +6,8 @@ final mainQuestsProvider = StreamProvider<List<MainQuest>>((ref) {
   return IsarDataStore.watchAllMainQuests();
 });
 
-class MainQuestNotifier extends Notifier<void> {
-  @override
-  void build() {}
-
-  void add(MainQuest mainQuest) {
+class MainQuestService {
+  static void add(MainQuest mainQuest) {
     IsarDataStore.addMainQuest(mainQuest);
   }
 }
-
-final mainQuestControllerProvider = NotifierProvider<MainQuestNotifier, void>(
-  () => MainQuestNotifier(),
-);

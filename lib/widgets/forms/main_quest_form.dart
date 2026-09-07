@@ -53,7 +53,7 @@ class _MainQuestFormState extends ConsumerState<MainQuestForm> {
       subTasks: _subTasks,
     );
 
-    ref.read(mainQuestControllerProvider.notifier).add(newMainQuest);
+    MainQuestService.add(newMainQuest);
 
     Navigator.of(context).pop();
   }

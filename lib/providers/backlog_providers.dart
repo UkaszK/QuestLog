@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/providers/main_quest_providers.dart';
-import 'package:questlog/providers/quest_providers.dart';
+import 'package:questlog/providers/side_quest_providers.dart';
 
 typedef BacklogState = ({
   List<MainQuest> mainQuests,

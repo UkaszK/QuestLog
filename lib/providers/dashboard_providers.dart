@@ -7,6 +7,7 @@ import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/providers/quest_providers.dart';
+import 'package:questlog/providers/side_quest_providers.dart';
 
 typedef DashboardState = ({
   List<AssemblerMainQuest> assemblerMainQuests,
