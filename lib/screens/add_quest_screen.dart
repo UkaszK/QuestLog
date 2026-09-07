@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/quest_type.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/widgets/forms/main_quest_form.dart';
 import 'package:questlog/widgets/forms/side_quest_form.dart';
 import 'package:questlog/widgets/questlog_app_bar.dart';
@@ -59,7 +58,7 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
       children: [
-        Text('Quest Classification', style: QuestLogTextStyles.headerText),
+        Text('Quest Classification', style: GoogleFonts.jetBrainsMono(color: QuestLogColors.textSecondary, fontSize: 12)),
 
         Container(
           decoration: BoxDecoration(

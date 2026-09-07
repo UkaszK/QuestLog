@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/theme/questlog_text_styles.dart';
 import 'package:questlog/widgets/forms/fields/questlog_switch.dart';
 
 class FormDaySelector extends StatefulWidget {
@@ -70,7 +69,13 @@ class _FormDaySelectorState extends State<FormDaySelector> {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
       children: [
-        Text('Quest Frequency', style: QuestLogTextStyles.headerText),
+        Text(
+          'Quest Frequency',
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.textSecondary,
+            fontSize: 12,
+          ),
+        ),
 
         QuestlogSwitch(
           options: [
