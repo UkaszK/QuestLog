@@ -11,9 +11,9 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dashboardStateAsync = ref.watch(
-      dashboardStateProvider(DateTime.now()),
-    );
+    final today = DateUtils.dateOnly(DateTime.now());
+    final dashboardStateAsync = ref.watch(dashboardStateProvider(today));
+    final controller = ref.read(dashboardControllerProvider.notifier);
 
     return dashboardStateAsync.when(
       data: (state) {
@@ -26,24 +26,25 @@ class DashboardScreen extends ConsumerWidget {
 
               AssemblerMainQuests(
                 assemblerMainQuests: state.assemblerMainQuests,
-                onCheckAssemblerMainQuest: checkAssemblerMainQuest,
-                onCheckSubTask: checkSubTask,
+                onCheckAssemblerMainQuest: controller.checkAssemblerMainQuest,
+                onCheckSubTask: controller.checkSubTask,
               ),
 
               SideQuests(
                 sideQuests: state.sideQuests,
                 completedSideQuestIds: state.completedSideQuestIds,
-                onCheckSideQuest: (sideQuest, newValue) => checkSideQuest(
-                  sideQuest,
-                  newValue,
-                  state.assemblerSideQuests,
-                ),
+                onCheckSideQuest: (sideQuest, newValue) =>
+                    controller.checkSideQuest(
+                      sideQuest,
+                      newValue,
+                      state.assemblerSideQuests,
+                    ),
               ),
             ],
           ),
         );
       },
-      error: (_, _) => QuestLogLoadingScreen(),
+      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
       loading: () => QuestLogLoadingScreen(),
     );
   }

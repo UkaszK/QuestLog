@@ -19,135 +19,113 @@ typedef DashboardState = ({
 
 final dashboardStateProvider =
     Provider.family<AsyncValue<DashboardState>, DateTime>((ref, date) {
-      final assemblerMainQuestsAsync = ref.watch(
-        assemblerMainQuestsForDayProvider(date),
-      );
-      final assemblerSideQuestsAsync = ref.watch(
-        assemblerSideQuestsForDayProvider(date),
-      );
-      final sideQuestsAsync = ref.watch(sideQuestsProvider);
-      final completedSideQuestIdsAsync = ref.watch(
-        completedSideQuestIdsForDayProvider(date),
-      );
-      final progressAsync = ref.watch(dailyProgressForDayProvider(date));
+      final states = [
+        ref.watch(assemblerMainQuestsForDayProvider(date)),
+        ref.watch(assemblerSideQuestsForDayProvider(date)),
+        ref.watch(sideQuestsProvider),
+        ref.watch(completedSideQuestIdsForDayProvider(date)),
+        ref.watch(dailyProgressForDayProvider(date)),
+      ];
 
-      // Loading
-      if (assemblerMainQuestsAsync.isLoading ||
-          assemblerSideQuestsAsync.isLoading ||
-          sideQuestsAsync.isLoading ||
-          completedSideQuestIdsAsync.isLoading ||
-          progressAsync.isLoading) {
+      if (states.any((state) => state.isLoading)) {
         return const AsyncLoading();
       }
 
-      // Errors
-      if (assemblerMainQuestsAsync.hasError) {
-        return AsyncError(
-          assemblerMainQuestsAsync.error!,
-          assemblerMainQuestsAsync.stackTrace!,
-        );
-      }
-      if (assemblerSideQuestsAsync.hasError) {
-        return AsyncError(
-          assemblerSideQuestsAsync.error!,
-          assemblerSideQuestsAsync.stackTrace!,
-        );
-      }
-      if (sideQuestsAsync.hasError) {
-        return AsyncError(sideQuestsAsync.error!, sideQuestsAsync.stackTrace!);
-      }
-      if (completedSideQuestIdsAsync.hasError) {
-        return AsyncError(
-          completedSideQuestIdsAsync.error!,
-          completedSideQuestIdsAsync.stackTrace!,
-        );
-      }
-      if (progressAsync.hasError) {
-        return AsyncError(progressAsync.error!, progressAsync.stackTrace!);
+      for (final state in states) {
+        if (state.hasError) return AsyncError(state.error!, state.stackTrace!);
       }
 
       return AsyncData((
-        assemblerMainQuests: assemblerMainQuestsAsync.requireValue,
-        assemblerSideQuests: assemblerSideQuestsAsync.requireValue,
-        sideQuests: sideQuestsAsync.requireValue,
-        completedSideQuestIds: completedSideQuestIdsAsync.requireValue,
-        progress: progressAsync.requireValue,
+        assemblerMainQuests: states[0].requireValue as List<AssemblerMainQuest>,
+        assemblerSideQuests: states[1].requireValue as List<AssemblerSideQuest>,
+        sideQuests: states[2].requireValue as List<SideQuest>,
+        completedSideQuestIds: states[3].requireValue as Set<int>,
+        progress: states[4].requireValue as DailyProgressMetrics,
       ));
     });
 
-void checkAssemblerMainQuest(
-  AssemblerMainQuest assemblerMainQuest,
-  bool newValue,
-) {
-  final updatedSubTasks = assemblerMainQuest.subTasks
-      .map((subTask) => SubTask(name: subTask.name, completed: newValue))
-      .toList();
+final dashboardControllerProvider = NotifierProvider<DashboardController, void>(
+  () => DashboardController(),
+);
 
-  final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
-    subTasks: updatedSubTasks,
-  );
+class DashboardController extends Notifier<void> {
+  @override
+  void build() {}
 
-  IsarDataStore.updateAssemblerMainQuest(
-    assemblerMainQuest.id,
-    updatedAssemblerMainQuest,
-  );
-}
+  void checkAssemblerMainQuest(
+    AssemblerMainQuest assemblerMainQuest,
+    bool newValue,
+  ) {
+    final updatedSubTasks = assemblerMainQuest.subTasks
+        .map((subTask) => SubTask(name: subTask.name, completed: newValue))
+        .toList();
 
-void checkSubTask(
-  AssemblerMainQuest assemblerMainQuest,
-  SubTask subTask,
-  bool newValue,
-) {
-  final subTaskIndex = assemblerMainQuest.subTasks.indexWhere(
-    (st) => st == subTask,
-  );
-  if (subTaskIndex == -1) return;
-
-  final updatedSubTasks = List<SubTask>.from(assemblerMainQuest.subTasks);
-  updatedSubTasks[subTaskIndex] = SubTask(
-    name: subTask.name,
-    completed: newValue,
-  );
-
-  bool? completed;
-  if (newValue) {
-    if (updatedSubTasks.every((st) => st.completed)) {
-      completed = true;
-    }
-  }
-
-  final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
-    subTasks: updatedSubTasks,
-    completed: completed,
-  );
-
-  IsarDataStore.updateAssemblerMainQuest(
-    assemblerMainQuest.id,
-    updatedAssemblerMainQuest,
-  );
-}
-
-void checkSideQuest(
-  SideQuest sideQuest,
-  bool newValue,
-  List<AssemblerSideQuest> assemblerSideQuests,
-) {
-  final existingSideQuest = assemblerSideQuests.firstWhereOrNull(
-    (assemblerSideQuest) => assemblerSideQuest.sideQuestId == sideQuest.id,
-  );
-
-  if (existingSideQuest != null && !newValue) {
-    IsarDataStore.deleteAssemblerSideQuest(existingSideQuest);
-    return;
-  }
-
-  if (existingSideQuest == null && newValue) {
-    final assemblerSideQuest = AssemblerSideQuest.from(
-      sideQuest,
-      DateTime.now(),
+    final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
+      subTasks: updatedSubTasks,
     );
 
-    IsarDataStore.addAssemblerSideQuest(assemblerSideQuest);
-    return;
+    IsarDataStore.updateAssemblerMainQuest(
+      assemblerMainQuest.id,
+      updatedAssemblerMainQuest,
+    );
+  }
+
+  void checkSubTask(
+    AssemblerMainQuest assemblerMainQuest,
+    SubTask subTask,
+    bool newValue,
+  ) {
+    final subTaskIndex = assemblerMainQuest.subTasks.indexWhere(
+      (st) => st == subTask,
+    );
+    if (subTaskIndex == -1) return;
+
+    final updatedSubTasks = List<SubTask>.from(assemblerMainQuest.subTasks);
+    updatedSubTasks[subTaskIndex] = SubTask(
+      name: subTask.name,
+      completed: newValue,
+    );
+
+    bool? completed;
+    if (newValue) {
+      if (updatedSubTasks.every((st) => st.completed)) {
+        completed = true;
+      }
+    }
+
+    final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
+      subTasks: updatedSubTasks,
+      completed: completed,
+    );
+
+    IsarDataStore.updateAssemblerMainQuest(
+      assemblerMainQuest.id,
+      updatedAssemblerMainQuest,
+    );
+  }
+
+  void checkSideQuest(
+    SideQuest sideQuest,
+    bool newValue,
+    List<AssemblerSideQuest> assemblerSideQuests,
+  ) {
+    final existingSideQuest = assemblerSideQuests.firstWhereOrNull(
+      (assemblerSideQuest) => assemblerSideQuest.sideQuestId == sideQuest.id,
+    );
+
+    if (existingSideQuest != null && !newValue) {
+      IsarDataStore.deleteAssemblerSideQuest(existingSideQuest);
+      return;
+    }
+
+    if (existingSideQuest == null && newValue) {
+      final assemblerSideQuest = AssemblerSideQuest.from(
+        sideQuest,
+        DateTime.now(),
+      );
+
+      IsarDataStore.addAssemblerSideQuest(assemblerSideQuest);
+      return;
+    }
   }
 }

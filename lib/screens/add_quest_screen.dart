@@ -58,7 +58,13 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
       children: [
-        Text('Quest Classification', style: GoogleFonts.jetBrainsMono(color: QuestLogColors.textSecondary, fontSize: 12)),
+        Text(
+          'Quest Classification',
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.textSecondary,
+            fontSize: 12,
+          ),
+        ),
 
         Container(
           decoration: BoxDecoration(

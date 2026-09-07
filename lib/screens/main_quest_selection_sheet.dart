@@ -20,7 +20,6 @@ class MainQuestSelectionSheet extends ConsumerStatefulWidget {
 class _MainQuestSelectionSheetState
     extends ConsumerState<MainQuestSelectionSheet> {
   final Set<QuestCategory> _expandedCategories = {};
-  Map<QuestCategory, List<MainQuest>> _mainQuestsByCategory = {};
 
   void _toggleCategory(QuestCategory questCategory) {
     setState(() {
@@ -43,8 +42,11 @@ class _MainQuestSelectionSheetState
     );
   }
 
-  Widget _buildCategoryBlock(QuestCategory questCategory) {
-    final mainQuests = _mainQuestsByCategory[questCategory]!
+  Widget _buildCategoryBlock(
+    QuestCategory questCategory,
+    Map<QuestCategory, List<MainQuest>> mainQuestsByCategory,
+  ) {
+    final mainQuests = mainQuestsByCategory[questCategory]!
       ..sort(((a, b) => a.compareTo(b)));
 
     final isExpanded = _expandedCategories.contains(questCategory);
@@ -144,8 +146,6 @@ class _MainQuestSelectionSheetState
 
     return mainQuestsByCategoryAsync.when(
       data: (mainQuestsByCategory) {
-        _mainQuestsByCategory = mainQuestsByCategory;
-
         return Scaffold(
           body: SingleChildScrollView(
             padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 168),
@@ -156,7 +156,7 @@ class _MainQuestSelectionSheetState
                 _buildHeader(),
 
                 for (final questCategory in mainQuestsByCategory.keys)
-                  _buildCategoryBlock(questCategory),
+                  _buildCategoryBlock(questCategory, mainQuestsByCategory),
               ],
             ),
           ),
@@ -167,11 +167,7 @@ class _MainQuestSelectionSheetState
           child: CircularProgressIndicator(color: QuestLogColors.accent),
         ),
       ),
-      error: (_, _) => Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(color: QuestLogColors.accent),
-        ),
-      ),
+      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
     );
   }
 }

@@ -220,7 +220,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
           ),
         );
       },
-      error: (_, _) => QuestLogLoadingScreen(),
+      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
       loading: () => QuestLogLoadingScreen(),
     );
   }

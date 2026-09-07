@@ -28,7 +28,7 @@ class BacklogScreen extends ConsumerWidget {
           ],
         );
       },
-      error: (_, _) => QuestLogLoadingScreen(),
+      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
       loading: () => QuestLogLoadingScreen(),
     );
   }
