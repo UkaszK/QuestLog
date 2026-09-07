@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/theme/questlog_text_styles.dart';
 
 class QuestDurationField extends StatelessWidget {
   QuestDurationField({super.key, required this.controller});
@@ -20,7 +19,13 @@ class QuestDurationField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
       children: [
-        Text('Duration (HH:MM) (Optional)', style: QuestLogTextStyles.headerText),
+        Text(
+          'Duration (HH:MM) (Optional)',
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.textSecondary,
+            fontSize: 12,
+          ),
+        ),
 
         Container(
           decoration: BoxDecoration(

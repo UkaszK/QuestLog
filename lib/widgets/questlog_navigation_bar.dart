@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/themed_svg_icon.dart';
 
-class QuestLogNavigationBar extends StatefulWidget {
+class QuestLogNavigationBar extends StatelessWidget {
   const QuestLogNavigationBar({
     super.key,
     required this.onDestinationSelected,
@@ -15,23 +15,18 @@ class QuestLogNavigationBar extends StatefulWidget {
   final void Function(int) onDestinationSelected;
   final int selectedIndex;
 
-  @override
-  State<StatefulWidget> createState() => _QuestLogNavigationBarState();
-}
-
-class _QuestLogNavigationBarState extends State<QuestLogNavigationBar> {
   Widget _buildNavItem({
     required Widget icon,
     required String label,
     required int index,
   }) {
-    final isSelected = widget.selectedIndex == index;
+    final isSelected = selectedIndex == index;
     final color = isSelected
         ? QuestLogColors.textPrimary
         : QuestLogColors.textSecondary;
 
     return InkWell(
-      onTap: () => widget.onDestinationSelected(index),
+      onTap: () => onDestinationSelected(index),
       child: SizedBox(
         width: 64,
         child: Column(

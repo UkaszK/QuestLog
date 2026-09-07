@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_category.dart';
+import 'package:questlog/providers/quest_providers.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/backlog_screen/main_quest_block.dart';
 
-class MainQuestSelectionSheet extends StatefulWidget {
-  const MainQuestSelectionSheet({
-    super.key,
-    required this.mainQuestsByCategory,
-    required this.onAssemble,
-  });
+class MainQuestSelectionSheet extends ConsumerStatefulWidget {
+  const MainQuestSelectionSheet({super.key, required this.onAssemble});
 
-  final Map<QuestCategory, List<MainQuest>> mainQuestsByCategory;
   final void Function(MainQuest) onAssemble;
 
   @override
-  State<MainQuestSelectionSheet> createState() =>
+  ConsumerState<MainQuestSelectionSheet> createState() =>
       _MainQuestSelectionSheetState();
 }
 
-class _MainQuestSelectionSheetState extends State<MainQuestSelectionSheet> {
+class _MainQuestSelectionSheetState
+    extends ConsumerState<MainQuestSelectionSheet> {
   final Set<QuestCategory> _expandedCategories = {};
 
   void _toggleCategory(QuestCategory questCategory) {
@@ -44,8 +42,11 @@ class _MainQuestSelectionSheetState extends State<MainQuestSelectionSheet> {
     );
   }
 
-  Widget _buildCategoryBlock(QuestCategory questCategory) {
-    final mainQuests = widget.mainQuestsByCategory[questCategory]!
+  Widget _buildCategoryBlock(
+    QuestCategory questCategory,
+    Map<QuestCategory, List<MainQuest>> mainQuestsByCategory,
+  ) {
+    final mainQuests = mainQuestsByCategory[questCategory]!
       ..sort(((a, b) => a.compareTo(b)));
 
     final isExpanded = _expandedCategories.contains(questCategory);
@@ -141,20 +142,32 @@ class _MainQuestSelectionSheetState extends State<MainQuestSelectionSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 168),
-        child: Column(
-          spacing: 16,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildHeader(),
+    final mainQuestsByCategoryAsync = ref.watch(mainQuestsByCategoryProvider);
 
-            for (final questCategory in widget.mainQuestsByCategory.keys)
-              _buildCategoryBlock(questCategory),
-          ],
+    return mainQuestsByCategoryAsync.when(
+      data: (mainQuestsByCategory) {
+        return Scaffold(
+          body: SingleChildScrollView(
+            padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 168),
+            child: Column(
+              spacing: 16,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildHeader(),
+
+                for (final questCategory in mainQuestsByCategory.keys)
+                  _buildCategoryBlock(questCategory, mainQuestsByCategory),
+              ],
+            ),
+          ),
+        );
+      },
+      loading: () => Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: QuestLogColors.accent),
         ),
       ),
+      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
     );
   }
 }

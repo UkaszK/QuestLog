@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/theme/questlog_text_styles.dart';
 
 class QuestNotesInputField extends StatelessWidget {
   const QuestNotesInputField({super.key, required this.controller});
@@ -14,7 +13,13 @@ class QuestNotesInputField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
       children: [
-        Text('Quest Title', style: QuestLogTextStyles.headerText),
+        Text(
+          'Quest Title',
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.textSecondary,
+            fontSize: 12,
+          ),
+        ),
 
         Container(
           decoration: BoxDecoration(

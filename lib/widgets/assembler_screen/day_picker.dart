@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:questlog/data/assembler_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
 class DayPicker extends StatefulWidget {
@@ -8,12 +7,10 @@ class DayPicker extends StatefulWidget {
     super.key,
     required this.selectedDay,
     required this.onDaySelected,
-    required this.assemblerQuests,
   });
 
   final DateTime selectedDay;
   final ValueChanged<DateTime> onDaySelected;
-  final List<AssemblerMainQuest> assemblerQuests;
 
   @override
   State<DayPicker> createState() => _DayPickerState();

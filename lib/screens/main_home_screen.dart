@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questlog/providers/navigation_bar_providers.dart';
 import 'package:questlog/screens/add_quest_screen.dart';
 import 'package:questlog/screens/analytics_screen.dart';
 import 'package:questlog/screens/assembler_screen.dart';
@@ -8,15 +10,8 @@ import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/questlog_app_bar.dart';
 import 'package:questlog/widgets/questlog_navigation_bar.dart';
 
-class MainHomeScreen extends StatefulWidget {
+class MainHomeScreen extends ConsumerWidget {
   const MainHomeScreen({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _MainHomeScreenState();
-}
-
-class _MainHomeScreenState extends State<MainHomeScreen> {
-  int _selectedIndex = 0;
 
   static const List<Widget> _pages = [
     DashboardScreen(),
@@ -25,21 +20,18 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
     BacklogScreen(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(navigationProvider);
+    final notifier = ref.read(navigationProvider.notifier);
+
     return Scaffold(
       extendBody: true,
       appBar: QuestLogAppBar(),
-      body: IndexedStack(index: _selectedIndex, children: _pages),
+      body: IndexedStack(index: currentIndex, children: _pages),
       bottomNavigationBar: QuestLogNavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: _onItemTapped,
+        selectedIndex: currentIndex,
+        onDestinationSelected: notifier.setIndex,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Builder(

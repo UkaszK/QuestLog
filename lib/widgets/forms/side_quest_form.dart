@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/data/day.dart';
-import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/side_quest.dart';
+import 'package:questlog/providers/side_quest_providers.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_day_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_submit_button.dart';
@@ -46,7 +46,7 @@ class _SideQuestFormState extends State<SideQuestForm> {
       repeatDaysList: _repeatDays.toList(),
     );
 
-    IsarDataStore.addSideQuest(newSideQuest);
+    SideQuestService.add(newSideQuest);
 
     Navigator.of(context).pop();
   }

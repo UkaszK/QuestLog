@@ -1,129 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:questlog/data/assembler_quest.dart';
-import 'package:questlog/data/isar_data_store.dart';
+import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/main_quest.dart';
-import 'package:questlog/data/quest_categories.dart';
-import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/data/time_slot.dart';
+import 'package:questlog/providers/assembler_providers.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/utils/get_main_quests_by_category.dart';
 import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/active_time_slot_bar.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
 import 'package:questlog/widgets/assembler_screen/assembler_title.dart';
 import 'package:questlog/widgets/assembler_screen/day_picker.dart';
+import 'package:questlog/widgets/quest_log_loading_screen.dart';
 
-class AssemblerScreen extends StatefulWidget {
+class AssemblerScreen extends ConsumerStatefulWidget {
   const AssemblerScreen({super.key});
 
   @override
-  State<AssemblerScreen> createState() => _AssemblerScreenState();
+  ConsumerState<AssemblerScreen> createState() => _AssemblerScreenState();
 }
 
-class _AssemblerScreenState extends State<AssemblerScreen> {
+class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
   DateTime _selectedDay = DateTime.now();
-  TimeSlot? _selectedTimeSlot;
-  MainQuest? _assembledMainQuest;
-  AssemblerMainQuest? _editingQuest;
 
-  List<AssemblerMainQuest> get _selectedDayQuests {
-    return IsarDataStore.getAllAssemblerQuests()
-        .where(
-          (assemblerQuest) =>
-              DateUtils.isSameDay(assemblerQuest.startTime, _selectedDay),
-        )
-        .toList();
-  }
-
-  bool get _isPastDay {
-    final today = DateTime.now();
-    final selectedDate = DateTime(
-      _selectedDay.year,
-      _selectedDay.month,
-      _selectedDay.day,
-    );
-    return selectedDate.isBefore(DateTime(today.year, today.month, today.day));
-  }
-
-  bool get _hasOverlap {
-    if (_selectedTimeSlot == null) return false;
-    return _selectedDayQuests.any(
+  bool _hasOverlap(
+    List<AssemblerMainQuest> assemblerMainQuests,
+    TimeSlot? selectedTimeSlot,
+    AssemblerMainQuest? editingQuest,
+  ) {
+    if (selectedTimeSlot == null) return false;
+    return assemblerMainQuests.any(
       (assemblerQuest) =>
-          !(assemblerQuest.id == _editingQuest?.id) &&
-          _selectedTimeSlot!.startTime.isBefore(assemblerQuest.endTime) &&
-          _selectedTimeSlot!.endTime.isAfter(assemblerQuest.startTime),
+          !(assemblerQuest.id == editingQuest?.id) &&
+          selectedTimeSlot.startTime.isBefore(assemblerQuest.endTime) &&
+          selectedTimeSlot.endTime.isAfter(assemblerQuest.startTime),
     );
   }
 
-  void _resetTimeSlot() {
-    setState(() {
-      _selectedTimeSlot = null;
-      _assembledMainQuest = null;
-      _editingQuest = null;
-    });
-  }
-
-  void _updateSelectedTimeSlot(TimeSlot slot) {
-    setState(() {
-      _selectedTimeSlot = slot;
-    });
-  }
-
-  void _handleSelectExistingQuest(AssemblerMainQuest quest) {
-    setState(() {
-      _editingQuest = quest;
-    });
-  }
-
-  void _handleQuestAssembled(MainQuest mainQuest) {
-    setState(() {
-      _assembledMainQuest = mainQuest;
-    });
-  }
-
-  void _handleQuestCleared() {
-    setState(() {
-      _assembledMainQuest = null;
-    });
-  }
-
-  void _handleSave() {
-    if (_editingQuest != null) {
-      _handleSaveEditedQuest();
-    } else {
-      _handleSaveAssembledQuest();
-    }
-  }
-
-  void _handleSaveAssembledQuest() {
-    if (_selectedTimeSlot == null || _assembledMainQuest == null) return;
-    if (_hasOverlap) return;
-
-    final newAssemblerQuest = AssemblerMainQuest(
-      mainQuestId: _assembledMainQuest!.id,
-      name: _assembledMainQuest!.name,
-      questCategoryName: _assembledMainQuest!.questCategoryName,
-      subTasks: _assembledMainQuest!.subTasks
-          .map((subTask) => SubTask(name: subTask, completed: false))
-          .toList(),
-      startTime: _selectedTimeSlot!.startTime,
-      endTime: _selectedTimeSlot!.endTime,
-    );
-
-    _showDeleteJustAssembledQuestDialog(
-      newAssemblerQuest,
-      _assembledMainQuest!,
-    );
-
-    setState(() {
-      IsarDataStore.addAssemblerQuest(newAssemblerQuest);
-      _resetTimeSlot();
-    });
+  bool _isPastDay(DateTime date) {
+    final today = DateUtils.dateOnly(DateTime.now());
+    final selectedDate = DateUtils.dateOnly(date);
+    return selectedDate.isBefore(today);
   }
 
   Future<void> _showDeleteJustAssembledQuestDialog(
-    AssemblerMainQuest assemblerQuest,
-    MainQuest assembledMainQuest,
+    void Function(MainQuest) onDelete,
+    AssembledQuestResult result,
   ) async {
     final bool? shouldDelete = await showDialog<bool>(
       context: context,
@@ -137,7 +58,7 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
           ),
         ),
         content: Text(
-          'Do you want to delete "${assemblerQuest.name}" from your Main Quest backlog?',
+          'Do you want to delete "${result.assemblerQuest.name}" from your Main Quest backlog?',
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textSecondary,
             fontSize: 12,
@@ -168,143 +89,139 @@ class _AssemblerScreenState extends State<AssemblerScreen> {
       ),
     );
 
-    if (shouldDelete == true && mounted) {
-      setState(() {
-        IsarDataStore.deleteMainQuest(assembledMainQuest);
-      });
+    if (shouldDelete == true) {
+      onDelete(result.sourceMainQuest);
     }
-  }
-
-  void _handleSaveEditedQuest() {
-    if (_selectedTimeSlot == null || _editingQuest == null) return;
-    if (_hasOverlap) return;
-
-    final updatedQuest = AssemblerMainQuest(
-      mainQuestId: _editingQuest!.mainQuestId,
-      name: _editingQuest!.name,
-      questCategoryName: _editingQuest!.questCategoryName,
-      subTasks: _editingQuest!.subTasks,
-      startTime: _selectedTimeSlot!.startTime,
-      endTime: _selectedTimeSlot!.endTime,
-      completed: _editingQuest!.completed,
-    );
-
-    setState(() {
-      IsarDataStore.updateAssemblerQuest(_editingQuest!.id, updatedQuest);
-      _resetTimeSlot();
-    });
-  }
-
-  void _handleDeleteEditedQuest() {
-    if (_editingQuest == null) return;
-
-    setState(() {
-      IsarDataStore.deleteAssemblerQuest(_editingQuest!);
-      _resetTimeSlot();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool hasTimeSlot = _selectedTimeSlot != null;
-    final bool hasAssembledQuest =
-        _assembledMainQuest != null || _editingQuest != null;
-    final String assembledQuestName =
-        _assembledMainQuest?.name ?? _editingQuest?.name ?? '';
-    final DateTime baseDate = DateTime(
-      _selectedDay.year,
-      _selectedDay.month,
-      _selectedDay.day,
+    final notifier = ref.read(assemblerViewStateNotifierProvider.notifier);
+    final assemblerViewState = ref.watch(assemblerViewStateNotifierProvider);
+    final assemblerDataStateAsync = ref.watch(
+      assemblerDataStateProvider(_selectedDay),
     );
 
-    return Scaffold(
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(
-                  top: 20,
-                  left: 16,
-                  right: 16,
-                  bottom: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    DayPicker(
-                      selectedDay: _selectedDay,
-                      onDaySelected: (value) {
-                        setState(() {
-                          _selectedDay = value;
-                          _resetTimeSlot();
-                        });
-                      },
-                      assemblerQuests: IsarDataStore.getAllAssemblerQuests(),
+    final DateTime baseDate = DateUtils.dateOnly(_selectedDay);
+    final TimeSlot? selectedTimeSlot = assemblerViewState.selectedTimeSlot;
+    final AssemblerMainQuest? editingQuest = assemblerViewState.editingQuest;
+    final MainQuest? assembledMainQuest = assemblerViewState.assembledMainQuest;
+    final bool hasTimeSlot = selectedTimeSlot != null;
+    final bool hasAssembledQuest =
+        assembledMainQuest != null || editingQuest != null;
+    final String assembledQuestName =
+        assembledMainQuest?.name ?? editingQuest?.name ?? '';
+
+    final isPastDay = _isPastDay(_selectedDay);
+
+    return assemblerDataStateAsync.when(
+      data: (state) {
+        final hasOverlap = _hasOverlap(
+          state.selectedDayQuests,
+          selectedTimeSlot,
+          editingQuest,
+        );
+        return Scaffold(
+          body: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(
+                      top: 20,
+                      left: 16,
+                      right: 16,
+                      bottom: 20,
                     ),
-                    AssemblerTitle(),
-
-                    const SizedBox(height: 10),
-
-                    const Divider(height: 1),
-
-                    Assembler(
-                      baseDate: baseDate,
-                      assemblerQuests: _selectedDayQuests,
-                      displayInsertBlocks: !_isPastDay && !hasTimeSlot,
-                      isPastDay: _isPastDay,
-                      hasOverlap: _hasOverlap,
-                      selectedTimeSlot: _selectedTimeSlot,
-                      onSelectTimeSlot: _updateSelectedTimeSlot,
-                      onUpdateTimeSlot: _updateSelectedTimeSlot,
-                      onSelectExistingQuest: _handleSelectExistingQuest,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
-                transitionBuilder: (child, animation) {
-                  return SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0, -1),
-                      end: Offset.zero,
-                    ).animate(animation),
-                    child: child,
-                  );
-                },
-                child: hasTimeSlot
-                    ? ActiveTimeSlotBar(
-                        key: const ValueKey('active-slot-bar'),
-                        timeSlot: _selectedTimeSlot!,
-                        onReset: _resetTimeSlot,
-                        hasAssembledQuest: hasAssembledQuest,
-                        mainQuestsByCategory: getMainQuestsByCategory(
-                          questCategories,
-                          IsarDataStore.getAllMainQuests(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DayPicker(
+                          selectedDay: _selectedDay,
+                          onDaySelected: (value) {
+                            setState(() => _selectedDay = value);
+                            notifier.resetTimeSlot();
+                          },
                         ),
-                        onQuestAssembled: _handleQuestAssembled,
-                        assembledQuestName: assembledQuestName,
-                        onSave: _handleSave,
-                        onClearQuest: _handleQuestCleared,
-                        hasOverlap: _hasOverlap,
-                        isEditingExistingQuest: _editingQuest != null,
-                        onDelete: _handleDeleteEditedQuest,
-                        onUpdateTimeSlot: _updateSelectedTimeSlot,
-                      )
-                    : const SizedBox.shrink(key: ValueKey('slot-bar-empty')),
-              ),
+                        AssemblerTitle(),
+
+                        const SizedBox(height: 10),
+
+                        const Divider(height: 1),
+
+                        Assembler(
+                          baseDate: baseDate,
+                          assemblerQuests: state.selectedDayQuests,
+                          displayInsertBlocks: !isPastDay && !hasTimeSlot,
+                          isPastDay: isPastDay,
+                          hasOverlap: hasOverlap,
+                          selectedTimeSlot: selectedTimeSlot,
+                          onSelectTimeSlot: notifier.updateSelectedTimeSlot,
+                          onUpdateTimeSlot: notifier.updateSelectedTimeSlot,
+                          onSelectExistingQuest:
+                              notifier.handleSelectExistingAssemblerQuest,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    transitionBuilder: (child, animation) {
+                      return SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, -1),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      );
+                    },
+                    child: hasTimeSlot
+                        ? ActiveTimeSlotBar(
+                            key: const ValueKey('active-slot-bar'),
+                            timeSlot: selectedTimeSlot,
+                            onReset: notifier.resetTimeSlot,
+                            hasAssembledQuest: hasAssembledQuest,
+                            onQuestAssembled: notifier.handleMainQuestAssembled,
+                            assembledQuestName: assembledQuestName,
+                            onSave: () {
+                              if (editingQuest != null) {
+                                notifier.handleUpdateAssemblerQuest();
+                                return;
+                              }
+                              final result = notifier
+                                  .handleCreateAssemblerQuest();
+                              if (result != null) {
+                                _showDeleteJustAssembledQuestDialog(
+                                  notifier.handleDeleteSourceMainQuest,
+                                  result,
+                                );
+                              }
+                            },
+                            onClearQuest: notifier.handleQuestCleared,
+                            hasOverlap: hasOverlap,
+                            isEditingExistingQuest: editingQuest != null,
+                            onDelete: notifier.handleDeleteEditedQuest,
+                            onUpdateTimeSlot: notifier.updateSelectedTimeSlot,
+                          )
+                        : const SizedBox.shrink(
+                            key: ValueKey('slot-bar-empty'),
+                          ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
+      loading: () => QuestLogLoadingScreen(),
     );
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/theme/questlog_text_styles.dart';
 
 class QuestDueDateField extends StatelessWidget {
   const QuestDueDateField({
@@ -48,7 +47,13 @@ class QuestDueDateField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 15,
       children: [
-        Text('Due Date (Optional)', style: QuestLogTextStyles.headerText),
+        Text(
+          'Due Date (Optional)',
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.textSecondary,
+            fontSize: 12,
+          ),
+        ),
         InkWell(
           onTap: () => _selectDate(context),
           child: Container(

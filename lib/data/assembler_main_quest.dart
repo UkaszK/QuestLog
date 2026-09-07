@@ -18,6 +18,26 @@ class AssemblerMainQuest implements Comparable<AssemblerMainQuest> {
     this.completed = false,
   });
 
+  AssemblerMainQuest copyWith({
+    int? mainQuestId,
+    String? name,
+    String? questCategoryName,
+    List<SubTask>? subTasks,
+    DateTime? startTime,
+    DateTime? endTime,
+    bool? completed,
+  }) {
+    return AssemblerMainQuest(
+      mainQuestId: mainQuestId ?? this.mainQuestId,
+      name: name ?? this.name,
+      questCategoryName: questCategoryName ?? this.questCategoryName,
+      subTasks: subTasks ?? this.subTasks,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      completed: completed ?? this.completed,
+    );
+  }
+
   Id id = Isar.autoIncrement;
 
   final int mainQuestId;
@@ -62,6 +82,9 @@ class AssemblerMainQuest implements Comparable<AssemblerMainQuest> {
 
   @ignore
   String get timeText => getTimeText(startTime, endTime);
+
+  @ignore
+  bool get subTasksCompleted => subTasks.every((subTask) => subTask.completed);
 
   @override
   int compareTo(AssemblerMainQuest other) {

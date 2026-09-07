@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:questlog/data/side_quest.dart';
 
 part 'assembler_side_quest.g.dart';
 
@@ -12,6 +14,32 @@ class AssemblerSideQuest implements Comparable<AssemblerSideQuest> {
     required this.occurrenceDate,
     this.completedAt,
   });
+
+  AssemblerSideQuest copyWith({
+    int? sideQuestId,
+    String? name,
+    String? questCategoryName,
+    DateTime? occurrenceDate,
+    DateTime? completedAt,
+  }) {
+    return AssemblerSideQuest(
+      sideQuestId: sideQuestId ?? this.sideQuestId,
+      name: name ?? this.name,
+      questCategoryName: questCategoryName ?? this.questCategoryName,
+      occurrenceDate: occurrenceDate ?? this.occurrenceDate,
+      completedAt: completedAt ?? this.completedAt,
+    );
+  }
+
+  static AssemblerSideQuest from(SideQuest sideQuest, DateTime completedAt) {
+    return AssemblerSideQuest(
+      sideQuestId: sideQuest.id,
+      name: sideQuest.name,
+      questCategoryName: sideQuest.questCategoryName,
+      occurrenceDate: DateUtils.dateOnly(completedAt),
+      completedAt: completedAt,
+    );
+  }
 
   Id id = Isar.autoIncrement;
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/theme/questlog_text_styles.dart';
 
 class QuestPrioritySelector extends StatelessWidget {
   const QuestPrioritySelector({
@@ -55,7 +54,13 @@ class QuestPrioritySelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
       children: [
-        Text('Priority', style: QuestLogTextStyles.headerText),
+        Text(
+          'Priority',
+          style: GoogleFonts.jetBrainsMono(
+            color: QuestLogColors.textSecondary,
+            fontSize: 12,
+          ),
+        ),
 
         Row(
           spacing: 10,
