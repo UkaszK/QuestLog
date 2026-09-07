@@ -74,88 +74,79 @@ final dashboardStateProvider =
       ));
     });
 
-final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, void>(
-  () => DashboardNotifier(),
-);
+void checkAssemblerMainQuest(
+  AssemblerMainQuest assemblerMainQuest,
+  bool newValue,
+) {
+  final updatedSubTasks = assemblerMainQuest.subTasks
+      .map((subTask) => SubTask(name: subTask.name, completed: newValue))
+      .toList();
 
-class DashboardNotifier extends Notifier<void> {
-  @override
-  void build() {}
+  final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
+    subTasks: updatedSubTasks,
+  );
 
-  void checkAssemblerMainQuest(
-    AssemblerMainQuest assemblerMainQuest,
-    bool newValue,
-  ) {
-    final updatedSubTasks = assemblerMainQuest.subTasks
-        .map((subTask) => SubTask(name: subTask.name, completed: newValue))
-        .toList();
+  IsarDataStore.updateAssemblerMainQuest(
+    assemblerMainQuest.id,
+    updatedAssemblerMainQuest,
+  );
+}
 
-    final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
-      subTasks: updatedSubTasks,
-    );
+void checkSubTask(
+  AssemblerMainQuest assemblerMainQuest,
+  SubTask subTask,
+  bool newValue,
+) {
+  final subTaskIndex = assemblerMainQuest.subTasks.indexWhere(
+    (st) => st == subTask,
+  );
+  if (subTaskIndex == -1) return;
 
-    IsarDataStore.updateAssemblerMainQuest(
-      assemblerMainQuest.id,
-      updatedAssemblerMainQuest,
-    );
+  final updatedSubTasks = List<SubTask>.from(assemblerMainQuest.subTasks);
+  updatedSubTasks[subTaskIndex] = SubTask(
+    name: subTask.name,
+    completed: newValue,
+  );
+
+  bool? completed;
+  if (newValue) {
+    if (updatedSubTasks.every((st) => st.completed)) {
+      completed = true;
+    }
   }
 
-  void checkSubTask(
-    AssemblerMainQuest assemblerMainQuest,
-    SubTask subTask,
-    bool newValue,
-  ) {
-    final subTaskIndex = assemblerMainQuest.subTasks.indexWhere(
-      (st) => st == subTask,
-    );
-    if (subTaskIndex == -1) return;
+  final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
+    subTasks: updatedSubTasks,
+    completed: completed,
+  );
 
-    final updatedSubTasks = List<SubTask>.from(assemblerMainQuest.subTasks);
-    updatedSubTasks[subTaskIndex] = SubTask(
-      name: subTask.name,
-      completed: newValue,
-    );
+  IsarDataStore.updateAssemblerMainQuest(
+    assemblerMainQuest.id,
+    updatedAssemblerMainQuest,
+  );
+}
 
-    bool? completed;
-    if (newValue) {
-      if (updatedSubTasks.every((st) => st.completed)) {
-        completed = true;
-      }
-    }
+void checkSideQuest(
+  SideQuest sideQuest,
+  bool newValue,
+  List<AssemblerSideQuest> assemblerSideQuests,
+) {
+  final existingSideQuest = assemblerSideQuests.firstWhereOrNull(
+    (assemblerSideQuest) => assemblerSideQuest.sideQuestId == sideQuest.id,
+  );
 
-    final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
-      subTasks: updatedSubTasks,
-      completed: completed,
-    );
-
-    IsarDataStore.updateAssemblerMainQuest(
-      assemblerMainQuest.id,
-      updatedAssemblerMainQuest,
-    );
+  if (existingSideQuest != null && !newValue) {
+    IsarDataStore.deleteAssemblerSideQuest(existingSideQuest);
+    return;
   }
 
-  void checkSideQuest(
-    SideQuest sideQuest,
-    bool newValue,
-    List<AssemblerSideQuest> assemblerSideQuests,
-  ) {
-    final existingSideQuest = assemblerSideQuests.firstWhereOrNull(
-      (assemblerSideQuest) => assemblerSideQuest.sideQuestId == sideQuest.id,
+  if (existingSideQuest == null && newValue) {
+    final assemblerSideQuest = AssemblerSideQuest.from(
+      sideQuest,
+      DateTime.now(),
     );
 
-    if (existingSideQuest != null && !newValue) {
-      IsarDataStore.deleteAssemblerSideQuest(existingSideQuest);
-      return;
-    }
-
-    if (existingSideQuest == null && newValue) {
-      final assemblerSideQuest = AssemblerSideQuest.from(
-        sideQuest,
-        DateTime.now(),
-      );
-
-      IsarDataStore.addAssemblerSideQuest(assemblerSideQuest);
-      return;
-    }
+    IsarDataStore.addAssemblerSideQuest(assemblerSideQuest);
+    return;
   }
 }

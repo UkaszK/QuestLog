@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
-import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/providers/assembler_providers.dart';
@@ -11,6 +10,7 @@ import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/active_t
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
 import 'package:questlog/widgets/assembler_screen/assembler_title.dart';
 import 'package:questlog/widgets/assembler_screen/day_picker.dart';
+import 'package:questlog/widgets/quest_log_loading_screen.dart';
 
 class AssemblerScreen extends ConsumerStatefulWidget {
   const AssemblerScreen({super.key});
@@ -43,6 +43,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
   }
 
   Future<void> _showDeleteJustAssembledQuestDialog(
+    void Function(MainQuest) onDelete,
     AssembledQuestResult result,
   ) async {
     final bool? shouldDelete = await showDialog<bool>(
@@ -89,20 +90,22 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
     );
 
     if (shouldDelete == true) {
-      IsarDataStore.deleteMainQuest(result.sourceMainQuest);
+      onDelete(result.sourceMainQuest);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final notifier = ref.read(assemblerNotifierProvider.notifier);
-    final viewState = ref.watch(assemblerNotifierProvider);
-    final assemblerStateAsync = ref.watch(assemblerStateProvider(_selectedDay));
+    final notifier = ref.read(assemblerViewStateNotifierProvider.notifier);
+    final assemblerViewState = ref.watch(assemblerViewStateNotifierProvider);
+    final assemblerDataStateAsync = ref.watch(
+      assemblerDataStateProvider(_selectedDay),
+    );
 
     final DateTime baseDate = DateUtils.dateOnly(_selectedDay);
-    final TimeSlot? selectedTimeSlot = viewState.selectedTimeSlot;
-    final AssemblerMainQuest? editingQuest = viewState.editingQuest;
-    final MainQuest? assembledMainQuest = viewState.assembledMainQuest;
+    final TimeSlot? selectedTimeSlot = assemblerViewState.selectedTimeSlot;
+    final AssemblerMainQuest? editingQuest = assemblerViewState.editingQuest;
+    final MainQuest? assembledMainQuest = assemblerViewState.assembledMainQuest;
     final bool hasTimeSlot = selectedTimeSlot != null;
     final bool hasAssembledQuest =
         assembledMainQuest != null || editingQuest != null;
@@ -111,7 +114,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
 
     final isPastDay = _isPastDay(_selectedDay);
 
-    return assemblerStateAsync.when(
+    return assemblerDataStateAsync.when(
       data: (state) {
         final hasOverlap = _hasOverlap(
           state.selectedDayQuests,
@@ -195,7 +198,10 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
                               final result = notifier
                                   .handleCreateAssemblerQuest();
                               if (result != null) {
-                                _showDeleteJustAssembledQuestDialog(result);
+                                _showDeleteJustAssembledQuestDialog(
+                                  notifier.handleDeleteSourceMainQuest,
+                                  result,
+                                );
                               }
                             },
                             onClearQuest: notifier.handleQuestCleared,
@@ -214,8 +220,8 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
           ),
         );
       },
-      error: (_, _) => CircularProgressIndicator(color: QuestLogColors.accent),
-      loading: () => CircularProgressIndicator(color: QuestLogColors.accent),
+      error: (_, _) => QuestLogLoadingScreen(),
+      loading: () => QuestLogLoadingScreen(),
     );
   }
 }

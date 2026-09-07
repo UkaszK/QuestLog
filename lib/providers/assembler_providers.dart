@@ -7,7 +7,7 @@ import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/providers/quest_providers.dart';
 
-typedef AssemblerState = ({
+typedef AssemblerDataState = ({
   List<AssemblerMainQuest> selectedDayQuests,
   Map<QuestCategory, List<MainQuest>> mainQuestsByCategory,
 });
@@ -24,8 +24,8 @@ typedef AssembledQuestResult = ({
   MainQuest sourceMainQuest,
 });
 
-final assemblerStateProvider =
-    Provider.family<AsyncValue<AssemblerState>, DateTime>((ref, date) {
+final assemblerDataStateProvider =
+    Provider.family<AsyncValue<AssemblerDataState>, DateTime>((ref, date) {
       final selectedDayQuestsAsync = ref.watch(
         assemblerMainQuestsForDayProvider(date),
       );
@@ -58,12 +58,12 @@ final assemblerStateProvider =
       ));
     });
 
-final assemblerNotifierProvider =
-    NotifierProvider<AssemblerNotifier, AssemblerViewState>(
-      () => AssemblerNotifier(),
+final assemblerViewStateNotifierProvider =
+    NotifierProvider<AssemblerViewStateNotifier, AssemblerViewState>(
+      () => AssemblerViewStateNotifier(),
     );
 
-class AssemblerNotifier extends Notifier<AssemblerViewState> {
+class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
   @override
   AssemblerViewState build() =>
       (selectedTimeSlot: null, assembledMainQuest: null, editingQuest: null);
@@ -158,5 +158,9 @@ class AssemblerNotifier extends Notifier<AssemblerViewState> {
 
     IsarDataStore.deleteAssemblerMainQuest(editingQuest);
     resetTimeSlot();
+  }
+
+  void handleDeleteSourceMainQuest(MainQuest mainQuest) {
+    IsarDataStore.deleteMainQuest(mainQuest);
   }
 }
