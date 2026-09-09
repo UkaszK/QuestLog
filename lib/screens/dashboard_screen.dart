@@ -20,15 +20,18 @@ class DashboardScreen extends ConsumerWidget {
         return SingleChildScrollView(
           padding: EdgeInsets.only(top: 16, right: 16, left: 16, bottom: 150),
           child: Column(
-            spacing: 25,
             children: [
               DashboardDailyProgress(progress: state.progress),
+
+              const SizedBox(height: 25),
 
               AssemblerMainQuests(
                 assemblerMainQuests: state.assemblerMainQuests,
                 onCheckAssemblerMainQuest: controller.checkAssemblerMainQuest,
                 onCheckSubTask: controller.checkSubTask,
               ),
+
+              const SizedBox(height: 25),
 
               SideQuests(
                 sideQuests: state.sideQuests,

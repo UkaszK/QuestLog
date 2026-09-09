@@ -6,6 +6,7 @@ import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/get_time_text.dart';
 import 'package:questlog/widgets/dashboard_screen/scheduled_main_quests/assembler_main_quest_block.dart';
+import 'package:questlog/widgets/reusables/quest_log_section_header.dart';
 
 class AssemblerMainQuests extends StatefulWidget {
   const AssemblerMainQuests({
@@ -25,34 +26,17 @@ class AssemblerMainQuests extends StatefulWidget {
 
 class _AssemblerMainQuestsState extends State<AssemblerMainQuests> {
   Widget _buildHeader(String? timelineText) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.access_time, color: QuestLogColors.accent, size: 14),
-
-            const SizedBox(width: 10),
-
-            Text(
-              'SCHEDULED MAIN QUESTS',
-              style: GoogleFonts.jetBrainsMono(
-                color: QuestLogColors.textPrimary,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+    return QuestLogSectionHeader(
+      title: 'SCHEDULED MAIN QUESTS',
+      icon: Icons.access_time,
+      iconColor: QuestLogColors.accent,
+      rightSide: Text(
+        'TIMELINE (${timelineText ?? '-'})',
+        style: GoogleFonts.jetBrainsMono(
+          color: QuestLogColors.textSecondary,
+          fontSize: 10,
         ),
-
-        Text(
-          'TIMELINE (${timelineText ?? '-'})',
-          style: GoogleFonts.jetBrainsMono(
-            color: QuestLogColors.textSecondary,
-            fontSize: 10,
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -133,11 +117,10 @@ class _AssemblerMainQuestsState extends State<AssemblerMainQuests> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 10,
       children: [
         _buildHeader(timelineText),
 
-        Divider(height: 1),
+        const SizedBox(height: 10),
 
         if (widget.assemblerMainQuests.isNotEmpty) ...[
           for (final assemblerQuest in widget.assemblerMainQuests)

@@ -1,12 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/data/main_quest.dart';
+import 'package:questlog/data/quest_categories.dart';
+import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/providers/main_quest_providers.dart';
 import 'package:questlog/providers/side_quest_providers.dart';
 
 typedef BacklogState = ({
-  List<MainQuest> mainQuests,
-  List<SideQuest> sideQuests,
+  Map<QuestCategory, (List<MainQuest>, List<SideQuest>)> questsByCategory,
 });
 
 final backlogStateProvider = Provider<AsyncValue<BacklogState>>((ref) {
@@ -27,5 +28,17 @@ final backlogStateProvider = Provider<AsyncValue<BacklogState>>((ref) {
   final mainQuests = mainQuestsAsync.requireValue;
   final sideQuests = sideQuestsAsync.requireValue;
 
-  return AsyncValue.data((mainQuests: mainQuests, sideQuests: sideQuests));
+  return AsyncValue.data((
+    questsByCategory: {
+      for (final category in questCategories)
+        category: (
+          mainQuests
+              .where((quest) => quest.questCategoryName == category.name)
+              .toList(),
+          sideQuests
+              .where((quest) => quest.questCategoryName == category.name)
+              .toList(),
+        ),
+    },
+  ));
 });

@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
-class SideQuestBlock extends StatelessWidget {
-  const SideQuestBlock({
+class AssemblerSideQuestBlock extends StatelessWidget {
+  const AssemblerSideQuestBlock({
     super.key,
     required this.sideQuest,
     required this.completed,

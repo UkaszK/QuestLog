@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
-class MainQuestBlock extends StatelessWidget {
-  const MainQuestBlock({
+class AssemblerMainQuestBlock extends StatelessWidget {
+  const AssemblerMainQuestBlock({
     super.key,
     required this.mainQuest,
     required this.onAssemble,

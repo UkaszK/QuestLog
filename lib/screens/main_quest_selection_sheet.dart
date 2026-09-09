@@ -125,7 +125,7 @@ class _MainQuestSelectionSheetState
                     spacing: 16,
                     children: [
                       for (final mainQuest in mainQuests)
-                        MainQuestBlock(
+                        AssemblerMainQuestBlock(
                           mainQuest: mainQuest,
                           onAssemble: widget.onAssemble,
                         ),
