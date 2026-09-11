@@ -660,25 +660,6 @@ class _BacklogEmptyNoteState extends State<_BacklogEmptyNote>
 
   @override
   Widget build(BuildContext context) {
-    final questBlockConfigs = [
-      (
-        title: 'MAIN QUESTS',
-        description:
-            'Strategic quests with sub-tasks, priority tiers, and completion dates.',
-        icon: Icons.flag_outlined,
-        primaryColor: QuestLogColors.accent,
-        secondaryColor: QuestLogColors.accentLessOpacity,
-      ),
-      (
-        title: 'SIDE QUESTS',
-        description:
-            'Recurring daily routines, weekday cycles, or standalone habits.',
-        icon: Icons.repeat_outlined,
-        primaryColor: QuestLogColors.otherAccent,
-        secondaryColor: QuestLogColors.otherAccentLessOpacity,
-      ),
-    ];
-
     return Stack(
       alignment: AlignmentGeometry.center,
       children: [
