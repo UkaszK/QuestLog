@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/side_quest.dart';
+import 'package:questlog/providers/assembler_providers.dart';
 import 'package:questlog/providers/backlog_providers.dart';
+import 'package:questlog/providers/navigation_bar_providers.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/quest_log_loading_screen.dart';
 import 'package:questlog/widgets/reusables/quest_log_badge.dart';
@@ -136,6 +138,10 @@ class BacklogScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final backlogScreenAsync = ref.watch(backlogStateProvider);
     final notifier = ref.read(backlogControllerProvider.notifier);
+    final navigationNotifier = ref.read(navigationProvider.notifier);
+    final assemblerNotifier = ref.read(
+      assemblerViewStateNotifierProvider.notifier,
+    );
 
     return backlogScreenAsync.when(
       data: (state) {
@@ -182,6 +188,12 @@ class BacklogScreen extends ConsumerWidget {
                         ),
                         onClickEdit: () {},
                         onUpdate: () => notifier.updateMainQuest(mainQuest),
+                        onAssemble: () {
+                          assemblerNotifier.handleAddMainQuestToAssemble(
+                            mainQuest,
+                          );
+                          navigationNotifier.setIndex(1);
+                        },
                       ),
                     ],
 
@@ -265,12 +277,14 @@ class _MainQuestBlock extends StatelessWidget {
     required this.onArchive,
     required this.onClickEdit,
     required this.onUpdate,
+    required this.onAssemble,
   });
 
   final MainQuest mainQuest;
   final VoidCallback onArchive;
   final VoidCallback onClickEdit;
   final VoidCallback onUpdate;
+  final VoidCallback onAssemble;
 
   @override
   Widget build(BuildContext context) {
@@ -407,7 +421,7 @@ class _MainQuestBlock extends StatelessWidget {
 
               QuestLogButton(
                 primaryColor: QuestLogColors.accent,
-                onPress: () {},
+                onPress: onAssemble,
                 label: 'ASSEMBLE',
                 fontSize: 10,
                 prefixIcon: Icons.bolt_outlined,

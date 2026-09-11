@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/isar_data_store.dart';
@@ -91,9 +92,15 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
     );
   }
 
-  void handleMainQuestAssembled(MainQuest mainQuest) {
+  void handleAddMainQuestToAssemble(MainQuest mainQuest) {
+    final today = DateUtils.dateOnly(DateTime.now());
+    final defaultTimeSlot = (
+      startTime: today,
+      endTime: today.add(const Duration(hours: 2)),
+    );
+
     state = (
-      selectedTimeSlot: state.selectedTimeSlot,
+      selectedTimeSlot: state.selectedTimeSlot ?? defaultTimeSlot,
       assembledMainQuest: mainQuest,
       editingQuest: state.editingQuest,
     );
@@ -149,9 +156,5 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
 
     IsarDataStore.deleteAssemblerMainQuest(editingQuest);
     resetTimeSlot();
-  }
-
-  void handleDeleteSourceMainQuest(MainQuest mainQuest) {
-    IsarDataStore.archiveMainQuest(mainQuest);
   }
 }

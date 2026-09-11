@@ -62,6 +62,7 @@ class DashboardController extends Notifier<void> {
 
     final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
       subTasks: updatedSubTasks,
+      completed: newValue,
     );
 
     IsarDataStore.updateAssemblerMainQuest(

@@ -11,7 +11,6 @@ class ActiveTimeSlotBar extends StatefulWidget {
     super.key,
     required this.timeSlot,
     required this.onReset,
-    required this.hasAssembledQuest,
     required this.onQuestAssembled,
     required this.assembledQuestName,
     required this.onSave,
@@ -20,11 +19,11 @@ class ActiveTimeSlotBar extends StatefulWidget {
     required this.isEditingExistingQuest,
     required this.onDelete,
     required this.onUpdateTimeSlot,
+    required this.onClickAddQuest,
   });
 
   final TimeSlot timeSlot;
   final VoidCallback onReset;
-  final bool hasAssembledQuest;
   final void Function(MainQuest) onQuestAssembled;
   final String assembledQuestName;
   final VoidCallback onSave;
@@ -33,6 +32,7 @@ class ActiveTimeSlotBar extends StatefulWidget {
   final bool isEditingExistingQuest;
   final VoidCallback onDelete;
   final void Function(TimeSlot) onUpdateTimeSlot;
+  final VoidCallback onClickAddQuest;
 
   @override
   State<ActiveTimeSlotBar> createState() => _ActiveTimeSlotBarState();
@@ -302,7 +302,7 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
 
             const SizedBox(height: 8),
 
-            if (widget.hasAssembledQuest) ...[
+            if (widget.assembledQuestName.isNotEmpty) ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -405,15 +405,7 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
                     foregroundColor: QuestLogColors.accent,
                     side: const BorderSide(color: QuestLogColors.accent),
                   ),
-                  onPressed: () {
-                    late final PersistentBottomSheetController controller;
-                    controller = showBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return const SizedBox.shrink();
-                      },
-                    );
-                  },
+                  onPressed: widget.onClickAddQuest,
                 ),
               ),
           ],
