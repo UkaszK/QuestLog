@@ -18,12 +18,6 @@ typedef AssemblerViewState = ({
   AssemblerMainQuest? editingQuest,
 });
 
-// Result of successfully creating an AssemblerMainQuest from a backlog MainQuest.
-typedef AssembledQuestResult = ({
-  AssemblerMainQuest assemblerQuest,
-  MainQuest sourceMainQuest,
-});
-
 final assemblerDataStateProvider =
     Provider.family<AsyncValue<AssemblerDataState>, DateTime>((ref, date) {
       final selectedDayQuestsAsync = ref.watch(
@@ -113,7 +107,7 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
     );
   }
 
-  AssembledQuestResult? handleCreateAssemblerQuest() {
+  MainQuest? handleCreateAssemblerQuest() {
     final selectedTimeSlot = state.selectedTimeSlot;
     final assembledMainQuest = state.assembledMainQuest;
     if (selectedTimeSlot == null || assembledMainQuest == null) return null;
@@ -132,10 +126,7 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
     IsarDataStore.addAssemblerMainQuest(newAssemblerQuest);
     resetTimeSlot();
 
-    return (
-      assemblerQuest: newAssemblerQuest,
-      sourceMainQuest: assembledMainQuest,
-    );
+    return assembledMainQuest;
   }
 
   void handleUpdateAssemblerQuest() {
@@ -161,6 +152,6 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
   }
 
   void handleDeleteSourceMainQuest(MainQuest mainQuest) {
-    IsarDataStore.deleteMainQuest(mainQuest);
+    IsarDataStore.archiveMainQuest(mainQuest);
   }
 }

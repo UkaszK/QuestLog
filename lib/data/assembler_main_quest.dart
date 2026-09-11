@@ -3,7 +3,7 @@ import 'package:questlog/data/quest_status.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/utils/get_time_text.dart';
 
-part 'assembler_quest.g.dart';
+part 'assembler_main_quest.g.dart';
 
 // Scheduled execution of a MainQuest for a specific time slot; not a template.
 @collection

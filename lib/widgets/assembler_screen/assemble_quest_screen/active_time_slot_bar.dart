@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
-import 'package:questlog/screens/main_quest_selection_sheet.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/DateTime/to_hhmm.dart';
 
@@ -410,12 +409,9 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
                     late final PersistentBottomSheetController controller;
                     controller = showBottomSheet(
                       context: context,
-                      builder: (context) => MainQuestSelectionSheet(
-                        onAssemble: (mainQuest) {
-                          widget.onQuestAssembled(mainQuest);
-                          controller.close();
-                        },
-                      ),
+                      builder: (context) {
+                        return const SizedBox.shrink();
+                      },
                     );
                   },
                 ),

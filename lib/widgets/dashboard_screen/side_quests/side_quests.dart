@@ -40,10 +40,8 @@ class _SideQuestsState extends State<SideQuests> {
         selected: {_showTodayOnly},
         showSelectedIcon: false,
         style: ButtonStyle(
-          shape: const WidgetStatePropertyAll(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(3)),
-            ),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
           ),
           visualDensity: VisualDensity(
             horizontal: VisualDensity.minimumDensity,

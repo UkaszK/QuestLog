@@ -16,7 +16,8 @@ class QuestLogColors {
   static const Color black = Colors.black;
   static const Color background = Color(0xFF141218);
   static const Color border = Color.fromARGB(255, 53, 53, 52);
-  static const Color surface = Color.fromARGB(255, 28, 27, 27);
+  static const Color surface = Color.fromARGB(255, 29, 28, 28);
+  static const Color surfaceOnSurface = Color.fromARGB(255, 63, 53, 52);
   // static const Color error = Color(0xFFB00020);
 
   // Text colors
@@ -26,7 +27,7 @@ class QuestLogColors {
 
   // Status colors
   static const Color success = Color.fromARGB(255, 165, 214, 167);
-  static const Color warning = Color.fromARGB(255, 244, 183, 174);
+  static const Color warning = Color.fromARGB(255, 233, 175, 166);
   static const Color danger = Colors.red;
   static const Color info = Color.fromARGB(255, 173, 216, 230);
 }

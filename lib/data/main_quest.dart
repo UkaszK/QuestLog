@@ -15,7 +15,26 @@ class MainQuest implements Comparable<MainQuest> {
     this.dueDate,
     required this.priority,
     required this.subTasks,
+    this.archived = false,
   });
+
+  MainQuest copyWith({
+    String? questCategoryName,
+    String? name,
+    DateTime? dueDate,
+    QuestPriority? priority,
+    List<String>? subTasks,
+    bool? archived,
+  }) {
+    return MainQuest(
+      questCategoryName: questCategoryName ?? this.questCategoryName,
+      name: name ?? this.name,
+      dueDate: dueDate ?? this.dueDate,
+      priority: priority ?? this.priority,
+      subTasks: subTasks ?? this.subTasks,
+      archived: archived ?? this.archived,
+    );
+  }
 
   Id id = Isar.autoIncrement;
 
@@ -25,6 +44,7 @@ class MainQuest implements Comparable<MainQuest> {
   @enumerated
   final QuestPriority priority;
   final List<String> subTasks;
+  final bool archived;
 
   @ignore
   QuestCategory get questCategory =>

@@ -44,7 +44,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
 
   Future<void> _showDeleteJustAssembledQuestDialog(
     void Function(MainQuest) onDelete,
-    AssembledQuestResult result,
+    MainQuest sourceMainQuest,
   ) async {
     final bool? shouldDelete = await showDialog<bool>(
       context: context,
@@ -58,7 +58,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
           ),
         ),
         content: Text(
-          'Do you want to delete "${result.assemblerQuest.name}" from your Main Quest backlog?',
+          'Do you want to delete "${sourceMainQuest.name}" from your Main Quest backlog?',
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textSecondary,
             fontSize: 12,
@@ -90,7 +90,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
     );
 
     if (shouldDelete == true) {
-      onDelete(result.sourceMainQuest);
+      onDelete(sourceMainQuest);
     }
   }
 

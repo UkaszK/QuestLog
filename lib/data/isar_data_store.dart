@@ -21,33 +21,51 @@ class IsarDataStore {
   }
 
   // MainQuest
-  static List<MainQuest> getAllMainQuests() =>
+  static List<MainQuest> getAllMainQuestsIncludingArchived() =>
       instance.mainQuests.where().findAllSync();
 
-  static Stream<List<MainQuest>> watchAllMainQuests() =>
-      instance.mainQuests.where().watch(fireImmediately: true);
+  static Stream<List<MainQuest>> watchAllMainQuests() => instance.mainQuests
+      .filter()
+      .archivedEqualTo(false)
+      .watch(fireImmediately: true);
 
   static void addMainQuest(MainQuest mainQuest) {
     instance.writeTxnSync(() => instance.mainQuests.putSync(mainQuest));
   }
 
-  static void deleteMainQuest(MainQuest mainQuest) {
-    instance.writeTxnSync(() => instance.mainQuests.deleteSync(mainQuest.id));
+  static void archiveMainQuest(MainQuest mainQuest) {
+    final archivedMainQuest = mainQuest.copyWith(archived: true)
+      ..id = mainQuest.id;
+    instance.writeTxnSync(() => instance.mainQuests.putSync(archivedMainQuest));
+  }
+
+  static void updateMainQuest(int id, MainQuest mainQuest) {
+    mainQuest.id = id;
+    instance.writeTxnSync(() => instance.mainQuests.putSync(mainQuest));
   }
 
   // SideQuest
-  static List<SideQuest> getAllSideQuests() =>
+  static List<SideQuest> getAllSideQuestsIncludingArchived() =>
       instance.sideQuests.where().findAllSync();
 
-  static Stream<List<SideQuest>> watchAllSideQuests() =>
-      instance.sideQuests.where().watch(fireImmediately: true);
+  static Stream<List<SideQuest>> watchAllSideQuests() => instance.sideQuests
+      .filter()
+      .archivedEqualTo(false)
+      .watch(fireImmediately: true);
 
   static void addSideQuest(SideQuest sideQuest) {
     instance.writeTxnSync(() => instance.sideQuests.putSync(sideQuest));
   }
 
-  static void deleteSideQuest(SideQuest sideQuest) {
-    instance.writeTxnSync(() => instance.sideQuests.deleteSync(sideQuest.id));
+  static void archiveSideQuest(SideQuest sideQuest) {
+    final archivedSideQuest = sideQuest.copyWith(archived: true)
+      ..id = sideQuest.id;
+    instance.writeTxnSync(() => instance.sideQuests.putSync(archivedSideQuest));
+  }
+
+  static void updateSideQuest(int id, SideQuest sideQuest) {
+    sideQuest.id = id;
+    instance.writeTxnSync(() => instance.sideQuests.putSync(sideQuest));
   }
 
   // AssemblerMainQuest

@@ -6,16 +6,221 @@ import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/providers/backlog_providers.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/backlog_screen/backlog_empty_note.dart';
 import 'package:questlog/widgets/quest_log_loading_screen.dart';
 import 'package:questlog/widgets/reusables/quest_log_badge.dart';
+import 'package:questlog/widgets/reusables/quest_log_button.dart';
 import 'package:questlog/widgets/reusables/quest_log_screen_container.dart';
 import 'package:questlog/widgets/reusables/quest_log_section_header.dart';
 
 class BacklogScreen extends ConsumerWidget {
   const BacklogScreen({super.key});
 
-  Widget _buildHeader(String label, int? questCount) {
+  Future<void> _dialogBuilder(
+    BuildContext context,
+    Object quest,
+    VoidCallback onDelete,
+  ) async {
+    String name;
+    if (quest is! MainQuest && quest is! SideQuest) return;
+    if (quest is MainQuest) {
+      name = quest.name;
+    } else if (quest is SideQuest) {
+      name = quest.name;
+    } else {
+      name = '';
+    }
+
+    final bool? shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 12),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: QuestLogColors.surface,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: QuestLogColors.warning, width: 0.67),
+              boxShadow: [
+                BoxShadow(
+                  color: QuestLogColors.warning.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  spreadRadius: 1,
+                  offset: Offset.zero,
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'CONFIRM // ARCHIVE QUEST',
+                    style: GoogleFonts.jetBrainsMono(
+                      color: QuestLogColors.warning,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Text.rich(
+                    TextSpan(
+                      text: 'Are you sure you want to archive ',
+                      children: [
+                        TextSpan(
+                          text: '"$name"',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const TextSpan(
+                          text:
+                              '? The Quest will no longer be available for use. This action cannot be undone.',
+                        ),
+                      ],
+                    ),
+                    style: TextStyle(
+                      color: QuestLogColors.textPrimary,
+                      fontSize: 14,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  const Divider(height: 1),
+
+                  const SizedBox(height: 16),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      QuestLogButton(
+                        primaryColor: QuestLogColors.textSecondary,
+                        onPress: () => Navigator.pop(context, false),
+                        label: 'CANCEL',
+                        borderColor: QuestLogColors.border,
+                        backgroundColor: QuestLogColors.surface,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+
+                      const SizedBox(width: 8),
+
+                      QuestLogButton(
+                        primaryColor: QuestLogColors.warning,
+                        backgroundColor: QuestLogColors.surfaceOnSurface,
+                        onPress: () => Navigator.pop(context, true),
+                        prefixIcon: Icons.archive_outlined,
+                        label: 'ARCHIVE QUEST',
+                        glow: true,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (shouldDelete ?? false) {
+      onDelete();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final backlogScreenAsync = ref.watch(backlogStateProvider);
+    final notifier = ref.read(backlogControllerProvider.notifier);
+
+    return backlogScreenAsync.when(
+      data: (state) {
+        final sortedCategories = state.questsByCategory.keys.toList()
+          ..sort((a, b) {
+            final aQuests = state.questsByCategory[a]!;
+            final bQuests = state.questsByCategory[b]!;
+            final aCount = aQuests.$1.length + aQuests.$2.length;
+            final bCount = bQuests.$1.length + bQuests.$2.length;
+
+            return bCount.compareTo(aCount);
+          });
+        final categoryCounts = <dynamic, int>{
+          for (final category in sortedCategories)
+            category:
+                state.questsByCategory[category]!.$1.length +
+                state.questsByCategory[category]!.$2.length,
+        };
+
+        if (sortedCategories.isEmpty) {
+          return _BacklogEmptyNote();
+        } else {
+          return QuestLogScreenContainer(
+            children: [
+              for (final category in sortedCategories) ...[
+                _Header(
+                  label: category.name,
+                  questCount: categoryCounts[category],
+                ),
+
+                const SizedBox(height: 10),
+
+                Column(
+                  spacing: 10,
+                  children: [
+                    for (final mainQuest
+                        in state.questsByCategory[category]!.$1) ...[
+                      _MainQuestBlock(
+                        mainQuest: mainQuest,
+                        onArchive: () => _dialogBuilder(
+                          context,
+                          mainQuest,
+                          () => notifier.archiveMainQuest(mainQuest),
+                        ),
+                        onClickEdit: () {},
+                        onUpdate: () => notifier.updateMainQuest(mainQuest),
+                      ),
+                    ],
+
+                    for (final sideQuest
+                        in state.questsByCategory[category]!.$2) ...[
+                      _SideQuestBlock(
+                        sideQuest: sideQuest,
+                        onArchive: () => _dialogBuilder(
+                          context,
+                          sideQuest,
+                          () => notifier.archiveSideQuest(sideQuest),
+                        ),
+                        onClickEdit: () {},
+                        onUpdate: () => notifier.updateSideQuest(sideQuest),
+                      ),
+                    ],
+                  ],
+                ),
+
+                const SizedBox(height: 32),
+              ],
+            ],
+          );
+        }
+      },
+      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
+      loading: () => QuestLogLoadingScreen(),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.label, this.questCount});
+
+  final String label;
+  final int? questCount;
+
+  @override
+  Widget build(BuildContext context) {
     return QuestLogSectionHeader(
       title: label.toUpperCase(),
 
@@ -27,9 +232,49 @@ class BacklogScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildMainQuestBlock(MainQuest mainQuest) {
-    return _questContainer(
+class _QuestContainer extends StatelessWidget {
+  const _QuestContainer({required this.color, required this.child});
+
+  final Color color;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: QuestLogColors.surface,
+        border: Border(
+          top: BorderSide(color: color, width: 0.5),
+          right: BorderSide(color: color, width: 0.5),
+          bottom: BorderSide(color: color, width: 0.5),
+          left: BorderSide(color: color, width: 5),
+        ),
+      ),
+      child: child,
+    );
+  }
+}
+
+class _MainQuestBlock extends StatelessWidget {
+  const _MainQuestBlock({
+    required this.mainQuest,
+    required this.onArchive,
+    required this.onClickEdit,
+    required this.onUpdate,
+  });
+
+  final MainQuest mainQuest;
+  final VoidCallback onArchive;
+  final VoidCallback onClickEdit;
+  final VoidCallback onUpdate;
+
+  @override
+  Widget build(BuildContext context) {
+    return _QuestContainer(
       color: QuestLogColors.accent,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,7 +336,11 @@ class BacklogScreen extends ConsumerWidget {
 
             Container(
               padding: EdgeInsets.all(10),
-              color: QuestLogColors.black,
+              decoration: BoxDecoration(
+                color: QuestLogColors.black,
+                border: Border.all(color: QuestLogColors.border, width: 0.5),
+                borderRadius: BorderRadius.circular(2),
+              ),
               child: Column(
                 children: [
                   Row(
@@ -122,10 +371,10 @@ class BacklogScreen extends ConsumerWidget {
                         Icon(
                           Icons.circle,
                           color: QuestLogColors.accent,
-                          size: 14,
+                          size: 5,
                         ),
 
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 10),
 
                         Text(
                           subTask,
@@ -151,44 +400,18 @@ class BacklogScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildFooterActionsButtons(() {}, () {}),
+              _QuestBlockFooterActions(
+                onArchive: onArchive,
+                onEdit: onClickEdit,
+              ),
 
-              Material(
-                child: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: QuestLogColors.accentLessOpacity,
-                      borderRadius: BorderRadius.all(Radius.circular(3)),
-                      border: Border.all(color: QuestLogColors.accent),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.bolt_outlined,
-                          color: QuestLogColors.accent,
-                          size: 14,
-                        ),
-
-                        const SizedBox(width: 5),
-
-                        Text(
-                          'ASSEMBLE',
-                          style: GoogleFonts.jetBrainsMono(
-                            color: QuestLogColors.accent,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              QuestLogButton(
+                primaryColor: QuestLogColors.accent,
+                onPress: () {},
+                label: 'ASSEMBLE',
+                fontSize: 10,
+                prefixIcon: Icons.bolt_outlined,
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
               ),
             ],
           ),
@@ -196,9 +419,24 @@ class BacklogScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildSideQuestBlock(SideQuest sideQuest) {
-    return _questContainer(
+class _SideQuestBlock extends StatelessWidget {
+  const _SideQuestBlock({
+    required this.sideQuest,
+    required this.onArchive,
+    required this.onClickEdit,
+    required this.onUpdate,
+  });
+
+  final SideQuest sideQuest;
+  final VoidCallback onArchive;
+  final VoidCallback onClickEdit;
+  final VoidCallback onUpdate;
+
+  @override
+  Widget build(BuildContext context) {
+    return _QuestContainer(
       color: QuestLogColors.otherAccent,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,7 +482,11 @@ class BacklogScreen extends ConsumerWidget {
 
           Container(
             padding: EdgeInsets.all(10),
-            color: QuestLogColors.black,
+            decoration: BoxDecoration(
+              color: QuestLogColors.black,
+              border: Border.all(color: QuestLogColors.border, width: 0.5),
+              borderRadius: BorderRadius.circular(2),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -323,33 +565,24 @@ class BacklogScreen extends ConsumerWidget {
 
           const SizedBox(height: 5),
 
-          _buildFooterActionsButtons(() {}, () {}),
+          _QuestBlockFooterActions(onArchive: onArchive, onEdit: onClickEdit),
         ],
       ),
     );
   }
+}
 
-  Container _questContainer({required Color color, required Widget child}) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: QuestLogColors.surface,
-        border: Border(
-          top: BorderSide(color: color, width: 0.5),
-          right: BorderSide(color: color, width: 0.5),
-          bottom: BorderSide(color: color, width: 0.5),
-          left: BorderSide(color: color, width: 5),
-        ),
-      ),
-      child: child,
-    );
-  }
+class _QuestBlockFooterActions extends StatelessWidget {
+  const _QuestBlockFooterActions({
+    required this.onArchive,
+    required this.onEdit,
+  });
 
-  Widget _buildFooterActionsButtons(
-    VoidCallback onTapDelete,
-    VoidCallback onTapEdit,
-  ) {
+  final VoidCallback onArchive;
+  final VoidCallback onEdit;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Material(
@@ -357,7 +590,7 @@ class BacklogScreen extends ConsumerWidget {
           child: InkWell(
             radius: 10,
             customBorder: const CircleBorder(),
-            onTap: onTapEdit,
+            onTap: onEdit,
             child: Container(
               padding: EdgeInsets.all(5),
               child: Icon(
@@ -376,11 +609,11 @@ class BacklogScreen extends ConsumerWidget {
           child: InkWell(
             radius: 10,
             customBorder: const CircleBorder(),
-            onTap: onTapDelete,
+            onTap: onArchive,
             child: Container(
               padding: EdgeInsets.all(5),
               child: Icon(
-                Icons.delete_outline,
+                Icons.archive,
                 size: 16,
                 color: QuestLogColors.textSecondary,
               ),
@@ -390,62 +623,130 @@ class BacklogScreen extends ConsumerWidget {
       ],
     );
   }
+}
+
+class _BacklogEmptyNote extends StatefulWidget {
+  const _BacklogEmptyNote();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final backlogScreenAsync = ref.watch(backlogStateProvider);
+  State<StatefulWidget> createState() => _BacklogEmptyNoteState();
+}
 
-    return backlogScreenAsync.when(
-      data: (state) {
-        final sortedCategories = state.questsByCategory.keys.toList()
-          ..sort((a, b) {
-            final aQuests = state.questsByCategory[a]!;
-            final bQuests = state.questsByCategory[b]!;
-            final aCount = aQuests.$1.length + aQuests.$2.length;
-            final bCount = bQuests.$1.length + bQuests.$2.length;
+class _BacklogEmptyNoteState extends State<_BacklogEmptyNote>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
 
-            return bCount.compareTo(aCount);
-          });
-        final categoryCounts = <dynamic, int>{
-          for (final category in sortedCategories)
-            category:
-                state.questsByCategory[category]!.$1.length +
-                state.questsByCategory[category]!.$2.length,
-        };
+  @override
+  void initState() {
+    super.initState();
 
-        return QuestLogScreenContainer(
-          children: [
-            if (state.questsByCategory.isEmpty)
-              BacklogEmptyNote()
-            else ...[
-              for (final category in sortedCategories) ...[
-                _buildHeader(category.name, categoryCounts[category]),
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
 
-                const SizedBox(height: 10),
+    _animation = Tween<double>(
+      begin: 0,
+      end: 12,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
 
-                Column(
-                  spacing: 10,
-                  children: [
-                    for (final quest
-                        in state.questsByCategory[category]!.$1) ...[
-                      _buildMainQuestBlock(quest),
-                    ],
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
-                    for (final quest
-                        in state.questsByCategory[category]!.$2) ...[
-                      _buildSideQuestBlock(quest),
-                    ],
-                  ],
+  @override
+  Widget build(BuildContext context) {
+    final questBlockConfigs = [
+      (
+        title: 'MAIN QUESTS',
+        description:
+            'Strategic quests with sub-tasks, priority tiers, and completion dates.',
+        icon: Icons.flag_outlined,
+        primaryColor: QuestLogColors.accent,
+        secondaryColor: QuestLogColors.accentLessOpacity,
+      ),
+      (
+        title: 'SIDE QUESTS',
+        description:
+            'Recurring daily routines, weekday cycles, or standalone habits.',
+        icon: Icons.repeat_outlined,
+        primaryColor: QuestLogColors.otherAccent,
+        secondaryColor: QuestLogColors.otherAccentLessOpacity,
+      ),
+    ];
+
+    return Stack(
+      alignment: AlignmentGeometry.center,
+      children: [
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 16,
+            children: [
+              Text(
+                'BACKLOG EMPTY',
+                style: GoogleFonts.jetBrainsMono(
+                  letterSpacing: 3,
+                  color: QuestLogColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              Text(
+                'NO QUESTS DETECTED IN LOCAL SECTOR',
+                style: GoogleFonts.jetBrainsMono(
+                  color: QuestLogColors.textSecondary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 160),
+            ],
+          ),
+        ),
+
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 160,
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(0, _animation.value),
+                child: child,
+              );
+            },
+            child: Column(
+              children: [
+                Text(
+                  'INITIALIZE AN OBJECTIVE',
+                  style: GoogleFonts.jetBrainsMono(
+                    color: QuestLogColors.accent,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                  ),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
+
+                const Icon(
+                  Icons.arrow_downward_rounded,
+                  color: QuestLogColors.accent,
+                  size: 20,
+                ),
               ],
-            ],
-          ],
-        );
-      },
-      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
-      loading: () => QuestLogLoadingScreen(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
