@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/side_quest.dart';
@@ -169,7 +170,7 @@ class BacklogScreen extends ConsumerWidget {
               for (final category in sortedCategories) ...[
                 _Header(
                   label: category.name,
-                  questCount: categoryCounts[category],
+                  questCount: categoryCounts[category] ?? 0,
                 ),
 
                 const SizedBox(height: 10),
@@ -226,22 +227,23 @@ class BacklogScreen extends ConsumerWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.label, this.questCount});
+  const _Header({required this.label, required this.questCount});
 
   final String label;
-  final int? questCount;
+  final int questCount;
 
   @override
   Widget build(BuildContext context) {
     return QuestLogSectionHeader(
       title: label.toUpperCase(),
-
       rightSide: QuestLogBadge(
-        label: '$questCount QUESTS',
+        label:
+            '$questCount ${Intl.plural(questCount, one: 'QUEST', other: 'QUESTS')}',
         primaryColor: QuestLogColors.textSecondary,
         backgroundColor: QuestLogColors.surface,
         borderColor: QuestLogColors.border,
       ),
+      dividerDistance: 4,
     );
   }
 }
@@ -359,10 +361,14 @@ class _MainQuestBlock extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        Icons.checklist,
-                        size: 14,
-                        color: QuestLogColors.accent,
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: Icon(
+                          Icons.checklist,
+                          size: 14,
+                          color: QuestLogColors.accent,
+                        ),
                       ),
 
                       const SizedBox(width: 5),
@@ -377,18 +383,22 @@ class _MainQuestBlock extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
 
                   for (final subTask in mainQuest.subTasks) ...[
                     Row(
                       children: [
-                        Icon(
-                          Icons.circle,
-                          color: QuestLogColors.accent,
-                          size: 5,
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: Icon(
+                            Icons.chevron_right,
+                            color: QuestLogColors.accent,
+                            size: 14,
+                          ),
                         ),
 
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 5),
 
                         Text(
                           subTask,
@@ -680,8 +690,22 @@ class _BacklogEmptyNoteState extends State<_BacklogEmptyNote>
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 16,
             children: [
+              Container(
+                padding: EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: QuestLogColors.border),
+                ),
+                child: Icon(
+                  Icons.radar,
+                  size: 48,
+                  color: QuestLogColors.border,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
               Text(
                 'BACKLOG EMPTY',
                 style: GoogleFonts.jetBrainsMono(
@@ -692,6 +716,8 @@ class _BacklogEmptyNoteState extends State<_BacklogEmptyNote>
                 ),
               ),
 
+              const SizedBox(height: 16),
+
               Text(
                 'NO QUESTS DETECTED IN LOCAL SECTOR',
                 style: GoogleFonts.jetBrainsMono(
@@ -701,7 +727,7 @@ class _BacklogEmptyNoteState extends State<_BacklogEmptyNote>
                 ),
               ),
 
-              const SizedBox(height: 160),
+              const SizedBox(height: 208),
             ],
           ),
         ),
