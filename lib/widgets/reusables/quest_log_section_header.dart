@@ -9,14 +9,14 @@ class QuestLogSectionHeader extends StatelessWidget {
     this.icon,
     this.iconColor,
     this.rightSide,
-    this.dividerDistance = 8,
+    this.dividerOptions = (dividerDistance: 8),
   });
 
   final String title;
   final IconData? icon;
   final Color? iconColor;
   final Widget? rightSide;
-  final double dividerDistance;
+  final ({double? dividerDistance})? dividerOptions;
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +48,11 @@ class QuestLogSectionHeader extends StatelessWidget {
           ],
         ),
 
-        SizedBox(height: dividerDistance),
+        if (dividerOptions != null) ...[
+          SizedBox(height: dividerOptions!.dividerDistance),
 
-        Divider(height: 1),
+          Divider(height: 1),
+        ],
       ],
     );
   }

@@ -4,6 +4,7 @@ import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/providers/side_quest_providers.dart';
+import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_day_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_submit_button.dart';
@@ -62,6 +63,7 @@ class _SideQuestFormState extends State<SideQuestForm> {
             selection: _questCategory,
             onChange: (questCategory) =>
                 setState(() => _questCategory = questCategory),
+            primaryColor: QuestLogColors.otherAccent,
           ),
 
           QuestTitleInputField(controller: _titleController),
@@ -75,6 +77,7 @@ class _SideQuestFormState extends State<SideQuestForm> {
           FormSubmitButton(
             onSubmit: _submitForm,
             disabled: _titleController.text.isEmpty,
+            primaryColor: QuestLogColors.otherAccent,
           ),
         ],
       ),

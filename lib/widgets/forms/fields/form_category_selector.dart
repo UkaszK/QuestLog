@@ -9,26 +9,28 @@ class FormCategorySelector extends StatelessWidget {
     required this.questCategories,
     required this.selection,
     required this.onChange,
+    this.primaryColor = QuestLogColors.accent,
   });
 
   final List<QuestCategory> questCategories;
   final QuestCategory selection;
   final void Function(QuestCategory) onChange;
+  final Color primaryColor;
 
   Widget _buildCategoryBox(QuestCategory questCategory) {
     bool isSelected = selection == questCategory;
-    Color color = isSelected
-        ? QuestLogColors.accent
-        : QuestLogColors.textSecondary;
+    Color color = isSelected ? primaryColor : QuestLogColors.textSecondary;
 
     return InkWell(
+      borderRadius: BorderRadius.circular(5),
       onTap: () => onChange(questCategory),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 7, horizontal: 12),
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
           border: Border.all(
             width: 1,
-            color: isSelected ? QuestLogColors.accent : QuestLogColors.border,
+            color: isSelected ? primaryColor : QuestLogColors.border,
           ),
         ),
         child: Row(
@@ -37,8 +39,8 @@ class FormCategorySelector extends StatelessWidget {
             Icon(questCategory.icon, size: 14, color: color),
 
             Text(
-              questCategory.name,
-              style: GoogleFonts.jetBrainsMono(color: color),
+              questCategory.name.toUpperCase(),
+              style: GoogleFonts.jetBrainsMono(color: color, fontSize: 12),
             ),
           ],
         ),
@@ -50,15 +52,17 @@ class FormCategorySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 10,
       children: [
         Text(
-          'Quest Category',
+          'QUEST CATEGORY',
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textSecondary,
             fontSize: 12,
           ),
         ),
+
+        const SizedBox(height: 8),
+
         SingleChildScrollView(
           physics: ScrollPhysics(parent: ClampingScrollPhysics()),
           scrollDirection: Axis.horizontal,

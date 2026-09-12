@@ -17,14 +17,16 @@ class QuestPrioritySelector extends StatelessWidget {
 
   Widget _buildPriorityBox(QuestPriority questPriority) {
     bool isSelected = questPriority == selection;
-    String label = questPriority.label;
+    String label = questPriority.label.toUpperCase();
     Color color = questPriority.color;
 
     return Expanded(
       child: InkWell(
+        borderRadius: BorderRadius.circular(5),
         onTap: () => onChange(questPriority),
         child: Container(
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
             border: Border.all(
               width: 1,
               color: isSelected ? color : QuestLogColors.border,
@@ -39,7 +41,7 @@ class QuestPrioritySelector extends StatelessWidget {
               Icon(Icons.square, size: 12, color: color),
               Text(
                 label,
-                style: GoogleFonts.jetBrainsMono(color: color, fontSize: 14),
+                style: GoogleFonts.jetBrainsMono(color: color, fontSize: 12),
               ),
             ],
           ),
@@ -52,15 +54,16 @@ class QuestPrioritySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 10,
       children: [
         Text(
-          'Priority',
+          'PRIORITY',
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textSecondary,
             fontSize: 12,
           ),
         ),
+
+        const SizedBox(height: 8),
 
         Row(
           spacing: 10,

@@ -43,20 +43,26 @@ class _FormDaySelectorState extends State<FormDaySelector> {
 
     return InkWell(
       onTap: () => _updateItems(day, !isSelected),
-      customBorder: CircleBorder(),
+      borderRadius: BorderRadius.circular(5),
       child: Container(
-        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? QuestLogColors.accent : Colors.transparent,
-          shape: BoxShape.circle,
-          border: Border.all(color: QuestLogColors.textSecondary, width: 1),
+          color: isSelected ? QuestLogColors.otherAccent : Colors.transparent,
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: QuestLogColors.border),
         ),
-        child: Text(
-          day.name.toString().substring(0, 1).toUpperCase(),
-          style: GoogleFonts.jetBrainsMono(
-            color: isSelected ? Colors.black : QuestLogColors.textSecondary,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+        child: SizedBox(
+          width: 32,
+          height: 32,
+          child: Center(
+            child: Text(
+              textAlign: TextAlign.center,
+              day.label[0],
+              style: GoogleFonts.jetBrainsMono(
+                color: isSelected ? Colors.black : QuestLogColors.textSecondary,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
           ),
         ),
       ),
@@ -67,7 +73,6 @@ class _FormDaySelectorState extends State<FormDaySelector> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 10,
       children: [
         Text(
           'Quest Frequency',
@@ -77,17 +82,22 @@ class _FormDaySelectorState extends State<FormDaySelector> {
           ),
         ),
 
+        const SizedBox(height: 8),
+
         QuestlogSwitch(
           options: [
-            (label: 'One-time', value: false),
-            (label: 'Recurring', value: true),
+            QuestLogSwitchOption(label: 'One-time', value: false),
+            QuestLogSwitchOption(label: 'Recurring', value: true),
           ],
           selection: _isRecurring,
           onChange: (value) => setState(() {
             _isRecurring = value;
             if (!value) _clearItems();
           }),
+          primaryColor: QuestLogColors.otherAccent,
         ),
+
+        const SizedBox(height: 8),
 
         if (_isRecurring)
           SingleChildScrollView(

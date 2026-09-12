@@ -26,6 +26,8 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
   int? _editingIndex;
   bool _newFocused = false;
 
+  final double subTaskFieldHeight = 40;
+
   @override
   void initState() {
     super.initState();
@@ -100,16 +102,27 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
     final isEditing = _editingIndex == index;
 
     return Row(
-      spacing: 5,
       children: [
+        SizedBox(
+          width: 20,
+          height: 20,
+          child: Icon(
+            Icons.chevron_right,
+            size: 20,
+            color: QuestLogColors.accent,
+          ),
+        ),
+
+        const SizedBox(width: 8),
+
         Expanded(
           child: isEditing
               ? GestureDetector(
                   onTap: () => _editFocusNode.requestFocus(),
                   child: Container(
-                    height: 50,
+                    height: subTaskFieldHeight,
                     alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
                       border: Border.all(
                         width: 1,
@@ -122,10 +135,12 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
                       controller: _editController,
                       focusNode: _editFocusNode,
                       autocorrect: false,
+                      maxLength: 30,
                       onFieldSubmitted: (_) => _saveEdit(index),
                       cursorColor: QuestLogColors.textSecondary,
-                      style: GoogleFonts.jetBrainsMono(fontSize: 14),
+                      style: GoogleFonts.jetBrainsMono(fontSize: 12),
                       decoration: const InputDecoration(
+                        counterText: '',
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
                         border: InputBorder.none,
@@ -144,9 +159,9 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
                     });
                   },
                   child: Container(
-                    height: 50,
+                    height: subTaskFieldHeight,
                     alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
                       border: Border.all(
                         width: 1,
@@ -155,16 +170,26 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
                     ),
                     child: Text(
                       item,
-                      style: GoogleFonts.jetBrainsMono(fontSize: 14),
+                      style: GoogleFonts.jetBrainsMono(fontSize: 12),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
         ),
-        IconButton(
-          icon: const Icon(Icons.delete_outline, size: 20),
-          color: QuestLogColors.textSecondary,
-          onPressed: () => _deleteItem(index),
+
+        const SizedBox(width: 8),
+
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: InkWell(
+            onTap: () => _deleteItem(index),
+            child: const Icon(
+              Icons.delete_outline,
+              size: 20,
+              color: QuestLogColors.textSecondary,
+            ),
+          ),
         ),
       ],
     );
@@ -176,9 +201,9 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
         _newFocusNode.requestFocus();
       },
       child: Container(
-        height: 50,
+        height: subTaskFieldHeight,
         alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           border: Border.all(
             width: 1,
@@ -190,18 +215,18 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
           focusNode: _newFocusNode,
           autocorrect: false,
           onFieldSubmitted: (_) => _trySaveNew(),
-          maxLength: 30,
+          maxLength: 25,
           cursorColor: QuestLogColors.textSecondary,
-          style: GoogleFonts.jetBrainsMono(fontSize: 14),
+          style: GoogleFonts.jetBrainsMono(fontSize: 12),
           decoration: InputDecoration(
             counterText: '',
             isDense: true,
             contentPadding: EdgeInsets.zero,
             border: InputBorder.none,
-            hintText: 'Module Title...',
+            hintText: 'Sub-task description...',
             hintStyle: GoogleFonts.jetBrainsMono(
               color: QuestLogColors.textSecondary,
-              fontSize: 14,
+              fontSize: 12,
             ),
           ),
         ),
@@ -212,7 +237,6 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 15,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,36 +251,30 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
             ),
             InkWell(
               onTap: () => _trySaveNew(),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: QuestLogColors.accent),
-                ),
-                child: Row(
-                  spacing: 5,
-                  children: [
-                    const Icon(
-                      Icons.add,
+              child: Row(
+                spacing: 5,
+                children: [
+                  const Icon(Icons.add, color: QuestLogColors.accent, size: 14),
+                  Text(
+                    'ADD TASK',
+                    style: GoogleFonts.jetBrainsMono(
                       color: QuestLogColors.accent,
-                      size: 14,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Text(
-                      'ADD TASK',
-                      style: GoogleFonts.jetBrainsMono(
-                        color: QuestLogColors.accent,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
 
-        for (int i = 0; i < widget.items.length; i++)
+        const SizedBox(height: 12),
+
+        for (int i = 0; i < widget.items.length; i++) ...[
           _buildSavedItem(i, widget.items[i]),
+          const SizedBox(height: 12),
+        ],
 
         _buildNewSubTaskInputField(),
       ],

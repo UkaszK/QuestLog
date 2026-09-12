@@ -7,10 +7,12 @@ class FormSubmitButton extends StatelessWidget {
     super.key,
     required this.onSubmit,
     this.disabled = false,
+    this.primaryColor = QuestLogColors.accent,
   });
 
   final VoidCallback onSubmit;
   final bool disabled;
+  final Color primaryColor;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +20,7 @@ class FormSubmitButton extends StatelessWidget {
       onTap: disabled ? null : onSubmit,
       child: Container(
         padding: EdgeInsets.all(16),
-        color: disabled
-            ? QuestLogColors.accent.withValues(alpha: 0.3)
-            : QuestLogColors.accent,
+        color: disabled ? primaryColor.withValues(alpha: 0.3) : primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 5,

@@ -304,7 +304,7 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
 
             Divider(height: 1),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
             if (widget.assembledQuestName.isNotEmpty) ...[
               Row(
