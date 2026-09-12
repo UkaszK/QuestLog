@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/quest_type.dart';
-import 'package:questlog/providers/main_quest_providers.dart';
-import 'package:questlog/providers/navigation_bar_providers.dart';
-import 'package:questlog/providers/side_quest_providers.dart';
+import 'package:questlog/providers/quest_form_providers.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/forms/fields/questlog_switch.dart';
 import 'package:questlog/widgets/forms/main_quest_form.dart';
@@ -57,21 +55,11 @@ class _QuestFormScreenState extends ConsumerState<QuestFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final navigationNotifier = ref.read(navigationProvider.notifier);
+    final notifier = ref.read(questFormNotifierProvider.notifier);
 
     Widget selectedForm = _selectedQuestType == QuestType.main
-        ? MainQuestForm(
-            onSubmit: (mainQuest) {
-              MainQuestService.add(mainQuest);
-              navigationNotifier.setIndex(3); // to backlog screen
-            },
-          )
-        : SideQuestForm(
-            onSubmit: (sideQuest) {
-              SideQuestService.add(sideQuest);
-              navigationNotifier.setIndex(3); // to backlog screen
-            },
-          );
+        ? MainQuestForm(onSubmit: notifier.submitMainQuest)
+        : SideQuestForm(onSubmit: notifier.submitSideQuest);
 
     return QuestLogNewScreenContainer(
       children: [
