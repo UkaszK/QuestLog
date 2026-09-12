@@ -4,6 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/main_quest.dart';
+import 'package:questlog/data/quest_category.dart';
+import 'package:questlog/data/quest_filter_options.dart';
+import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/providers/assembler_providers.dart';
 import 'package:questlog/providers/backlog_providers.dart';
@@ -12,11 +15,83 @@ import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/quest_log_loading_screen.dart';
 import 'package:questlog/widgets/reusables/quest_log_badge.dart';
 import 'package:questlog/widgets/reusables/quest_log_button.dart';
+import 'package:questlog/widgets/reusables/quest_log_choice_chip_bar.dart';
 import 'package:questlog/widgets/reusables/quest_log_screen_container.dart';
 import 'package:questlog/widgets/reusables/quest_log_section_header.dart';
 
-class BacklogScreen extends ConsumerWidget {
+final List<QuestLogChoiceChipBarOption> _choiceChipBarOptions = [
+  (
+    label: QuestFilterOption.all.label,
+    value: QuestFilterOption.all,
+    primaryColor: QuestFilterOption.all.color,
+  ),
+  (
+    label: QuestFilterOption.mainQuests.label,
+    value: QuestFilterOption.mainQuests,
+    primaryColor: QuestFilterOption.mainQuests.color,
+  ),
+  (
+    label: QuestFilterOption.sideQuests.label,
+    value: QuestFilterOption.sideQuests,
+    primaryColor: QuestFilterOption.sideQuests.color,
+  ),
+  (
+    label: QuestFilterOption.dueToday.label,
+    value: QuestFilterOption.dueToday,
+    primaryColor: QuestFilterOption.dueToday.color,
+  ),
+  (
+    label: QuestFilterOption.highPriority.label,
+    value: QuestFilterOption.highPriority,
+    primaryColor: QuestFilterOption.highPriority.color,
+  ),
+];
+
+class BacklogScreen extends ConsumerStatefulWidget {
   const BacklogScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _BacklogScreenState();
+}
+
+class _BacklogScreenState extends ConsumerState<BacklogScreen> {
+  QuestFilterOption _selectedFilter = QuestFilterOption.all;
+
+  Map<QuestCategory, (List<MainQuest>, List<SideQuest>)>
+  _filteredQuestsByCategory(
+    Map<QuestCategory, (List<MainQuest>, List<SideQuest>)> questsByCategory,
+  ) {
+    final today = DateTime.now();
+
+    return {
+      for (final entry in questsByCategory.entries)
+        entry.key: switch (_selectedFilter) {
+          QuestFilterOption.all => entry.value,
+          QuestFilterOption.mainQuests => (entry.value.$1, []),
+          QuestFilterOption.sideQuests => ([], entry.value.$2),
+          QuestFilterOption.highPriority => (
+            entry.value.$1
+                .where((quest) => quest.priority == QuestPriority.high)
+                .toList(),
+            [],
+          ),
+          QuestFilterOption.dueToday => (
+            entry.value.$1
+                .where(
+                  (quest) =>
+                      quest.dueDate != null &&
+                      DateUtils.isSameDay(quest.dueDate, today),
+                )
+                .toList(),
+            entry.value.$2
+                .where(
+                  (quest) => quest.repeatDays.contains(Day.fromDateTime(today)),
+                )
+                .toList(),
+          ),
+        },
+    }..removeWhere((_, quests) => quests.$1.isEmpty && quests.$2.isEmpty);
+  }
 
   Future<void> _dialogBuilder(
     BuildContext context,
@@ -136,7 +211,7 @@ class BacklogScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final backlogScreenAsync = ref.watch(backlogStateProvider);
     final notifier = ref.read(backlogControllerProvider.notifier);
     final navigationNotifier = ref.read(navigationProvider.notifier);
@@ -146,79 +221,95 @@ class BacklogScreen extends ConsumerWidget {
 
     return backlogScreenAsync.when(
       data: (state) {
-        final sortedCategories = state.questsByCategory.keys.toList()
+        final filteredQuestsByCategory = _filteredQuestsByCategory(
+          state.questsByCategory,
+        );
+        final sortedCategories = filteredQuestsByCategory.keys.toList()
           ..sort((a, b) {
-            final aQuests = state.questsByCategory[a]!;
-            final bQuests = state.questsByCategory[b]!;
+            final aQuests = filteredQuestsByCategory[a]!;
+            final bQuests = filteredQuestsByCategory[b]!;
             final aCount = aQuests.$1.length + aQuests.$2.length;
             final bCount = bQuests.$1.length + bQuests.$2.length;
 
             return bCount.compareTo(aCount);
           });
+
         final categoryCounts = <dynamic, int>{
           for (final category in sortedCategories)
             category:
-                state.questsByCategory[category]!.$1.length +
-                state.questsByCategory[category]!.$2.length,
+                filteredQuestsByCategory[category]!.$1.length +
+                filteredQuestsByCategory[category]!.$2.length,
         };
 
-        if (sortedCategories.isEmpty) {
-          return _BacklogEmptyNote();
-        } else {
-          return QuestLogScreenContainer(
-            children: [
-              for (final category in sortedCategories) ...[
-                _Header(
-                  label: category.name,
-                  questCount: categoryCounts[category] ?? 0,
-                ),
+        return QuestLogScreenContainer(
+          children: [
+            QuestLogChoiceChipBar<QuestFilterOption>(
+              options: _choiceChipBarOptions,
+              selection: _selectedFilter,
+              onChange: (filter) => setState(() => _selectedFilter = filter),
+              primaryColor: QuestLogColors.accent,
+            ),
 
-                const SizedBox(height: 10),
+            if (sortedCategories.isNotEmpty) ...[
+              const SizedBox(height: 32),
 
-                Column(
-                  spacing: 10,
-                  children: [
-                    for (final mainQuest
-                        in state.questsByCategory[category]!.$1) ...[
-                      _MainQuestBlock(
-                        mainQuest: mainQuest,
-                        onArchive: () => _dialogBuilder(
-                          context,
-                          mainQuest,
-                          () => notifier.archiveMainQuest(mainQuest),
-                        ),
-                        onClickEdit: () =>
-                            notifier.onClickEditMainQuest(context, mainQuest),
-                        onAssemble: () {
-                          assemblerNotifier.handleAddMainQuestToAssemble(
+              if (sortedCategories.isNotEmpty) ...[
+                for (final category in sortedCategories) ...[
+                  _Header(
+                    label: category.name,
+                    questCount: categoryCounts[category] ?? 0,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Column(
+                    spacing: 10,
+                    children: [
+                      for (final mainQuest
+                          in filteredQuestsByCategory[category]!.$1) ...[
+                        _MainQuestBlock(
+                          mainQuest: mainQuest,
+                          onArchive: () => _dialogBuilder(
+                            context,
                             mainQuest,
-                          );
-                          navigationNotifier.setIndex(1);
-                        },
-                      ),
-                    ],
-
-                    for (final sideQuest
-                        in state.questsByCategory[category]!.$2) ...[
-                      _SideQuestBlock(
-                        sideQuest: sideQuest,
-                        onArchive: () => _dialogBuilder(
-                          context,
-                          sideQuest,
-                          () => notifier.archiveSideQuest(sideQuest),
+                            () => notifier.archiveMainQuest(mainQuest),
+                          ),
+                          onClickEdit: () =>
+                              notifier.onClickEditMainQuest(context, mainQuest),
+                          onAssemble: () {
+                            assemblerNotifier.handleAddMainQuestToAssemble(
+                              mainQuest,
+                            );
+                            navigationNotifier.setIndex(1);
+                          },
                         ),
-                        onClickEdit: () =>
-                            notifier.onClickEditSideQuest(context, sideQuest),
-                      ),
-                    ],
-                  ],
-                ),
+                      ],
 
-                const SizedBox(height: 32),
+                      for (final sideQuest
+                          in filteredQuestsByCategory[category]!.$2) ...[
+                        _SideQuestBlock(
+                          sideQuest: sideQuest,
+                          onArchive: () => _dialogBuilder(
+                            context,
+                            sideQuest,
+                            () => notifier.archiveSideQuest(sideQuest),
+                          ),
+                          onClickEdit: () =>
+                              notifier.onClickEditSideQuest(context, sideQuest),
+                        ),
+                      ],
+                    ],
+                  ),
+
+                  const SizedBox(height: 32),
+                ],
               ],
+            ] else ...[
+              const SizedBox(height: 128),
+              _BacklogEmptyNote(),
             ],
-          );
-        }
+          ],
+        );
       },
       error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
       loading: () => QuestLogLoadingScreen(),
@@ -680,87 +771,75 @@ class _BacklogEmptyNoteState extends State<_BacklogEmptyNote>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentGeometry.center,
+    return Column(
       children: [
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: QuestLogColors.border),
-                ),
-                child: Icon(
-                  Icons.radar,
-                  size: 48,
-                  color: QuestLogColors.border,
-                ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: QuestLogColors.border),
               ),
+              child: Icon(Icons.radar, size: 48, color: QuestLogColors.border),
+            ),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
+            Text(
+              'BACKLOG EMPTY',
+              style: GoogleFonts.jetBrainsMono(
+                letterSpacing: 3,
+                color: QuestLogColors.textPrimary,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            Text(
+              'NO QUESTS DETECTED IN LOCAL SECTOR',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 64),
+
+        AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(0, _animation.value),
+              child: child,
+            );
+          },
+          child: Column(
+            children: [
               Text(
-                'BACKLOG EMPTY',
+                'INITIALIZE AN OBJECTIVE',
                 style: GoogleFonts.jetBrainsMono(
-                  letterSpacing: 3,
-                  color: QuestLogColors.textPrimary,
-                  fontSize: 18,
+                  color: QuestLogColors.accent,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
                 ),
               ),
 
               const SizedBox(height: 16),
 
-              Text(
-                'NO QUESTS DETECTED IN LOCAL SECTOR',
-                style: GoogleFonts.jetBrainsMono(
-                  color: QuestLogColors.textSecondary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+              const Icon(
+                Icons.arrow_downward_rounded,
+                color: QuestLogColors.accent,
+                size: 20,
               ),
-
-              const SizedBox(height: 208),
             ],
-          ),
-        ),
-
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 160,
-          child: AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: Offset(0, _animation.value),
-                child: child,
-              );
-            },
-            child: Column(
-              children: [
-                Text(
-                  'INITIALIZE AN OBJECTIVE',
-                  style: GoogleFonts.jetBrainsMono(
-                    color: QuestLogColors.accent,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                const Icon(
-                  Icons.arrow_downward_rounded,
-                  color: QuestLogColors.accent,
-                  size: 20,
-                ),
-              ],
-            ),
           ),
         ),
       ],

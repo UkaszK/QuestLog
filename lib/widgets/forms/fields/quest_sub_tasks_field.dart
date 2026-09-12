@@ -135,7 +135,7 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
                       controller: _editController,
                       focusNode: _editFocusNode,
                       autocorrect: false,
-                      maxLength: 30,
+                      maxLength: 25,
                       onFieldSubmitted: (_) => _saveEdit(index),
                       cursorColor: QuestLogColors.textSecondary,
                       style: GoogleFonts.jetBrainsMono(fontSize: 12),

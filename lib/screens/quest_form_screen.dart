@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/quest_type.dart';
 import 'package:questlog/providers/quest_form_providers.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/forms/fields/questlog_switch.dart';
+import 'package:questlog/widgets/forms/fields/quest_log_switch.dart';
 import 'package:questlog/widgets/forms/main_quest_form.dart';
 import 'package:questlog/widgets/forms/side_quest_form.dart';
 import 'package:questlog/widgets/reusables/quest_log_new_screen_container.dart';
@@ -39,9 +39,7 @@ class _QuestFormScreenState extends ConsumerState<QuestFormScreen> {
             QuestLogSwitchOption(
               label: 'SIDE QUEST',
               value: QuestType.side,
-              configurations: QuestLogSwitchOptionConfiguration(
-                selectedColor: QuestLogColors.otherAccent,
-              ),
+              primaryColor: QuestLogColors.otherAccent,
             ),
           ],
           selection: _selectedQuestType,

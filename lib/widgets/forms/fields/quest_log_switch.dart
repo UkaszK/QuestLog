@@ -2,22 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
-class QuestLogSwitchOptionConfiguration {
-  const QuestLogSwitchOptionConfiguration({this.selectedColor});
-
-  final Color? selectedColor;
-}
-
 class QuestLogSwitchOption<T> {
   const QuestLogSwitchOption({
     required this.label,
     required this.value,
-    this.configurations,
+    this.primaryColor,
   });
 
   final String label;
   final T value;
-  final QuestLogSwitchOptionConfiguration? configurations;
+  final Color? primaryColor;
 }
 
 class QuestLogSwitch<T> extends StatelessWidget {
@@ -29,7 +23,7 @@ class QuestLogSwitch<T> extends StatelessWidget {
     this.primaryColor = QuestLogColors.accent,
   });
 
-  final List<QuestLogSwitchOption<T>> options;
+  final List<QuestLogSwitchOption> options;
   final T selection;
   final void Function(T) onChange;
   final Color primaryColor;
@@ -37,11 +31,11 @@ class QuestLogSwitch<T> extends StatelessWidget {
   Widget _buildSwitchButton({
     required String label,
     required isSelected,
-    QuestLogSwitchOptionConfiguration? options,
+    Color? optionPrimaryColor,
     required VoidCallback onTap,
   }) {
     Color labelColor = isSelected
-        ? options?.selectedColor ?? primaryColor
+        ? optionPrimaryColor ?? primaryColor
         : QuestLogColors.textSecondary;
 
     return Expanded(
@@ -86,7 +80,7 @@ class QuestLogSwitch<T> extends StatelessWidget {
             _buildSwitchButton(
               label: option.label,
               isSelected: option.value == selection,
-              options: option.configurations,
+              optionPrimaryColor: option.primaryColor,
               onTap: () {
                 onChange(option.value);
               },
