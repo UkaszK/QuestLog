@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/main_quest.dart';
@@ -6,6 +7,9 @@ import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/providers/main_quest_providers.dart';
 import 'package:questlog/providers/side_quest_providers.dart';
+import 'package:questlog/widgets/forms/main_quest_form.dart';
+import 'package:questlog/widgets/forms/side_quest_form.dart';
+import 'package:questlog/widgets/reusables/quest_log_new_screen_container.dart';
 
 typedef BacklogState = ({
   Map<QuestCategory, (List<MainQuest>, List<SideQuest>)> questsByCategory,
@@ -56,15 +60,49 @@ class BacklogController extends Notifier<void> {
     IsarDataStore.archiveMainQuest(mainQuest);
   }
 
-  void updateMainQuest(MainQuest mainQuest) {
-    IsarDataStore.updateMainQuest(mainQuest.id, mainQuest);
+  void updateMainQuest(int id, MainQuest mainQuest) {
+    IsarDataStore.updateMainQuest(id, mainQuest);
+  }
+
+  void onClickEditMainQuest(BuildContext context, MainQuest mainQuest) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuestLogNewScreenContainer(
+          children: [
+            MainQuestForm(
+              onSubmit: (updatedMainQuest) =>
+                  updateMainQuest(mainQuest.id, updatedMainQuest),
+              editingQuest: mainQuest,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void archiveSideQuest(SideQuest sideQuest) {
     IsarDataStore.archiveSideQuest(sideQuest);
   }
 
-  void updateSideQuest(SideQuest sideQuest) {
-    IsarDataStore.updateSideQuest(sideQuest.id, sideQuest);
+  void updateSideQuest(int id, SideQuest sideQuest) {
+    IsarDataStore.updateSideQuest(id, sideQuest);
+  }
+
+  void onClickEditSideQuest(BuildContext context, SideQuest sideQuest) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuestLogNewScreenContainer(
+          children: [
+            SideQuestForm(
+              onSubmit: (updatedSideQuest) =>
+                  updateSideQuest(sideQuest.id, updatedSideQuest),
+              editingQuest: sideQuest,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

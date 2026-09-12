@@ -187,8 +187,8 @@ class BacklogScreen extends ConsumerWidget {
                           mainQuest,
                           () => notifier.archiveMainQuest(mainQuest),
                         ),
-                        onClickEdit: () {},
-                        onUpdate: () => notifier.updateMainQuest(mainQuest),
+                        onClickEdit: () =>
+                            notifier.onClickEditMainQuest(context, mainQuest),
                         onAssemble: () {
                           assemblerNotifier.handleAddMainQuestToAssemble(
                             mainQuest,
@@ -207,8 +207,8 @@ class BacklogScreen extends ConsumerWidget {
                           sideQuest,
                           () => notifier.archiveSideQuest(sideQuest),
                         ),
-                        onClickEdit: () {},
-                        onUpdate: () => notifier.updateSideQuest(sideQuest),
+                        onClickEdit: () =>
+                            notifier.onClickEditSideQuest(context, sideQuest),
                       ),
                     ],
                   ],
@@ -278,14 +278,12 @@ class _MainQuestBlock extends StatelessWidget {
     required this.mainQuest,
     required this.onArchive,
     required this.onClickEdit,
-    required this.onUpdate,
     required this.onAssemble,
   });
 
   final MainQuest mainQuest;
   final VoidCallback onArchive;
   final VoidCallback onClickEdit;
-  final VoidCallback onUpdate;
   final VoidCallback onAssemble;
 
   @override
@@ -450,13 +448,11 @@ class _SideQuestBlock extends StatelessWidget {
     required this.sideQuest,
     required this.onArchive,
     required this.onClickEdit,
-    required this.onUpdate,
   });
 
   final SideQuest sideQuest;
   final VoidCallback onArchive;
   final VoidCallback onClickEdit;
-  final VoidCallback onUpdate;
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/forms/fields/questlog_switch.dart';
 
 class FormDaySelector extends StatefulWidget {
   const FormDaySelector({
@@ -21,8 +20,6 @@ class FormDaySelector extends StatefulWidget {
 }
 
 class _FormDaySelectorState extends State<FormDaySelector> {
-  bool _isRecurring = false;
-
   void _updateItems(Day day, bool selected) {
     final updated = {...widget.selection};
     if (selected) {
@@ -32,10 +29,6 @@ class _FormDaySelectorState extends State<FormDaySelector> {
     }
 
     widget.onChange(updated);
-  }
-
-  void _clearItems() {
-    widget.onChange({});
   }
 
   Widget _buildDayItem(Day day) {
@@ -71,35 +64,21 @@ class _FormDaySelectorState extends State<FormDaySelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Quest Frequency',
-          style: GoogleFonts.jetBrainsMono(
-            color: QuestLogColors.textSecondary,
-            fontSize: 12,
+    return Align(
+      alignment: AlignmentGeometry.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Quest Frequency',
+            style: GoogleFonts.jetBrainsMono(
+              color: QuestLogColors.textSecondary,
+              fontSize: 12,
+            ),
           ),
-        ),
 
-        const SizedBox(height: 8),
+          const SizedBox(height: 8),
 
-        QuestlogSwitch(
-          options: [
-            QuestLogSwitchOption(label: 'One-time', value: false),
-            QuestLogSwitchOption(label: 'Recurring', value: true),
-          ],
-          selection: _isRecurring,
-          onChange: (value) => setState(() {
-            _isRecurring = value;
-            if (!value) _clearItems();
-          }),
-          primaryColor: QuestLogColors.otherAccent,
-        ),
-
-        const SizedBox(height: 8),
-
-        if (_isRecurring)
           SingleChildScrollView(
             physics: ScrollPhysics(parent: ClampingScrollPhysics()),
             scrollDirection: Axis.horizontal,
@@ -108,7 +87,8 @@ class _FormDaySelectorState extends State<FormDaySelector> {
               children: [for (final day in widget.weekdays) _buildDayItem(day)],
             ),
           ),
-      ],
+        ],
+      ),
     );
   }
 }

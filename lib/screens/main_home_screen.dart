@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/providers/navigation_bar_providers.dart';
-import 'package:questlog/screens/add_quest_screen.dart';
+import 'package:questlog/screens/quest_form_screen.dart';
 import 'package:questlog/screens/analytics_screen.dart';
 import 'package:questlog/screens/assembler_screen.dart';
 import 'package:questlog/screens/backlog_screen.dart';
@@ -53,7 +53,7 @@ class MainHomeScreen extends ConsumerWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddQuestScreen()),
+                MaterialPageRoute(builder: (context) => QuestFormScreen()),
               );
             },
             backgroundColor: QuestLogColors.accent,

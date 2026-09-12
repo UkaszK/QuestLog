@@ -3,7 +3,6 @@ import 'package:questlog/data/day.dart';
 import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/side_quest.dart';
-import 'package:questlog/providers/side_quest_providers.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_day_selector.dart';
@@ -11,7 +10,10 @@ import 'package:questlog/widgets/forms/fields/form_submit_button.dart';
 import 'package:questlog/widgets/forms/fields/quest_title_input_field.dart';
 
 class SideQuestForm extends StatefulWidget {
-  const SideQuestForm({super.key});
+  const SideQuestForm({super.key, required this.onSubmit, this.editingQuest});
+
+  final void Function(SideQuest) onSubmit;
+  final SideQuest? editingQuest;
 
   @override
   State<StatefulWidget> createState() => _SideQuestFormState();
@@ -27,6 +29,12 @@ class _SideQuestFormState extends State<SideQuestForm> {
   void initState() {
     super.initState();
     _titleController.addListener(_onTitleChanged);
+
+    if (widget.editingQuest != null) {
+      _questCategory = widget.editingQuest!.questCategory;
+      _titleController.text = widget.editingQuest!.name;
+      _repeatDays = widget.editingQuest!.repeatDays;
+    }
   }
 
   void _onTitleChanged() {
@@ -47,8 +55,7 @@ class _SideQuestFormState extends State<SideQuestForm> {
       repeatDaysList: _repeatDays.toList(),
     );
 
-    SideQuestService.add(newSideQuest);
-
+    widget.onSubmit(newSideQuest);
     Navigator.of(context).pop();
   }
 

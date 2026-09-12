@@ -4,7 +4,6 @@ import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/quest_priority.dart';
-import 'package:questlog/providers/main_quest_providers.dart';
 import 'package:questlog/widgets/forms/fields/form_category_selector.dart';
 import 'package:questlog/widgets/forms/fields/form_submit_button.dart';
 import 'package:questlog/widgets/forms/fields/quest_due_date_field.dart';
@@ -13,7 +12,10 @@ import 'package:questlog/widgets/forms/fields/quest_sub_tasks_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_title_input_field.dart';
 
 class MainQuestForm extends ConsumerStatefulWidget {
-  const MainQuestForm({super.key});
+  const MainQuestForm({super.key, required this.onSubmit, this.editingQuest});
+
+  final void Function(MainQuest) onSubmit;
+  final MainQuest? editingQuest;
 
   @override
   ConsumerState<MainQuestForm> createState() => _MainQuestFormState();
@@ -31,6 +33,14 @@ class _MainQuestFormState extends ConsumerState<MainQuestForm> {
   void initState() {
     super.initState();
     _titleController.addListener(_onTitleChanged);
+
+    if (widget.editingQuest != null) {
+      _questCategory = widget.editingQuest!.questCategory;
+      _titleController.text = widget.editingQuest!.name;
+      _dueDate = widget.editingQuest!.dueDate;
+      _questPriority = widget.editingQuest!.priority;
+      _subTasks = widget.editingQuest!.subTasks;
+    }
   }
 
   void _onTitleChanged() {
@@ -44,7 +54,7 @@ class _MainQuestFormState extends ConsumerState<MainQuestForm> {
     super.dispose();
   }
 
-  void _submitForm() {
+  void _handleSubmit() {
     final newMainQuest = MainQuest(
       name: _titleController.text.trim(),
       questCategoryName: _questCategory.name,
@@ -53,8 +63,7 @@ class _MainQuestFormState extends ConsumerState<MainQuestForm> {
       subTasks: _subTasks,
     );
 
-    MainQuestService.add(newMainQuest);
-
+    widget.onSubmit(newMainQuest);
     Navigator.of(context).pop();
   }
 
@@ -93,7 +102,7 @@ class _MainQuestFormState extends ConsumerState<MainQuestForm> {
             onChange: (subTasks) => setState(() => _subTasks = subTasks),
           ),
 
-          FormSubmitButton(onSubmit: _submitForm, disabled: isSubmitDisabled),
+          FormSubmitButton(onSubmit: _handleSubmit, disabled: isSubmitDisabled),
         ],
       ),
     );

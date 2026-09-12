@@ -20,8 +20,8 @@ class QuestLogSwitchOption<T> {
   final QuestLogSwitchOptionConfiguration? configurations;
 }
 
-class QuestlogSwitch<T> extends StatelessWidget {
-  const QuestlogSwitch({
+class QuestLogSwitch<T> extends StatelessWidget {
+  const QuestLogSwitch({
     super.key,
     required this.options,
     required this.selection,

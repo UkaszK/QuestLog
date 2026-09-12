@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/quest_type.dart';
+import 'package:questlog/providers/main_quest_providers.dart';
+import 'package:questlog/providers/navigation_bar_providers.dart';
+import 'package:questlog/providers/side_quest_providers.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/widgets/forms/fields/questlog_switch.dart';
 import 'package:questlog/widgets/forms/main_quest_form.dart';
 import 'package:questlog/widgets/forms/side_quest_form.dart';
-import 'package:questlog/widgets/questlog_app_bar.dart';
+import 'package:questlog/widgets/reusables/quest_log_new_screen_container.dart';
 
-class AddQuestScreen extends StatefulWidget {
-  const AddQuestScreen({super.key});
+class QuestFormScreen extends ConsumerStatefulWidget {
+  const QuestFormScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _AddQuestScreenState();
+  ConsumerState<QuestFormScreen> createState() => _QuestFormScreenState();
 }
 
-class _AddQuestScreenState extends State<AddQuestScreen> {
+class _QuestFormScreenState extends ConsumerState<QuestFormScreen> {
   QuestType _selectedQuestType = QuestType.main;
 
   Widget _buildQuestClassificationSwitch() {
@@ -31,7 +35,7 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
 
         const SizedBox(height: 8),
 
-        QuestlogSwitch<QuestType>(
+        QuestLogSwitch<QuestType>(
           options: [
             QuestLogSwitchOption(label: 'MAIN QUEST', value: QuestType.main),
             QuestLogSwitchOption(
@@ -53,27 +57,28 @@ class _AddQuestScreenState extends State<AddQuestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget selectedForm = _selectedQuestType == QuestType.main
-        ? MainQuestForm()
-        : SideQuestForm();
+    final navigationNotifier = ref.read(navigationProvider.notifier);
 
-    return Scaffold(
-      appBar: QuestLogAppBar(),
-      body: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 96),
-          child: Column(
-            spacing: 15,
-            children: [
-              _buildQuestClassificationSwitch(),
-              Divider(height: 10),
-              selectedForm,
-            ],
-          ),
-        ),
-      ),
+    Widget selectedForm = _selectedQuestType == QuestType.main
+        ? MainQuestForm(
+            onSubmit: (mainQuest) {
+              MainQuestService.add(mainQuest);
+              navigationNotifier.setIndex(3); // to backlog screen
+            },
+          )
+        : SideQuestForm(
+            onSubmit: (sideQuest) {
+              SideQuestService.add(sideQuest);
+              navigationNotifier.setIndex(3); // to backlog screen
+            },
+          );
+
+    return QuestLogNewScreenContainer(
+      children: [
+        _buildQuestClassificationSwitch(),
+        Divider(height: 32),
+        selectedForm,
+      ],
     );
   }
 }
