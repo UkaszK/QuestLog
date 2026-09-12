@@ -243,7 +243,7 @@ class _Header extends StatelessWidget {
         backgroundColor: QuestLogColors.surface,
         borderColor: QuestLogColors.border,
       ),
-      dividerOptions: (dividerDistance: 4),
+      dividerStyle: (dividerDistance: 4),
     );
   }
 }

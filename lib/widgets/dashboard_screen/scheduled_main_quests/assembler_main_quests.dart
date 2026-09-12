@@ -29,6 +29,7 @@ class _AssemblerMainQuestsState extends State<AssemblerMainQuests> {
     return QuestLogSectionHeader(
       title: 'SCHEDULED MAIN QUESTS',
       icon: Icons.access_time,
+      dividerStyle: (dividerDistance: 8),
       iconColor: QuestLogColors.accent,
       rightSide: Text(
         'TIMELINE (${timelineText ?? '-'})',

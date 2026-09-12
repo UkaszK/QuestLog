@@ -32,6 +32,7 @@ class _SideQuestsState extends State<SideQuests> {
       title: 'SIDE QUESTS',
       icon: Icons.checklist,
       iconColor: QuestLogColors.otherAccent,
+      dividerStyle: (dividerDistance: 0),
       rightSide: SegmentedButton<bool>(
         segments: const [
           ButtonSegment(value: false, label: Text('ALL')),
