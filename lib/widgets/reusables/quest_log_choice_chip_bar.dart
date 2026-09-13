@@ -118,6 +118,7 @@ class _QuestLogChoiceChipBarState<T> extends State<QuestLogChoiceChipBar<T>> {
                     return _OptionContainer(
                       label: option.label,
                       prefixIcon: option.prefixIcon,
+                      suffixIcon: option.suffixIcon,
                       onSelect: () => widget.onChange(option.value),
                       textColor: colors.textColor,
                       backgroundColor: colors.backgroundColor,
@@ -211,8 +212,8 @@ class _OptionContainer<T> extends StatelessWidget {
               ),
 
               if (suffixIcon != null) ...[
-                Icon(suffixIcon, size: 12, color: textColor),
                 const SizedBox(width: 5),
+                Icon(suffixIcon, size: 12, color: textColor),
               ],
             ],
           ),
