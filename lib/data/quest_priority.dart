@@ -9,7 +9,7 @@ enum QuestPriority {
   String get label {
     return switch (this) {
       QuestPriority.low => 'Low',
-      QuestPriority.normal => 'Medium',
+      QuestPriority.normal => 'Normal',
       QuestPriority.high => 'High',
     };
   }

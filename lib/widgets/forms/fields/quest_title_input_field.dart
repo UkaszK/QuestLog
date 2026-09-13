@@ -11,15 +11,16 @@ class QuestTitleInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 10,
       children: [
         Text(
-          'Quest Title',
+          'QUEST TITLE',
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textSecondary,
             fontSize: 12,
           ),
         ),
+
+        const SizedBox(height: 8),
 
         Container(
           decoration: BoxDecoration(
@@ -27,13 +28,14 @@ class QuestTitleInputField extends StatelessWidget {
               color: QuestLogColors.textSecondary.withValues(alpha: 0.2),
               width: 1,
             ),
+            borderRadius: BorderRadius.circular(5),
           ),
           child: TextFormField(
             controller: controller,
             maxLength: 25,
             style: GoogleFonts.jetBrainsMono(
               color: QuestLogColors.textPrimary,
-              fontSize: 16,
+              fontSize: 12,
             ),
             autocorrect: false,
             cursorColor: QuestLogColors.textSecondary,
@@ -42,7 +44,7 @@ class QuestTitleInputField extends StatelessWidget {
               hintText: 'Enter quest title...',
               hintStyle: GoogleFonts.jetBrainsMono(
                 color: QuestLogColors.textSecondary,
-                fontSize: 16,
+                fontSize: 12,
               ),
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(

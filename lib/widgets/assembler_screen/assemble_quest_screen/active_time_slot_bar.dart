@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
-import 'package:questlog/screens/main_quest_selection_sheet.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/DateTime/to_hhmm.dart';
 
@@ -12,7 +11,6 @@ class ActiveTimeSlotBar extends StatefulWidget {
     super.key,
     required this.timeSlot,
     required this.onReset,
-    required this.hasAssembledQuest,
     required this.onQuestAssembled,
     required this.assembledQuestName,
     required this.onSave,
@@ -21,11 +19,11 @@ class ActiveTimeSlotBar extends StatefulWidget {
     required this.isEditingExistingQuest,
     required this.onDelete,
     required this.onUpdateTimeSlot,
+    required this.onClickAddQuest,
   });
 
   final TimeSlot timeSlot;
   final VoidCallback onReset;
-  final bool hasAssembledQuest;
   final void Function(MainQuest) onQuestAssembled;
   final String assembledQuestName;
   final VoidCallback onSave;
@@ -34,6 +32,7 @@ class ActiveTimeSlotBar extends StatefulWidget {
   final bool isEditingExistingQuest;
   final VoidCallback onDelete;
   final void Function(TimeSlot) onUpdateTimeSlot;
+  final VoidCallback onClickAddQuest;
 
   @override
   State<ActiveTimeSlotBar> createState() => _ActiveTimeSlotBarState();
@@ -301,9 +300,13 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
               ),
             ],
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
 
-            if (widget.hasAssembledQuest) ...[
+            Divider(height: 1),
+
+            const SizedBox(height: 6),
+
+            if (widget.assembledQuestName.isNotEmpty) ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -406,18 +409,7 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
                     foregroundColor: QuestLogColors.accent,
                     side: const BorderSide(color: QuestLogColors.accent),
                   ),
-                  onPressed: () {
-                    late final PersistentBottomSheetController controller;
-                    controller = showBottomSheet(
-                      context: context,
-                      builder: (context) => MainQuestSelectionSheet(
-                        onAssemble: (mainQuest) {
-                          widget.onQuestAssembled(mainQuest);
-                          controller.close();
-                        },
-                      ),
-                    );
-                  },
+                  onPressed: widget.onClickAddQuest,
                 ),
               ),
           ],

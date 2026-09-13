@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/dashboard_screen/side_quests/side_quest_block.dart';
+import 'package:questlog/widgets/dashboard_screen/side_quests/assembler_side_quest_block.dart';
+import 'package:questlog/widgets/reusables/quest_log_section_header.dart';
 
 class SideQuests extends StatefulWidget {
   const SideQuests({
@@ -27,59 +28,38 @@ class _SideQuestsState extends State<SideQuests> {
   bool _showTodayOnly = false;
 
   Widget _buildHeader() {
-    return Row(
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              Icon(
-                Icons.checklist,
-                color: QuestLogColors.otherAccent,
-                size: 14,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'SIDE QUESTS',
-                style: GoogleFonts.jetBrainsMono(
-                  color: QuestLogColors.otherAccent,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+    return QuestLogSectionHeader(
+      title: 'SIDE QUESTS',
+      icon: Icons.checklist,
+      iconColor: QuestLogColors.otherAccent,
+      dividerStyle: (dividerDistance: 0),
+      rightSide: SegmentedButton<bool>(
+        segments: const [
+          ButtonSegment(value: false, label: Text('ALL')),
+          ButtonSegment(value: true, label: Text('TODAY')),
+        ],
+        selected: {_showTodayOnly},
+        showSelectedIcon: false,
+        style: ButtonStyle(
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+          ),
+          visualDensity: VisualDensity(
+            horizontal: VisualDensity.minimumDensity,
+            vertical: VisualDensity.minimumDensity,
+          ),
+          textStyle: WidgetStatePropertyAll(
+            GoogleFonts.jetBrainsMono(
+              fontSize: 8,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
           ),
         ),
-
-        SegmentedButton<bool>(
-          segments: const [
-            ButtonSegment(value: false, label: Text('ALL')),
-            ButtonSegment(value: true, label: Text('TODAY')),
-          ],
-          selected: {_showTodayOnly},
-          showSelectedIcon: false,
-          style: ButtonStyle(
-            shape: const WidgetStatePropertyAll(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(3)),
-              ),
-            ),
-            visualDensity: VisualDensity(
-              horizontal: VisualDensity.minimumDensity,
-              vertical: VisualDensity.minimumDensity,
-            ),
-            textStyle: WidgetStatePropertyAll(
-              GoogleFonts.jetBrainsMono(
-                fontSize: 8,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1,
-              ),
-            ),
-          ),
-          onSelectionChanged: (selection) {
-            setState(() => _showTodayOnly = selection.first);
-          },
-        ),
-      ],
+        onSelectionChanged: (selection) {
+          setState(() => _showTodayOnly = selection.first);
+        },
+      ),
     );
   }
 
@@ -156,21 +136,27 @@ class _SideQuestsState extends State<SideQuests> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(),
-        const SizedBox(height: 5),
-        Divider(height: 1),
+
+        const SizedBox(height: 10),
+
         if (displayedSideQuests.isNotEmpty) ...[
-          for (final sideQuest in displayedSideQuests) ...[
-            const SizedBox(height: 10),
-            SideQuestBlock(
-              sideQuest: sideQuest,
-              completed: widget.completedSideQuestIds.contains(sideQuest.id),
-              scheduledToday: sideQuest.repeatDays.contains(today),
-              onCheckSideQuest: (newValue) =>
-                  widget.onCheckSideQuest(sideQuest, newValue),
-            ),
-          ],
+          Column(
+            spacing: 10,
+            children: [
+              for (final sideQuest in displayedSideQuests) ...[
+                AssemblerSideQuestBlock(
+                  sideQuest: sideQuest,
+                  completed: widget.completedSideQuestIds.contains(
+                    sideQuest.id,
+                  ),
+                  scheduledToday: sideQuest.repeatDays.contains(today),
+                  onCheckSideQuest: (newValue) =>
+                      widget.onCheckSideQuest(sideQuest, newValue),
+                ),
+              ],
+            ],
+          ),
         ] else ...[
-          const SizedBox(height: 10),
           _buildEmptyBlock(hasSideQuests: widget.sideQuests.isNotEmpty),
         ],
       ],

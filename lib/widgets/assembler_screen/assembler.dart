@@ -254,25 +254,25 @@ class _AssemblerState extends State<Assembler> {
                                 ? CrossAxisAlignment.center
                                 : CrossAxisAlignment.start,
                             children: [
-                              Flexible(
-                                child: Text(
-                                  title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.jetBrainsMono(
-                                    color: statusColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
+                              Text(
+                                title,
+                                style: GoogleFonts.jetBrainsMono(
+                                  color: statusColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
                                 ),
                               ),
 
-                              Text(
-                                timeText,
-                                textAlign: TextAlign.right,
-                                style: GoogleFonts.jetBrainsMono(
-                                  color: QuestLogColors.textPrimary,
-                                  fontSize: 10,
+                              Flexible(
+                                child: Text(
+                                  timeText,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.right,
+                                  style: GoogleFonts.jetBrainsMono(
+                                    color: QuestLogColors.textPrimary,
+                                    fontSize: 10,
+                                  ),
                                 ),
                               ),
                             ],

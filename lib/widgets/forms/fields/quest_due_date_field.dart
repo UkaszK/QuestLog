@@ -45,22 +45,26 @@ class QuestDueDateField extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 15,
       children: [
         Text(
-          'Due Date (Optional)',
+          'DUE DATE (Optional)',
           style: GoogleFonts.jetBrainsMono(
             color: QuestLogColors.textSecondary,
             fontSize: 12,
           ),
         ),
+
+        const SizedBox(height: 8),
+
         InkWell(
           onTap: () => _selectDate(context),
+          borderRadius: BorderRadius.circular(5),
           child: Container(
             height: 50,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               border: Border.all(width: 1, color: QuestLogColors.border),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: Row(
               children: [
@@ -76,7 +80,7 @@ class QuestDueDateField extends StatelessWidget {
                         ? DateFormat('dd.MM.yyyy').format(selectedDate!)
                         : 'Select Date...',
                     style: GoogleFonts.jetBrainsMono(
-                      fontSize: 14,
+                      fontSize: 12,
                       color: hasDate
                           ? QuestLogColors.accent
                           : QuestLogColors.textSecondary,

@@ -12,7 +12,22 @@ class SideQuest {
     required this.questCategoryName,
     required this.name,
     required this.repeatDaysList,
+    this.archived = false,
   });
+
+  SideQuest copyWith({
+    String? questCategoryName,
+    String? name,
+    List<Day>? repeatDaysList,
+    bool? archived,
+  }) {
+    return SideQuest(
+      questCategoryName: questCategoryName ?? this.questCategoryName,
+      name: name ?? this.name,
+      repeatDaysList: repeatDaysList ?? this.repeatDaysList,
+      archived: archived ?? this.archived,
+    );
+  }
 
   Id id = Isar.autoIncrement;
 
@@ -21,6 +36,8 @@ class SideQuest {
 
   @enumerated
   final List<Day> repeatDaysList;
+
+  final bool archived;
 
   @ignore
   Set<Day> get repeatDays => repeatDaysList.toSet();

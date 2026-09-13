@@ -112,13 +112,8 @@ final dailyProgressForDayProvider =
       final scheduledSideQuests = asyncScheduledSideQuests.requireValue;
       final completedSideQuestIds = asyncCompletedSideQuestIds.requireValue;
 
-      // Tasks done: completed main quests + completed subtasks + completed side quests
-      final mainTasksDone = mainQuests.fold<int>(0, (total, quest) {
-        final completedSubTasks = quest.subTasks
-            .where((st) => st.completed)
-            .length;
-        return total + completedSubTasks + (quest.completed ? 1 : 0);
-      });
+      // Tasks done: completed main quests + completed side quests
+      final mainTasksDone = mainQuests.where((quest) => quest.completed).length;
 
       final sideQuestsDone = scheduledSideQuests
           .where((sq) => completedSideQuestIds.contains(sq.id))
@@ -126,10 +121,8 @@ final dailyProgressForDayProvider =
 
       final tasksDone = mainTasksDone + sideQuestsDone;
 
-      // Tasks planned: all main quests + their subtasks + scheduled side quests for this day
-      final mainTasksPlanned = mainQuests.fold<int>(0, (total, quest) {
-        return total + quest.subTasks.length + 1;
-      });
+      // Tasks planned: all main quests + scheduled side quests for this day
+      final mainTasksPlanned = mainQuests.length;
       final sideQuestsPlanned = scheduledSideQuests.length;
 
       final tasksPlanned = mainTasksPlanned + sideQuestsPlanned;

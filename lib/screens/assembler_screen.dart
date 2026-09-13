@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/providers/assembler_providers.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/providers/navigation_bar_providers.dart';
 import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/active_time_slot_bar.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
 import 'package:questlog/widgets/assembler_screen/assembler_title.dart';
@@ -42,58 +41,6 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
     return selectedDate.isBefore(today);
   }
 
-  Future<void> _showDeleteJustAssembledQuestDialog(
-    void Function(MainQuest) onDelete,
-    AssembledQuestResult result,
-  ) async {
-    final bool? shouldDelete = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: QuestLogColors.surface,
-        title: Text(
-          'Quest Assembled',
-          style: GoogleFonts.jetBrainsMono(
-            color: QuestLogColors.textPrimary,
-            fontSize: 14,
-          ),
-        ),
-        content: Text(
-          'Do you want to delete "${result.assemblerQuest.name}" from your Main Quest backlog?',
-          style: GoogleFonts.jetBrainsMono(
-            color: QuestLogColors.textSecondary,
-            fontSize: 12,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(
-              'Keep',
-              style: GoogleFonts.jetBrainsMono(
-                color: QuestLogColors.accent,
-                fontSize: 12,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(
-              'Delete',
-              style: GoogleFonts.jetBrainsMono(
-                color: QuestLogColors.danger,
-                fontSize: 12,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (shouldDelete == true) {
-      onDelete(result.sourceMainQuest);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final notifier = ref.read(assemblerViewStateNotifierProvider.notifier);
@@ -101,14 +48,13 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
     final assemblerDataStateAsync = ref.watch(
       assemblerDataStateProvider(_selectedDay),
     );
+    final navigationNotifier = ref.read(navigationProvider.notifier);
 
     final DateTime baseDate = DateUtils.dateOnly(_selectedDay);
     final TimeSlot? selectedTimeSlot = assemblerViewState.selectedTimeSlot;
     final AssemblerMainQuest? editingQuest = assemblerViewState.editingQuest;
     final MainQuest? assembledMainQuest = assemblerViewState.assembledMainQuest;
     final bool hasTimeSlot = selectedTimeSlot != null;
-    final bool hasAssembledQuest =
-        assembledMainQuest != null || editingQuest != null;
     final String assembledQuestName =
         assembledMainQuest?.name ?? editingQuest?.name ?? '';
 
@@ -187,28 +133,23 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
                             key: const ValueKey('active-slot-bar'),
                             timeSlot: selectedTimeSlot,
                             onReset: notifier.resetTimeSlot,
-                            hasAssembledQuest: hasAssembledQuest,
-                            onQuestAssembled: notifier.handleMainQuestAssembled,
+                            onQuestAssembled:
+                                notifier.handleAddMainQuestToAssemble,
                             assembledQuestName: assembledQuestName,
                             onSave: () {
                               if (editingQuest != null) {
                                 notifier.handleUpdateAssemblerQuest();
                                 return;
                               }
-                              final result = notifier
-                                  .handleCreateAssemblerQuest();
-                              if (result != null) {
-                                _showDeleteJustAssembledQuestDialog(
-                                  notifier.handleDeleteSourceMainQuest,
-                                  result,
-                                );
-                              }
+                              notifier.handleCreateAssemblerQuest();
                             },
                             onClearQuest: notifier.handleQuestCleared,
                             hasOverlap: hasOverlap,
                             isEditingExistingQuest: editingQuest != null,
                             onDelete: notifier.handleDeleteEditedQuest,
                             onUpdateTimeSlot: notifier.updateSelectedTimeSlot,
+                            onClickAddQuest: () =>
+                                navigationNotifier.setIndex(3),
                           )
                         : const SizedBox.shrink(
                             key: ValueKey('slot-bar-empty'),
