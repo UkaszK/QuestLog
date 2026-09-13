@@ -2,50 +2,160 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
-typedef QuestLogChoiceChipBarOption<T> = ({
-  String label,
-  T value,
-  Color? primaryColor,
-});
+enum QuestLogChoiceChipBarStyle { filled, outlined }
 
-class QuestLogChoiceChipBar<T> extends StatelessWidget {
+class QuestLogChoiceChipBarOption<T> {
+  const QuestLogChoiceChipBarOption({
+    required this.label,
+    this.prefixIcon,
+    this.suffixIcon,
+    required this.value,
+    this.primaryColor,
+  });
+
+  final String label;
+  final IconData? prefixIcon;
+  final IconData? suffixIcon;
+  final T value;
+  final Color? primaryColor;
+}
+
+class QuestLogChoiceChipBar<T> extends StatefulWidget {
   const QuestLogChoiceChipBar({
     super.key,
     required this.options,
     required this.selection,
     required this.onChange,
     this.primaryColor = QuestLogColors.accent,
+    this.style = QuestLogChoiceChipBarStyle.filled,
   });
 
-  final List<QuestLogChoiceChipBarOption> options;
+  final List<QuestLogChoiceChipBarOption<T>> options;
   final T selection;
   final void Function(T) onChange;
   final Color primaryColor;
+  final QuestLogChoiceChipBarStyle style;
+
+  @override
+  State<QuestLogChoiceChipBar<T>> createState() =>
+      _QuestLogChoiceChipBarState<T>();
+}
+
+class _QuestLogChoiceChipBarState<T> extends State<QuestLogChoiceChipBar<T>> {
+  final ScrollController _scrollController = ScrollController();
+  bool _showRightIndicator = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_checkScrollPosition);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkScrollPosition();
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_checkScrollPosition);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _checkScrollPosition() {
+    if (!_scrollController.hasClients) return;
+
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+
+    final shouldShow = currentScroll < (maxScroll - 5);
+
+    if (shouldShow != _showRightIndicator) {
+      setState(() {
+        _showRightIndicator = shouldShow;
+      });
+    }
+  }
+
+  ({Color textColor, Color backgroundColor, Color borderColor})
+  _getOptionColors(QuestLogChoiceChipBarOption<T> option) {
+    final isSelected = option.value == widget.selection;
+    final optionColor = option.primaryColor ?? widget.primaryColor;
+
+    if (widget.style == QuestLogChoiceChipBarStyle.filled) {
+      return (
+        textColor: isSelected
+            ? QuestLogColors.black
+            : QuestLogColors.textSecondary,
+        backgroundColor: isSelected ? optionColor : QuestLogColors.surface,
+        borderColor: isSelected ? optionColor : QuestLogColors.border,
+      );
+    }
+
+    return (
+      textColor: isSelected ? optionColor : QuestLogColors.textSecondary,
+      backgroundColor: QuestLogColors.background,
+      borderColor: isSelected ? optionColor : QuestLogColors.border,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        spacing: 8,
-        children: [
-          for (final option in options) ...[
-            _OptionContainer(
-              label: option.label,
-              onSelect: () => onChange(option.value),
-              textColor: option.value == selection
-                  ? QuestLogColors.black
-                  : QuestLogColors.textSecondary,
-              backgroundColor: option.value == selection
-                  ? option.primaryColor ?? primaryColor
-                  : QuestLogColors.surface,
-              borderColor: option.value == selection
-                  ? option.primaryColor ?? primaryColor
-                  : QuestLogColors.border,
+    return Stack(
+      alignment: Alignment.centerRight,
+      children: [
+        SingleChildScrollView(
+          controller: _scrollController,
+          physics: ScrollPhysics(parent: ClampingScrollPhysics()),
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            spacing: 8,
+            children: [
+              for (final option in widget.options) ...[
+                Builder(
+                  builder: (context) {
+                    final colors = _getOptionColors(option);
+                    return _OptionContainer(
+                      label: option.label,
+                      prefixIcon: option.prefixIcon,
+                      onSelect: () => widget.onChange(option.value),
+                      textColor: colors.textColor,
+                      backgroundColor: colors.backgroundColor,
+                      borderColor: colors.borderColor,
+                    );
+                  },
+                ),
+              ],
+            ],
+          ),
+        ),
+
+        if (_showRightIndicator)
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              padding: const EdgeInsets.only(left: 16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    QuestLogColors.background.withValues(alpha: 0),
+                    QuestLogColors.background.withValues(alpha: 0.8),
+                    QuestLogColors.background,
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+              child: const Icon(
+                Icons.chevron_right,
+                color: QuestLogColors.textSecondary,
+                size: 20,
+              ),
             ),
-          ],
-        ],
-      ),
+          ),
+      ],
     );
   }
 }
@@ -53,6 +163,8 @@ class QuestLogChoiceChipBar<T> extends StatelessWidget {
 class _OptionContainer<T> extends StatelessWidget {
   const _OptionContainer({
     required this.label,
+    this.prefixIcon,
+    this.suffixIcon,
     required this.onSelect,
     required this.textColor,
     required this.backgroundColor,
@@ -60,6 +172,8 @@ class _OptionContainer<T> extends StatelessWidget {
   });
 
   final String label;
+  final IconData? prefixIcon;
+  final IconData? suffixIcon;
   final VoidCallback onSelect;
   final Color textColor;
   final Color backgroundColor;
@@ -80,13 +194,27 @@ class _OptionContainer<T> extends StatelessWidget {
             color: backgroundColor,
             borderRadius: BorderRadius.circular(3),
           ),
-          child: Text(
-            label.toUpperCase(),
-            style: GoogleFonts.jetBrainsMono(
-              color: textColor,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Row(
+            children: [
+              if (prefixIcon != null) ...[
+                Icon(prefixIcon, size: 12, color: textColor),
+                const SizedBox(width: 5),
+              ],
+
+              Text(
+                label.toUpperCase(),
+                style: GoogleFonts.jetBrainsMono(
+                  color: textColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              if (suffixIcon != null) ...[
+                Icon(suffixIcon, size: 12, color: textColor),
+                const SizedBox(width: 5),
+              ],
+            ],
           ),
         ),
       ),

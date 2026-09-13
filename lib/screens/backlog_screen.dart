@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_category.dart';
-import 'package:questlog/data/quest_filter_options.dart';
+import 'package:questlog/data/quest_filter_option.dart';
 import 'package:questlog/data/quest_priority.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/providers/assembler_providers.dart';
@@ -19,33 +19,16 @@ import 'package:questlog/widgets/reusables/quest_log_choice_chip_bar.dart';
 import 'package:questlog/widgets/reusables/quest_log_screen_container.dart';
 import 'package:questlog/widgets/reusables/quest_log_section_header.dart';
 
-final List<QuestLogChoiceChipBarOption> _choiceChipBarOptions = [
-  (
-    label: QuestFilterOption.all.label,
-    value: QuestFilterOption.all,
-    primaryColor: QuestFilterOption.all.color,
-  ),
-  (
-    label: QuestFilterOption.mainQuests.label,
-    value: QuestFilterOption.mainQuests,
-    primaryColor: QuestFilterOption.mainQuests.color,
-  ),
-  (
-    label: QuestFilterOption.sideQuests.label,
-    value: QuestFilterOption.sideQuests,
-    primaryColor: QuestFilterOption.sideQuests.color,
-  ),
-  (
-    label: QuestFilterOption.dueToday.label,
-    value: QuestFilterOption.dueToday,
-    primaryColor: QuestFilterOption.dueToday.color,
-  ),
-  (
-    label: QuestFilterOption.highPriority.label,
-    value: QuestFilterOption.highPriority,
-    primaryColor: QuestFilterOption.highPriority.color,
-  ),
-];
+final List<QuestLogChoiceChipBarOption<QuestFilterOption>>
+_filterChoiceChipBarOptions = QuestFilterOption.values
+    .map(
+      (value) => QuestLogChoiceChipBarOption(
+        label: value.label,
+        value: value,
+        primaryColor: value.color,
+      ),
+    )
+    .toList();
 
 class BacklogScreen extends ConsumerStatefulWidget {
   const BacklogScreen({super.key});
@@ -244,7 +227,7 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
         return QuestLogScreenContainer(
           children: [
             QuestLogChoiceChipBar<QuestFilterOption>(
-              options: _choiceChipBarOptions,
+              options: _filterChoiceChipBarOptions,
               selection: _selectedFilter,
               onChange: (filter) => setState(() => _selectedFilter = filter),
               primaryColor: QuestLogColors.accent,

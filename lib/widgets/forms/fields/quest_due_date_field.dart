@@ -56,8 +56,6 @@ class QuestDueDateField extends StatelessWidget {
 
         const SizedBox(height: 8),
 
-        const SizedBox(height: 8),
-
         InkWell(
           onTap: () => _selectDate(context),
           borderRadius: BorderRadius.circular(5),
