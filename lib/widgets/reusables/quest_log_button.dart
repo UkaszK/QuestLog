@@ -14,6 +14,7 @@ class QuestLogButton extends StatelessWidget {
     this.suffixIcon,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     this.glow = false,
+    this.expandHorizontally = false,
   });
 
   final Color primaryColor;
@@ -26,6 +27,7 @@ class QuestLogButton extends StatelessWidget {
   final IconData? suffixIcon;
   final EdgeInsetsGeometry? padding;
   final bool glow;
+  final bool expandHorizontally;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,10 @@ class QuestLogButton extends StatelessWidget {
               border: Border.all(color: borderColor ?? primaryColor),
             ),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: expandHorizontally
+                  ? MainAxisSize.max
+                  : MainAxisSize.min,
+              mainAxisAlignment: .center,
               children: [
                 if (prefixIcon != null) ...[
                   Icon(prefixIcon, color: primaryColor, size: fontSize + 2.0),

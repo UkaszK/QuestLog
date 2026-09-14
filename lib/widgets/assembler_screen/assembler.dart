@@ -266,7 +266,7 @@ class _AssemblerState extends State<Assembler> {
                               Flexible(
                                 child: Text(
                                   timeText,
-                                  maxLines: 1,
+                                  maxLines: smallSized ? 1 : 2,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.jetBrainsMono(

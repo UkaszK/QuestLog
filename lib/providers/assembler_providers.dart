@@ -3,15 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/isar_data_store.dart';
 import 'package:questlog/data/main_quest.dart';
-import 'package:questlog/data/quest_category.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/providers/quest_providers.dart';
+import 'package:questlog/screens/select_main_quest_screen.dart';
 
-typedef AssemblerDataState = ({
-  List<AssemblerMainQuest> selectedDayQuests,
-  Map<QuestCategory, List<MainQuest>> mainQuestsByCategory,
-});
+typedef AssemblerState = ({List<AssemblerMainQuest> selectedDayQuests});
 
 typedef AssemblerViewState = ({
   TimeSlot? selectedTimeSlot,
@@ -19,17 +16,14 @@ typedef AssemblerViewState = ({
   AssemblerMainQuest? editingQuest,
 });
 
-final assemblerDataStateProvider =
-    Provider.family<AsyncValue<AssemblerDataState>, DateTime>((ref, date) {
+final assemblerStateProvider =
+    Provider.family<AsyncValue<AssemblerState>, DateTime>((ref, date) {
       final selectedDayQuestsAsync = ref.watch(
         assemblerMainQuestsForDayProvider(date),
       );
 
-      final mainQuestsByCategoryAsync = ref.watch(mainQuestsByCategoryProvider);
-
       // Loading
-      if (selectedDayQuestsAsync.isLoading ||
-          mainQuestsByCategoryAsync.isLoading) {
+      if (selectedDayQuestsAsync.isLoading) {
         return const AsyncLoading();
       }
 
@@ -40,16 +34,9 @@ final assemblerDataStateProvider =
           selectedDayQuestsAsync.stackTrace!,
         );
       }
-      if (mainQuestsByCategoryAsync.hasError) {
-        return AsyncError(
-          mainQuestsByCategoryAsync.error!,
-          mainQuestsByCategoryAsync.stackTrace!,
-        );
-      }
 
       return AsyncData((
         selectedDayQuests: selectedDayQuestsAsync.requireValue,
-        mainQuestsByCategory: mainQuestsByCategoryAsync.requireValue,
       ));
     });
 
@@ -156,5 +143,12 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
 
     IsarDataStore.deleteAssemblerMainQuest(editingQuest);
     resetTimeSlot();
+  }
+
+  void onClickAddQuest(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SelectMainQuestScreen()),
+    );
   }
 }

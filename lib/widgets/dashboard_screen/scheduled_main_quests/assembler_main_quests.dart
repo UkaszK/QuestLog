@@ -121,10 +121,9 @@ class _AssemblerMainQuestsState extends State<AssemblerMainQuests> {
       children: [
         _buildHeader(timelineText),
 
-        const SizedBox(height: 10),
-
         if (widget.assemblerMainQuests.isNotEmpty) ...[
-          for (final assemblerQuest in widget.assemblerMainQuests)
+          for (final assemblerQuest in widget.assemblerMainQuests) ...[
+            const SizedBox(height: 10),
             AssemblerMainQuestBlock(
               assemblerQuest: assemblerQuest,
               onCheckQuest: (newValue) =>
@@ -132,8 +131,11 @@ class _AssemblerMainQuestsState extends State<AssemblerMainQuests> {
               onCheckSubTask: (subTask, newValue) =>
                   widget.onCheckSubTask(assemblerQuest, subTask, newValue),
             ),
-        ] else
+          ],
+        ] else ...[
+          const SizedBox(height: 10),
           _buildEmptyBlock(),
+        ],
       ],
     );
   }
