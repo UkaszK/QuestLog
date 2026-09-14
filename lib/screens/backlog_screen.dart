@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/quest_category.dart';
@@ -12,12 +11,14 @@ import 'package:questlog/providers/assembler_providers.dart';
 import 'package:questlog/providers/backlog_providers.dart';
 import 'package:questlog/providers/navigation_bar_providers.dart';
 import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/widgets/quest_category/quest_category_header.dart';
 import 'package:questlog/widgets/quest_log_loading_screen.dart';
+import 'package:questlog/widgets/quests/main_quest_block.dart';
+import 'package:questlog/widgets/quests/quest_container.dart';
 import 'package:questlog/widgets/reusables/quest_log_badge.dart';
 import 'package:questlog/widgets/reusables/quest_log_button.dart';
 import 'package:questlog/widgets/reusables/quest_log_choice_chip_bar.dart';
 import 'package:questlog/widgets/reusables/quest_log_screen_container.dart';
-import 'package:questlog/widgets/reusables/quest_log_section_header.dart';
 
 final List<QuestLogChoiceChipBarOption<QuestFilterOption>>
 _filterChoiceChipBarOptions = QuestFilterOption.values
@@ -238,7 +239,7 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
 
               if (sortedCategories.isNotEmpty) ...[
                 for (final category in sortedCategories) ...[
-                  _Header(
+                  QuestCategoryHeader(
                     label: category.name,
                     questCount: categoryCounts[category] ?? 0,
                   ),
@@ -250,21 +251,55 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
                     children: [
                       for (final mainQuest
                           in filteredQuestsByCategory[category]!.$1) ...[
-                        _MainQuestBlock(
+                        MainQuestBlock(
                           mainQuest: mainQuest,
-                          onArchive: () => _dialogBuilder(
-                            context,
-                            mainQuest,
-                            () => notifier.archiveMainQuest(mainQuest),
+                          footer: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      _EditButton(
+                                        onPress: () =>
+                                            notifier.onClickEditMainQuest(
+                                              context,
+                                              mainQuest,
+                                            ),
+                                      ),
+
+                                      const SizedBox(width: 10),
+
+                                      _ArchiveButton(
+                                        onPress: () => _dialogBuilder(
+                                          context,
+                                          mainQuest,
+                                          () => notifier.archiveMainQuest(
+                                            mainQuest,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              QuestLogButton(
+                                primaryColor: QuestLogColors.accent,
+                                onPress: () {
+                                  assemblerNotifier
+                                      .handleAddMainQuestToAssemble(mainQuest);
+                                  navigationNotifier.setIndex(1);
+                                },
+                                label: 'ASSEMBLE',
+                                fontSize: 10,
+                                prefixIcon: Icons.bolt_outlined,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 4,
+                                ),
+                              ),
+                            ],
                           ),
-                          onClickEdit: () =>
-                              notifier.onClickEditMainQuest(context, mainQuest),
-                          onAssemble: () {
-                            assemblerNotifier.handleAddMainQuestToAssemble(
-                              mainQuest,
-                            );
-                            navigationNotifier.setIndex(1);
-                          },
                         ),
                       ],
 
@@ -300,223 +335,6 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header({required this.label, required this.questCount});
-
-  final String label;
-  final int questCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return QuestLogSectionHeader(
-      title: label.toUpperCase(),
-      rightSide: QuestLogBadge(
-        label:
-            '$questCount ${Intl.plural(questCount, one: 'QUEST', other: 'QUESTS')}',
-        primaryColor: QuestLogColors.textSecondary,
-        backgroundColor: QuestLogColors.surface,
-        borderColor: QuestLogColors.border,
-      ),
-      dividerStyle: (dividerDistance: 4),
-    );
-  }
-}
-
-class _QuestContainer extends StatelessWidget {
-  const _QuestContainer({required this.color, required this.child});
-
-  final Color color;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: QuestLogColors.surface,
-        border: Border(
-          top: BorderSide(color: color, width: 0.5),
-          right: BorderSide(color: color, width: 0.5),
-          bottom: BorderSide(color: color, width: 0.5),
-          left: BorderSide(color: color, width: 5),
-        ),
-      ),
-      child: child,
-    );
-  }
-}
-
-class _MainQuestBlock extends StatelessWidget {
-  const _MainQuestBlock({
-    required this.mainQuest,
-    required this.onArchive,
-    required this.onClickEdit,
-    required this.onAssemble,
-  });
-
-  final MainQuest mainQuest;
-  final VoidCallback onArchive;
-  final VoidCallback onClickEdit;
-  final VoidCallback onAssemble;
-
-  @override
-  Widget build(BuildContext context) {
-    return _QuestContainer(
-      color: QuestLogColors.accent,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  QuestLogBadge(
-                    label: 'MAIN QUEST',
-                    primaryColor: QuestLogColors.accent,
-                  ),
-
-                  const SizedBox(width: 5),
-
-                  QuestLogBadge(
-                    label: mainQuest.priority.label.toUpperCase(),
-                    primaryColor: mainQuest.priority.color,
-                    prefixIcon: mainQuest.priority.icon,
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(
-                    Icons.calendar_today,
-                    color: QuestLogColors.accent,
-                    size: 10,
-                  ),
-
-                  const SizedBox(width: 5),
-
-                  Text(
-                    'DUE: ${mainQuest.dueText}',
-                    style: GoogleFonts.jetBrainsMono(
-                      color: QuestLogColors.textSecondary,
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            mainQuest.name,
-            style: GoogleFonts.jetBrainsMono(
-              color: QuestLogColors.textPrimary,
-              fontSize: 14,
-              fontWeight: FontWeight(1000),
-            ),
-          ),
-
-          if (mainQuest.subTasks.isNotEmpty) ...[
-            const SizedBox(height: 10),
-
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: QuestLogColors.black,
-                border: Border.all(color: QuestLogColors.border, width: 0.5),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: Icon(
-                          Icons.checklist,
-                          size: 14,
-                          color: QuestLogColors.accent,
-                        ),
-                      ),
-
-                      const SizedBox(width: 5),
-
-                      Text(
-                        'SUB-TASKS',
-                        style: GoogleFonts.jetBrainsMono(
-                          color: QuestLogColors.textSecondary,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 5),
-
-                  for (final subTask in mainQuest.subTasks) ...[
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: Icon(
-                            Icons.chevron_right,
-                            color: QuestLogColors.accent,
-                            size: 14,
-                          ),
-                        ),
-
-                        const SizedBox(width: 5),
-
-                        Text(
-                          subTask,
-                          style: GoogleFonts.jetBrainsMono(
-                            color: QuestLogColors.textSecondary,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-
-          const SizedBox(height: 10),
-
-          Divider(height: 1),
-
-          const SizedBox(height: 5),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _QuestBlockFooterActions(
-                onArchive: onArchive,
-                onEdit: onClickEdit,
-              ),
-
-              QuestLogButton(
-                primaryColor: QuestLogColors.accent,
-                onPress: onAssemble,
-                label: 'ASSEMBLE',
-                fontSize: 10,
-                prefixIcon: Icons.bolt_outlined,
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _SideQuestBlock extends StatelessWidget {
   const _SideQuestBlock({
     required this.sideQuest,
@@ -530,7 +348,7 @@ class _SideQuestBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _QuestContainer(
+    return QuestContainer(
       color: QuestLogColors.otherAccent,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -659,62 +477,69 @@ class _SideQuestBlock extends StatelessWidget {
 
           const SizedBox(height: 5),
 
-          _QuestBlockFooterActions(onArchive: onArchive, onEdit: onClickEdit),
+          Row(
+            children: [
+              _EditButton(onPress: onClickEdit),
+
+              const SizedBox(width: 10),
+
+              _ArchiveButton(onPress: onArchive),
+            ],
+          ),
         ],
       ),
     );
   }
 }
 
-class _QuestBlockFooterActions extends StatelessWidget {
-  const _QuestBlockFooterActions({
-    required this.onArchive,
-    required this.onEdit,
-  });
+class _EditButton extends StatelessWidget {
+  const _EditButton({required this.onPress});
 
-  final VoidCallback onArchive;
-  final VoidCallback onEdit;
+  final VoidCallback onPress;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            radius: 10,
-            customBorder: const CircleBorder(),
-            onTap: onEdit,
-            child: Container(
-              padding: EdgeInsets.all(5),
-              child: Icon(
-                Icons.edit,
-                size: 16,
-                color: QuestLogColors.textSecondary,
-              ),
-            ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        radius: 10,
+        customBorder: const CircleBorder(),
+        onTap: onPress,
+        child: Container(
+          padding: EdgeInsets.all(5),
+          child: Icon(
+            Icons.edit,
+            size: 16,
+            color: QuestLogColors.textSecondary,
           ),
         ),
+      ),
+    );
+  }
+}
 
-        const SizedBox(width: 10),
+class _ArchiveButton extends StatelessWidget {
+  const _ArchiveButton({required this.onPress});
 
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            radius: 10,
-            customBorder: const CircleBorder(),
-            onTap: onArchive,
-            child: Container(
-              padding: EdgeInsets.all(5),
-              child: Icon(
-                Icons.archive,
-                size: 16,
-                color: QuestLogColors.textSecondary,
-              ),
-            ),
+  final VoidCallback onPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        radius: 10,
+        customBorder: const CircleBorder(),
+        onTap: onPress,
+        child: Container(
+          padding: EdgeInsets.all(5),
+          child: Icon(
+            Icons.archive,
+            size: 16,
+            color: QuestLogColors.textSecondary,
           ),
         ),
-      ],
+      ),
     );
   }
 }

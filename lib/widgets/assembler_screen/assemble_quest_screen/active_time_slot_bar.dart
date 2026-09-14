@@ -11,7 +11,7 @@ class ActiveTimeSlotBar extends StatefulWidget {
     super.key,
     required this.timeSlot,
     required this.onReset,
-    required this.onQuestAssembled,
+    required this.onAddMainQuestToAssemble,
     required this.assembledQuestName,
     required this.onSave,
     required this.onClearQuest,
@@ -24,7 +24,7 @@ class ActiveTimeSlotBar extends StatefulWidget {
 
   final TimeSlot timeSlot;
   final VoidCallback onReset;
-  final void Function(MainQuest) onQuestAssembled;
+  final void Function(MainQuest) onAddMainQuestToAssemble;
   final String assembledQuestName;
   final VoidCallback onSave;
   final VoidCallback onClearQuest;

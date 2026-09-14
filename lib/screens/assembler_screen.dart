@@ -4,7 +4,6 @@ import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/providers/assembler_providers.dart';
-import 'package:questlog/providers/navigation_bar_providers.dart';
 import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/active_time_slot_bar.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
 import 'package:questlog/widgets/assembler_screen/assembler_title.dart';
@@ -46,9 +45,8 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
     final notifier = ref.read(assemblerViewStateNotifierProvider.notifier);
     final assemblerViewState = ref.watch(assemblerViewStateNotifierProvider);
     final assemblerDataStateAsync = ref.watch(
-      assemblerDataStateProvider(_selectedDay),
+      assemblerStateProvider(_selectedDay),
     );
-    final navigationNotifier = ref.read(navigationProvider.notifier);
 
     final DateTime baseDate = DateUtils.dateOnly(_selectedDay);
     final TimeSlot? selectedTimeSlot = assemblerViewState.selectedTimeSlot;
@@ -133,7 +131,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
                             key: const ValueKey('active-slot-bar'),
                             timeSlot: selectedTimeSlot,
                             onReset: notifier.resetTimeSlot,
-                            onQuestAssembled:
+                            onAddMainQuestToAssemble:
                                 notifier.handleAddMainQuestToAssemble,
                             assembledQuestName: assembledQuestName,
                             onSave: () {
@@ -149,7 +147,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
                             onDelete: notifier.handleDeleteEditedQuest,
                             onUpdateTimeSlot: notifier.updateSelectedTimeSlot,
                             onClickAddQuest: () =>
-                                navigationNotifier.setIndex(3),
+                                notifier.onClickAddQuest(context),
                           )
                         : const SizedBox.shrink(
                             key: ValueKey('slot-bar-empty'),
