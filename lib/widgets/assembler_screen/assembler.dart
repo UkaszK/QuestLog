@@ -169,7 +169,7 @@ class _AssemblerState extends State<Assembler> {
   Widget _buildTimeBlocks(BuildContext context) {
     List<Widget> blocks = [];
 
-    final sortedAssemblerQuests = widget.assemblerQuests
+    final sortedAssemblerQuests = List.of(widget.assemblerQuests)
       ..sort((a, b) => a.compareTo(b));
 
     DateTime currentTracker =
@@ -182,11 +182,29 @@ class _AssemblerState extends State<Assembler> {
         widget.displayInsertBlocks && _currentStart == null;
 
     for (final assemblerQuest in sortedAssemblerQuests) {
-      if (showInsertBlocks &&
-          assemblerQuest.startTime.isAfter(currentTracker)) {
-        blocks.add(
-          _buildInsertBlock(context, currentTracker, assemblerQuest.startTime),
-        );
+      if (showInsertBlocks) {
+        while (currentTracker.isBefore(assemblerQuest.startTime)) {
+          final desiredEndTime = currentTracker.add(Duration(hours: 4));
+
+          if (desiredEndTime.isBefore(assemblerQuest.startTime)) {
+            blocks.add(
+              _buildInsertBlock(context, currentTracker, desiredEndTime),
+            );
+
+            currentTracker = desiredEndTime;
+            continue;
+          }
+
+          blocks.add(
+            _buildInsertBlock(
+              context,
+              currentTracker,
+              assemblerQuest.startTime,
+            ),
+          );
+
+          currentTracker = assemblerQuest.startTime;
+        }
       }
 
       // Don't build time block for selected quest
@@ -302,27 +320,42 @@ class _AssemblerState extends State<Assembler> {
       currentTracker = assemblerQuest.endTime;
     }
 
-    if (showInsertBlocks && currentTracker.isBefore(endOfDay)) {
-      blocks.add(_buildInsertBlock(context, currentTracker, endOfDay));
+    if (showInsertBlocks) {
+      while (currentTracker.isBefore(endOfDay)) {
+        final desiredEndTime = currentTracker.add(Duration(hours: 4));
+
+        if (desiredEndTime.isBefore(endOfDay)) {
+          blocks.add(
+            _buildInsertBlock(context, currentTracker, desiredEndTime),
+          );
+
+          currentTracker = desiredEndTime;
+          continue;
+        }
+
+        blocks.add(_buildInsertBlock(context, currentTracker, endOfDay));
+        currentTracker = endOfDay;
+      }
     }
 
     if (_currentStart != null && _currentEnd != null) {
       blocks.add(_buildInteractiveSlotBlock());
     }
 
-    return Stack(clipBehavior: Clip.none, children: blocks);
+    return Stack(children: blocks);
   }
 
   Widget _buildInsertBlock(BuildContext context, DateTime start, DateTime end) {
     int minutesFromStart = start.difference(widget.baseDate).inMinutes;
     int duration = end.difference(start).inMinutes;
 
-    double topPosition = minutesFromStart * _pixelsPerMinute + _blocksOffsetY;
-    double height = duration * _pixelsPerMinute;
+    double topPosition =
+        minutesFromStart * _pixelsPerMinute + _blocksOffsetY + 3;
+    double height = duration * _pixelsPerMinute - 6;
 
     String timeText = getTimeText(start, end, false);
 
-    bool tinySized = height < 25;
+    bool tinySized = height < 20;
     bool smallSized = height < 60;
 
     Color color = QuestLogColors.textSecondary.withValues(alpha: 0.3);
