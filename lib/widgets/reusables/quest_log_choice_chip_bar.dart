@@ -4,36 +4,24 @@ import 'package:questlog/theme/questlog_colors.dart';
 
 enum QuestLogChoiceChipBarStyle { filled, outlined }
 
-class QuestLogChoiceChipBarOption<T> {
-  const QuestLogChoiceChipBarOption({
-    required this.label,
-    this.prefixIcon,
-    this.suffixIcon,
-    required this.value,
-    this.primaryColor,
-  });
-
-  final String label;
-  final IconData? prefixIcon;
-  final IconData? suffixIcon;
-  final T value;
-  final Color? primaryColor;
-}
-
 class QuestLogChoiceChipBar<T> extends StatefulWidget {
-  const QuestLogChoiceChipBar({
+  QuestLogChoiceChipBar({
     super.key,
     required this.options,
     required this.selection,
     required this.onChange,
-    this.primaryColor = QuestLogColors.accent,
+    required this.labelOf,
+    this.iconOf,
+    Color Function(T)? primaryColorOf,
     this.style = QuestLogChoiceChipBarStyle.filled,
-  });
+  }) : primaryColorOf = primaryColorOf ?? ((_) => QuestLogColors.accent);
 
-  final List<QuestLogChoiceChipBarOption<T>> options;
+  final List<T> options;
   final T selection;
   final void Function(T) onChange;
-  final Color primaryColor;
+  final String Function(T) labelOf;
+  final IconData Function(T)? iconOf;
+  final Color Function(T) primaryColorOf;
   final QuestLogChoiceChipBarStyle style;
 
   @override
@@ -78,24 +66,21 @@ class _QuestLogChoiceChipBarState<T> extends State<QuestLogChoiceChipBar<T>> {
   }
 
   ({Color textColor, Color backgroundColor, Color borderColor})
-  _getOptionColors(QuestLogChoiceChipBarOption<T> option) {
-    final isSelected = option.value == widget.selection;
-    final optionColor = option.primaryColor ?? widget.primaryColor;
-
+  _getOptionColors(bool isSelected, Color primaryColor) {
     if (widget.style == QuestLogChoiceChipBarStyle.filled) {
       return (
         textColor: isSelected
             ? QuestLogColors.black
             : QuestLogColors.textSecondary,
-        backgroundColor: isSelected ? optionColor : QuestLogColors.surface,
-        borderColor: isSelected ? optionColor : QuestLogColors.border,
+        backgroundColor: isSelected ? primaryColor : QuestLogColors.surface,
+        borderColor: isSelected ? primaryColor : QuestLogColors.border,
       );
     }
 
     return (
-      textColor: isSelected ? optionColor : QuestLogColors.textSecondary,
+      textColor: isSelected ? primaryColor : QuestLogColors.textSecondary,
       backgroundColor: QuestLogColors.background,
-      borderColor: isSelected ? optionColor : QuestLogColors.border,
+      borderColor: isSelected ? primaryColor : QuestLogColors.border,
     );
   }
 
@@ -114,12 +99,14 @@ class _QuestLogChoiceChipBarState<T> extends State<QuestLogChoiceChipBar<T>> {
               for (final option in widget.options) ...[
                 Builder(
                   builder: (context) {
-                    final colors = _getOptionColors(option);
+                    final colors = _getOptionColors(
+                      option == widget.selection,
+                      widget.primaryColorOf(option),
+                    );
                     return _OptionContainer(
-                      label: option.label,
-                      prefixIcon: option.prefixIcon,
-                      suffixIcon: option.suffixIcon,
-                      onSelect: () => widget.onChange(option.value),
+                      label: widget.labelOf(option),
+                      icon: widget.iconOf?.call(option),
+                      onSelect: () => widget.onChange(option),
                       textColor: colors.textColor,
                       backgroundColor: colors.backgroundColor,
                       borderColor: colors.borderColor,
@@ -164,8 +151,7 @@ class _QuestLogChoiceChipBarState<T> extends State<QuestLogChoiceChipBar<T>> {
 class _OptionContainer<T> extends StatelessWidget {
   const _OptionContainer({
     required this.label,
-    this.prefixIcon,
-    this.suffixIcon,
+    this.icon,
     required this.onSelect,
     required this.textColor,
     required this.backgroundColor,
@@ -173,8 +159,7 @@ class _OptionContainer<T> extends StatelessWidget {
   });
 
   final String label;
-  final IconData? prefixIcon;
-  final IconData? suffixIcon;
+  final IconData? icon;
   final VoidCallback onSelect;
   final Color textColor;
   final Color backgroundColor;
@@ -197,8 +182,8 @@ class _OptionContainer<T> extends StatelessWidget {
           ),
           child: Row(
             children: [
-              if (prefixIcon != null) ...[
-                Icon(prefixIcon, size: 12, color: textColor),
+              if (icon != null) ...[
+                Icon(icon, size: 12, color: textColor),
                 const SizedBox(width: 5),
               ],
 
@@ -210,11 +195,6 @@ class _OptionContainer<T> extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
-              if (suffixIcon != null) ...[
-                const SizedBox(width: 5),
-                Icon(suffixIcon, size: 12, color: textColor),
-              ],
             ],
           ),
         ),

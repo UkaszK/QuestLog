@@ -33,15 +33,10 @@ class _QuestFormScreenState extends ConsumerState<QuestFormScreen> {
 
         const SizedBox(height: 8),
 
-        QuestLogSwitch<QuestType>(
-          options: [
-            QuestLogSwitchOption(label: 'MAIN QUEST', value: QuestType.main),
-            QuestLogSwitchOption(
-              label: 'SIDE QUEST',
-              value: QuestType.side,
-              primaryColor: QuestLogColors.otherAccent,
-            ),
-          ],
+        QuestLogSwitch(
+          options: QuestType.values,
+          labelOf: (questType) => questType.label.toUpperCase(),
+          primaryColorOf: (questType) => questType.color,
           selection: _selectedQuestType,
           onChange: (value) => setState(() {
             _selectedQuestType = value;
