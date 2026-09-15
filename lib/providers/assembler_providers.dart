@@ -137,6 +137,28 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
     resetTimeSlot();
   }
 
+  void handleUpdateAssemblerQuestDetails({
+    required String name,
+    required List<SubTask> subTasks,
+  }) {
+    final editingQuest = state.editingQuest;
+    if (editingQuest == null) return;
+
+    final updatedQuest = editingQuest.copyWith(
+      name: name,
+      subTasks: subTasks,
+    );
+
+    IsarDataStore.updateAssemblerMainQuest(editingQuest.id, updatedQuest);
+
+    // Keep the bar open with the refreshed quest so time slot edits still work.
+    state = (
+      selectedTimeSlot: state.selectedTimeSlot,
+      assembledMainQuest: state.assembledMainQuest,
+      editingQuest: updatedQuest,
+    );
+  }
+
   void handleDeleteEditedQuest() {
     final editingQuest = state.editingQuest;
     if (editingQuest == null) return;

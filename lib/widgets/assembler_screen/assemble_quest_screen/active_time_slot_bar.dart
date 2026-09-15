@@ -20,6 +20,7 @@ class ActiveTimeSlotBar extends StatefulWidget {
     required this.onDelete,
     required this.onUpdateTimeSlot,
     required this.onClickAddQuest,
+    required this.onEditDetails,
   });
 
   final TimeSlot timeSlot;
@@ -33,6 +34,7 @@ class ActiveTimeSlotBar extends StatefulWidget {
   final VoidCallback onDelete;
   final void Function(TimeSlot) onUpdateTimeSlot;
   final VoidCallback onClickAddQuest;
+  final VoidCallback onEditDetails;
 
   @override
   State<ActiveTimeSlotBar> createState() => _ActiveTimeSlotBarState();
@@ -337,6 +339,20 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
                             ),
                           ),
                         ),
+                        if (widget.isEditingExistingQuest) ...[
+                          const SizedBox(width: 4),
+                          InkWell(
+                            onTap: widget.onEditDetails,
+                            child: const Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.edit_outlined,
+                                size: 16,
+                                color: QuestLogColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

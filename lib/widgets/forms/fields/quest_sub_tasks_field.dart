@@ -2,21 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
-class QuestSubTasksField extends StatefulWidget {
+class QuestSubTasksField<T> extends StatefulWidget {
   const QuestSubTasksField({
     super.key,
     required this.items,
     required this.onChange,
+    required this.labelOf,
+    required this.create,
+    required this.rename,
+    this.leadingBuilder,
   });
 
-  final List<String> items;
-  final void Function(List<String>) onChange;
+  /// Convenience constructor for plain string sub tasks.
+  static QuestSubTasksField<String> strings({
+    Key? key,
+    required List<String> items,
+    required void Function(List<String>) onChange,
+  }) {
+    return QuestSubTasksField<String>(
+      key: key,
+      items: items,
+      onChange: onChange,
+      labelOf: (item) => item,
+      create: (text) => text,
+      rename: (_, text) => text,
+    );
+  }
+
+  final List<T> items;
+  final void Function(List<T>) onChange;
+  final String Function(T item) labelOf;
+  final T Function(String text) create;
+  final T Function(T item, String text) rename;
+  final Widget Function(T item)? leadingBuilder;
 
   @override
-  State<StatefulWidget> createState() => _QuestSubTasksFieldState();
+  State<StatefulWidget> createState() => _QuestSubTasksFieldState<T>();
 }
 
-class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
+class _QuestSubTasksFieldState<T> extends State<QuestSubTasksField<T>> {
   final TextEditingController _newController = TextEditingController();
   final TextEditingController _editController = TextEditingController();
 
@@ -61,7 +85,7 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
   void _trySaveNew() {
     final text = _newController.text.trim();
     if (text.isNotEmpty) {
-      List<String> updated = [...widget.items, text];
+      List<T> updated = [...widget.items, widget.create(text)];
       widget.onChange(updated);
       _newController.clear();
     }
@@ -71,10 +95,10 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
     if (_editingIndex != index) return;
 
     final text = _editController.text.trim();
-    List<String> updated = List.from(widget.items);
+    List<T> updated = List.from(widget.items);
 
     if (text.isNotEmpty) {
-      updated[index] = text;
+      updated[index] = widget.rename(updated[index], text);
     } else {
       updated.removeAt(index);
     }
@@ -87,7 +111,7 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
   }
 
   void _deleteItem(int index) {
-    List<String> updated = List.from(widget.items);
+    List<T> updated = List.from(widget.items);
     updated.removeAt(index);
     widget.onChange(updated);
 
@@ -98,19 +122,22 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
     }
   }
 
-  Widget _buildSavedItem(int index, String item) {
+  Widget _buildSavedItem(int index, T item) {
     final isEditing = _editingIndex == index;
+    final label = widget.labelOf(item);
 
     return Row(
       children: [
         SizedBox(
           width: 20,
           height: 20,
-          child: Icon(
-            Icons.chevron_right,
-            size: 20,
-            color: QuestLogColors.accent,
-          ),
+          child:
+              widget.leadingBuilder?.call(item) ??
+              const Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: QuestLogColors.accent,
+              ),
         ),
 
         const SizedBox(width: 8),
@@ -152,7 +179,7 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
                   onTap: () {
                     setState(() {
                       _editingIndex = index;
-                      _editController.text = item;
+                      _editController.text = label;
                     });
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       _editFocusNode.requestFocus();
@@ -169,7 +196,7 @@ class _QuestSubTasksFieldState extends State<QuestSubTasksField> {
                       ),
                     ),
                     child: Text(
-                      item,
+                      label,
                       style: GoogleFonts.jetBrainsMono(fontSize: 12),
                       overflow: TextOverflow.ellipsis,
                     ),
