@@ -5,6 +5,7 @@ import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/providers/assembler_providers.dart';
 import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/active_time_slot_bar.dart';
+import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/edit_assembler_quest_sheet.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
 import 'package:questlog/widgets/assembler_screen/assembler_title.dart';
 import 'package:questlog/widgets/assembler_screen/day_picker.dart';
@@ -38,6 +39,18 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
     final today = DateUtils.dateOnly(DateTime.now());
     final selectedDate = DateUtils.dateOnly(date);
     return selectedDate.isBefore(today);
+  }
+
+  Future<void> _editQuestDetails(AssemblerMainQuest quest) async {
+    final details = await showEditAssemblerQuestSheet(context, quest);
+    if (details == null) return;
+
+    ref
+        .read(assemblerViewStateNotifierProvider.notifier)
+        .handleUpdateAssemblerQuestDetails(
+          name: details.name,
+          subTasks: details.subTasks,
+        );
   }
 
   @override
@@ -148,6 +161,10 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
                             onUpdateTimeSlot: notifier.updateSelectedTimeSlot,
                             onClickAddQuest: () =>
                                 notifier.onClickAddQuest(context),
+                            onEditDetails: () {
+                              if (editingQuest == null) return;
+                              _editQuestDetails(editingQuest);
+                            },
                           )
                         : const SizedBox.shrink(
                             key: ValueKey('slot-bar-empty'),

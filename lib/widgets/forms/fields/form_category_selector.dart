@@ -33,19 +33,13 @@ class FormCategorySelector extends StatelessWidget {
 
         const SizedBox(height: 8),
 
-        QuestLogChoiceChipBar<QuestCategory>(
-          options: questCategories
-              .map(
-                (category) => QuestLogChoiceChipBarOption(
-                  label: category.name,
-                  value: category,
-                  prefixIcon: category.icon,
-                  primaryColor: primaryColor,
-                ),
-              )
-              .toList(),
+        QuestLogChoiceChipBar(
+          options: questCategories,
           selection: selection,
           onChange: onChange,
+          labelOf: (category) => category.name,
+          iconOf: (category) => category.icon,
+          primaryColorOf: (_) => primaryColor,
           style: .outlined,
         ),
       ],

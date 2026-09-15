@@ -20,17 +20,6 @@ import 'package:questlog/widgets/reusables/quest_log_button.dart';
 import 'package:questlog/widgets/reusables/quest_log_choice_chip_bar.dart';
 import 'package:questlog/widgets/reusables/quest_log_screen_container.dart';
 
-final List<QuestLogChoiceChipBarOption<QuestFilterOption>>
-_filterChoiceChipBarOptions = QuestFilterOption.values
-    .map(
-      (value) => QuestLogChoiceChipBarOption(
-        label: value.label,
-        value: value,
-        primaryColor: value.color,
-      ),
-    )
-    .toList();
-
 class BacklogScreen extends ConsumerStatefulWidget {
   const BacklogScreen({super.key});
 
@@ -227,11 +216,11 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
 
         return QuestLogScreenContainer(
           children: [
-            QuestLogChoiceChipBar<QuestFilterOption>(
-              options: _filterChoiceChipBarOptions,
+            QuestLogChoiceChipBar(
+              options: QuestFilterOption.values,
               selection: _selectedFilter,
               onChange: (filter) => setState(() => _selectedFilter = filter),
-              primaryColor: QuestLogColors.accent,
+              labelOf: (filterOption) => filterOption.label,
             ),
 
             if (sortedCategories.isNotEmpty) ...[

@@ -5,6 +5,7 @@ import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 import 'package:questlog/utils/DateTime/to_hhmm.dart';
+import 'package:questlog/widgets/reusables/quest_log_button.dart';
 
 class ActiveTimeSlotBar extends StatefulWidget {
   const ActiveTimeSlotBar({
@@ -20,6 +21,7 @@ class ActiveTimeSlotBar extends StatefulWidget {
     required this.onDelete,
     required this.onUpdateTimeSlot,
     required this.onClickAddQuest,
+    required this.onEditDetails,
   });
 
   final TimeSlot timeSlot;
@@ -33,6 +35,7 @@ class ActiveTimeSlotBar extends StatefulWidget {
   final VoidCallback onDelete;
   final void Function(TimeSlot) onUpdateTimeSlot;
   final VoidCallback onClickAddQuest;
+  final VoidCallback onEditDetails;
 
   @override
   State<ActiveTimeSlotBar> createState() => _ActiveTimeSlotBarState();
@@ -337,25 +340,29 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
                             ),
                           ),
                         ),
+                        if (widget.isEditingExistingQuest) ...[
+                          InkWell(
+                            onTap: widget.onEditDetails,
+                            child: const Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.edit_outlined,
+                                size: 16,
+                                color: QuestLogColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
                       ],
                     ),
                   ),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.check, size: 16),
-                    label: Text(
-                      'SAVE',
-                      style: GoogleFonts.jetBrainsMono(fontSize: 12),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: QuestLogColors.accent,
-                      foregroundColor: QuestLogColors.surface,
-                      disabledBackgroundColor: QuestLogColors.textSecondary
-                          .withValues(alpha: 0.2),
-                      disabledForegroundColor: QuestLogColors.textSecondary,
-                    ),
-                    onPressed: (widget.hasOverlap || hasInvalidTime)
-                        ? null
-                        : widget.onSave,
+                  QuestLogButton(
+                    primaryColor: QuestLogColors.accent,
+                    onPress: widget.onSave,
+                    disabled: widget.hasOverlap || hasInvalidTime,
+                    label: 'SAVE',
+                    prefixIcon: Icons.check,
                   ),
                   const SizedBox(width: 8),
                   if (widget.isEditingExistingQuest)

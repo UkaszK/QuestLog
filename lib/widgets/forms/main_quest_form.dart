@@ -97,7 +97,7 @@ class _MainQuestFormState extends ConsumerState<MainQuestForm> {
 
           Divider(height: 20),
 
-          QuestSubTasksField(
+          QuestSubTasksField.strings(
             items: _subTasks,
             onChange: (subTasks) => setState(() => _subTasks = subTasks),
           ),
