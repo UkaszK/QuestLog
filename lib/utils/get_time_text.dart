@@ -1,4 +1,4 @@
-import 'package:questlog/utils/DateTime/to_hhmm.dart';
+import 'package:questlog/utils/DateTime/date_time_extension.dart';
 
 String getTimeText(
   DateTime start,

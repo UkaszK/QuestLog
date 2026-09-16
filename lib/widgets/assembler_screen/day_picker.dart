@@ -3,11 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
 
 class DayPicker extends StatefulWidget {
-  const DayPicker({
+  DayPicker({
     super.key,
-    required this.selectedDay,
+    required DateTime selectedDay,
     required this.onDaySelected,
-  });
+  }) : selectedDay = DateUtils.dateOnly(selectedDay);
 
   final DateTime selectedDay;
   final ValueChanged<DateTime> onDaySelected;
@@ -17,32 +17,16 @@ class DayPicker extends StatefulWidget {
 }
 
 class _DayPickerState extends State<DayPicker> {
-  late DateTime _baseDate;
-
-  @override
-  void initState() {
-    super.initState();
-    _baseDate = _resetDay(widget.selectedDay);
-  }
-
   void _shiftDays(int offset) {
-    setState(() {
-      _baseDate = _baseDate.add(Duration(days: offset));
-      widget.onDaySelected(_baseDate);
-    });
-  }
-
-  DateTime _resetDay(DateTime selection) {
-    final updated = DateTime(selection.year, selection.month, selection.day);
-
-    return updated;
+    final updatedDate = widget.selectedDay.add(Duration(days: offset));
+    widget.onDaySelected(updatedDate);
   }
 
   List<Map<String, dynamic>> get availableDays {
     const weekdays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
     return List.generate(5, (index) {
-      final date = _baseDate.add(Duration(days: index - 2));
+      final date = widget.selectedDay.add(Duration(days: index - 2));
       return {
         'day': weekdays[date.weekday - 1],
         'dayNum': date.day,
@@ -80,7 +64,7 @@ class _DayPickerState extends State<DayPicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 30),
+      margin: EdgeInsets.symmetric(vertical: 35),
       child: Row(
         spacing: 25,
         children: [
@@ -95,12 +79,7 @@ class _DayPickerState extends State<DayPicker> {
               children: [
                 for (final dayData in availableDays)
                   GestureDetector(
-                    onTap: () => {
-                      setState(() {
-                        _baseDate = dayData['fullDate'];
-                      }),
-                      widget.onDaySelected(dayData['fullDate']),
-                    },
+                    onTap: () => {widget.onDaySelected(dayData['fullDate'])},
                     behavior: HitTestBehavior.opaque,
                     child: _buildDayField(
                       dayData['day'],

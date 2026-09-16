@@ -11,6 +11,7 @@ import 'package:questlog/screens/select_main_quest_screen.dart';
 typedef AssemblerState = ({List<AssemblerMainQuest> selectedDayQuests});
 
 typedef AssemblerViewState = ({
+  DateTime selectedDay,
   TimeSlot? selectedTimeSlot,
   MainQuest? assembledMainQuest,
   AssemblerMainQuest? editingQuest,
@@ -47,11 +48,16 @@ final assemblerViewStateNotifierProvider =
 
 class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
   @override
-  AssemblerViewState build() =>
-      (selectedTimeSlot: null, assembledMainQuest: null, editingQuest: null);
+  AssemblerViewState build() => (
+    selectedDay: DateUtils.dateOnly(DateTime.now()),
+    selectedTimeSlot: null,
+    assembledMainQuest: null,
+    editingQuest: null,
+  );
 
   void resetTimeSlot() {
     state = (
+      selectedDay: state.selectedDay,
       selectedTimeSlot: null,
       assembledMainQuest: null,
       editingQuest: null,
@@ -60,6 +66,7 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
 
   void updateSelectedTimeSlot(TimeSlot timeSlot) {
     state = (
+      selectedDay: state.selectedDay,
       selectedTimeSlot: timeSlot,
       assembledMainQuest: state.assembledMainQuest,
       editingQuest: state.editingQuest,
@@ -70,6 +77,7 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
     AssemblerMainQuest assemblerMainQuest,
   ) {
     state = (
+      selectedDay: state.selectedDay,
       selectedTimeSlot: (
         startTime: assemblerMainQuest.startTime,
         endTime: assemblerMainQuest.endTime,
@@ -87,6 +95,7 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
     );
 
     state = (
+      selectedDay: today,
       selectedTimeSlot: state.selectedTimeSlot ?? defaultTimeSlot,
       assembledMainQuest: mainQuest,
       editingQuest: state.editingQuest,
@@ -95,6 +104,7 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
 
   void handleQuestCleared() {
     state = (
+      selectedDay: state.selectedDay,
       selectedTimeSlot: state.selectedTimeSlot,
       assembledMainQuest: null,
       editingQuest: state.editingQuest,
@@ -144,15 +154,13 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
     final editingQuest = state.editingQuest;
     if (editingQuest == null) return;
 
-    final updatedQuest = editingQuest.copyWith(
-      name: name,
-      subTasks: subTasks,
-    );
+    final updatedQuest = editingQuest.copyWith(name: name, subTasks: subTasks);
 
     IsarDataStore.updateAssemblerMainQuest(editingQuest.id, updatedQuest);
 
     // Keep the bar open with the refreshed quest so time slot edits still work.
     state = (
+      selectedDay: state.selectedDay,
       selectedTimeSlot: state.selectedTimeSlot,
       assembledMainQuest: state.assembledMainQuest,
       editingQuest: updatedQuest,
@@ -171,6 +179,16 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => SelectMainQuestScreen()),
+    );
+  }
+
+  void updateSelectedDay(DateTime date) {
+    final normalizedDate = DateUtils.dateOnly(date);
+    state = (
+      selectedDay: normalizedDate,
+      selectedTimeSlot: null,
+      assembledMainQuest: null,
+      editingQuest: null,
     );
   }
 }
