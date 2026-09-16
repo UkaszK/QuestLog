@@ -262,13 +262,13 @@ class _AssemblerState extends State<Assembler> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: smallSized
-                                ? CrossAxisAlignment.center
-                                : CrossAxisAlignment.start,
-                            children: [
-                              if (!tinySized) ...[
+                          if (!tinySized) ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: smallSized
+                                  ? CrossAxisAlignment.center
+                                  : CrossAxisAlignment.start,
+                              children: [
                                 Text(
                                   title,
                                   style: GoogleFonts.jetBrainsMono(
@@ -291,8 +291,8 @@ class _AssemblerState extends State<Assembler> {
                                   ),
                                 ),
                               ],
-                            ],
-                          ),
+                            ),
+                          ],
 
                           if (largeSized && description.isNotEmpty) ...[
                             const SizedBox(height: 4),
