@@ -188,7 +188,9 @@ AnalyticsMetrics computeAnalytics({
   // Index source data by day.
   final mainQuestsByDay = <DateTime, List<AssemblerMainQuest>>{};
   for (final quest in mainQuests) {
-    mainQuestsByDay.putIfAbsent(_dateOnly(quest.startTime), () => []).add(quest);
+    mainQuestsByDay
+        .putIfAbsent(_dateOnly(quest.startTime), () => [])
+        .add(quest);
   }
 
   final sideCompletionsByDay = <DateTime, List<AssemblerSideQuest>>{};
@@ -206,8 +208,12 @@ AnalyticsMetrics computeAnalytics({
   var focusMinutes = 0;
 
   final categoryCounters = <String, _Counter>{};
-  final habitCounters = <int, _Counter>{for (final sq in sideQuests) sq.id: _Counter()};
-  final weekdayCounters = <Day, _Counter>{for (final d in Day.values) d: _Counter()};
+  final habitCounters = <int, _Counter>{
+    for (final sq in sideQuests) sq.id: _Counter(),
+  };
+  final weekdayCounters = <Day, _Counter>{
+    for (final d in Day.values) d: _Counter(),
+  };
   final windowCounters = <DayWindow, _Counter>{
     for (final w in DayWindow.values) w: _Counter(),
   };
@@ -315,7 +321,9 @@ AnalyticsMetrics computeAnalytics({
               categoryName: entry.key,
               done: entry.value.done,
               planned: entry.value.planned,
-              share: objectivesDone == 0 ? 0 : entry.value.done / objectivesDone,
+              share: objectivesDone == 0
+                  ? 0
+                  : entry.value.done / objectivesDone,
             ),
           )
           .toList()
@@ -374,7 +382,10 @@ AnalyticsMetrics computeAnalytics({
   );
 }
 
-(int current, int best) _computeStreaks(Set<DateTime> activeDays, DateTime today) {
+(int current, int best) _computeStreaks(
+  Set<DateTime> activeDays,
+  DateTime today,
+) {
   if (activeDays.isEmpty) return (0, 0);
 
   // Current streak: walk backwards from today; allow today to be pending.

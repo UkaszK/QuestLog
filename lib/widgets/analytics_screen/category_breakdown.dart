@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:questlog/data/analytics_metrics.dart';
 import 'package:questlog/data/quest_categories.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/analytics_screen/analytics_shared.dart';
+import 'package:questlog/widgets/analytics_screen/analytics_card.dart';
 
 class CategoryBreakdown extends StatelessWidget {
   const CategoryBreakdown({super.key, required this.metrics});

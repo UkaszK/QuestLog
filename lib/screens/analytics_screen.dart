@@ -20,7 +20,6 @@ class AnalyticsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final range = ref.watch(analyticsRangeProvider);
     final analyticsAsync = ref.watch(analyticsStateProvider);
 
     return analyticsAsync.when(
@@ -28,7 +27,7 @@ class AnalyticsScreen extends ConsumerWidget {
         spacing: 25,
         children: [
           _Header(
-            range: range,
+            range: metrics.range,
             metrics: metrics,
             onRangeChange: ref.read(analyticsRangeProvider.notifier).select,
           ),
