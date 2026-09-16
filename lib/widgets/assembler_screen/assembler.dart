@@ -218,6 +218,7 @@ class _AssemblerState extends State<Assembler> {
       double topPosition = minutesFromStart * _pixelsPerMinute + _blocksOffsetY;
       double height = assemblerQuest.durationInMinutes * _pixelsPerMinute;
 
+      final tinySized = height < 30;
       final smallSized =
           height < 60; // only title and one-line time text visible
       final largeSized = height >= 80; // two-line time text and description
@@ -267,27 +268,29 @@ class _AssemblerState extends State<Assembler> {
                                 ? CrossAxisAlignment.center
                                 : CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                title,
-                                style: GoogleFonts.jetBrainsMono(
-                                  color: statusColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-
-                              Flexible(
-                                child: Text(
-                                  timeText,
-                                  maxLines: smallSized ? 1 : 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.right,
+                              if (!tinySized) ...[
+                                Text(
+                                  title,
                                   style: GoogleFonts.jetBrainsMono(
-                                    color: QuestLogColors.textPrimary,
-                                    fontSize: 10,
+                                    color: statusColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
                                   ),
                                 ),
-                              ),
+
+                                Flexible(
+                                  child: Text(
+                                    timeText,
+                                    maxLines: smallSized ? 1 : 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.right,
+                                    style: GoogleFonts.jetBrainsMono(
+                                      color: QuestLogColors.textPrimary,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
 
