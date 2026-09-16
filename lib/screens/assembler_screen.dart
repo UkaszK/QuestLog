@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/providers/assembler_providers.dart';
+import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/utils/DateTime/date_time_extension.dart';
 import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/active_time_slot_bar.dart';
 import 'package:questlog/widgets/assembler_screen/assemble_quest_screen/edit_assembler_quest_sheet.dart';
 import 'package:questlog/widgets/assembler_screen/assembler.dart';
-import 'package:questlog/widgets/assembler_screen/assembler_title.dart';
 import 'package:questlog/widgets/assembler_screen/day_picker.dart';
 import 'package:questlog/widgets/quest_log_loading_screen.dart';
 
-class AssemblerScreen extends ConsumerStatefulWidget {
+class AssemblerScreen extends ConsumerWidget {
   const AssemblerScreen({super.key});
-
-  @override
-  ConsumerState<AssemblerScreen> createState() => _AssemblerScreenState();
-}
-
-class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
-  DateTime _selectedDay = DateTime.now();
 
   bool _hasOverlap(
     List<AssemblerMainQuest> assemblerMainQuests,
@@ -35,41 +30,34 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
     );
   }
 
-  bool _isPastDay(DateTime date) {
-    final today = DateUtils.dateOnly(DateTime.now());
-    final selectedDate = DateUtils.dateOnly(date);
-    return selectedDate.isBefore(today);
-  }
-
-  Future<void> _editQuestDetails(AssemblerMainQuest quest) async {
-    final details = await showEditAssemblerQuestSheet(context, quest);
-    if (details == null) return;
-
-    ref
-        .read(assemblerViewStateNotifierProvider.notifier)
-        .handleUpdateAssemblerQuestDetails(
-          name: details.name,
-          subTasks: details.subTasks,
-        );
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    Future<void> editQuestDetails(AssemblerMainQuest quest) async {
+      final details = await showEditAssemblerQuestSheet(context, quest);
+      if (details == null) return;
+
+      ref
+          .read(assemblerViewStateNotifierProvider.notifier)
+          .handleUpdateAssemblerQuestDetails(
+            name: details.name,
+            subTasks: details.subTasks,
+          );
+    }
+
     final notifier = ref.read(assemblerViewStateNotifierProvider.notifier);
     final assemblerViewState = ref.watch(assemblerViewStateNotifierProvider);
+    final selectedDay = assemblerViewState.selectedDay;
     final assemblerDataStateAsync = ref.watch(
-      assemblerStateProvider(_selectedDay),
+      assemblerStateProvider(selectedDay),
     );
 
-    final DateTime baseDate = DateUtils.dateOnly(_selectedDay);
+    final DateTime baseDate = DateUtils.dateOnly(selectedDay);
     final TimeSlot? selectedTimeSlot = assemblerViewState.selectedTimeSlot;
     final AssemblerMainQuest? editingQuest = assemblerViewState.editingQuest;
     final MainQuest? assembledMainQuest = assemblerViewState.assembledMainQuest;
     final bool hasTimeSlot = selectedTimeSlot != null;
     final String assembledQuestName =
         assembledMainQuest?.name ?? editingQuest?.name ?? '';
-
-    final isPastDay = _isPastDay(_selectedDay);
 
     return assemblerDataStateAsync.when(
       data: (state) {
@@ -96,13 +84,20 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         DayPicker(
-                          selectedDay: _selectedDay,
+                          selectedDay: selectedDay,
                           onDaySelected: (value) {
-                            setState(() => _selectedDay = value);
-                            notifier.resetTimeSlot();
+                            notifier.updateSelectedDay(value);
                           },
                         ),
-                        AssemblerTitle(),
+                        _AssemblerTitle(
+                          rightSide: Text(
+                            selectedDay.toDDMMYYYY(),
+                            style: GoogleFonts.jetBrainsMono(
+                              color: QuestLogColors.accent,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
 
                         const SizedBox(height: 10),
 
@@ -111,8 +106,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
                         Assembler(
                           baseDate: baseDate,
                           assemblerQuests: state.selectedDayQuests,
-                          displayInsertBlocks: !isPastDay && !hasTimeSlot,
-                          isPastDay: isPastDay,
+                          displayInsertBlocks: !hasTimeSlot,
                           hasOverlap: hasOverlap,
                           selectedTimeSlot: selectedTimeSlot,
                           onSelectTimeSlot: notifier.updateSelectedTimeSlot,
@@ -163,7 +157,7 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
                                 notifier.onClickAddQuest(context),
                             onEditDetails: () {
                               if (editingQuest == null) return;
-                              _editQuestDetails(editingQuest);
+                              editQuestDetails(editingQuest);
                             },
                           )
                         : const SizedBox.shrink(
@@ -178,6 +172,31 @@ class _AssemblerScreenState extends ConsumerState<AssemblerScreen> {
       },
       error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
       loading: () => QuestLogLoadingScreen(),
+    );
+  }
+}
+
+class _AssemblerTitle extends StatelessWidget {
+  const _AssemblerTitle({required this.rightSide});
+
+  final Widget rightSide;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: .spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          'ASSEMBLER',
+          style: GoogleFonts.jetBrainsMono(
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+
+        rightSide,
+      ],
     );
   }
 }

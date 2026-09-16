@@ -279,7 +279,7 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
                                       .handleAddMainQuestToAssemble(mainQuest);
                                   navigationNotifier.setIndex(1);
                                 },
-                                label: 'ASSEMBLE',
+                                label: 'ASSEMBLE TODAY',
                                 fontSize: 10,
                                 prefixIcon: Icons.bolt_outlined,
                                 padding: EdgeInsets.symmetric(

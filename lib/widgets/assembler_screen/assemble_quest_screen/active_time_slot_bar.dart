@@ -4,7 +4,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/utils/DateTime/to_hhmm.dart';
+import 'package:questlog/utils/DateTime/date_time_extension.dart';
 import 'package:questlog/widgets/reusables/quest_log_button.dart';
 
 class ActiveTimeSlotBar extends StatefulWidget {
@@ -42,6 +42,8 @@ class ActiveTimeSlotBar extends StatefulWidget {
 }
 
 class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
+  bool expanded = true;
+
   late TextEditingController _startController;
   late TextEditingController _endController;
   final FocusNode _startFocus = FocusNode();
@@ -230,7 +232,6 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
       child: SafeArea(
         bottom: false,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -406,17 +407,11 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
             ] else
               Align(
                 alignment: Alignment.centerRight,
-                child: OutlinedButton.icon(
-                  icon: const Icon(Icons.add, size: 16),
-                  label: Text(
-                    'QUEST',
-                    style: GoogleFonts.jetBrainsMono(fontSize: 12),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: QuestLogColors.accent,
-                    side: const BorderSide(color: QuestLogColors.accent),
-                  ),
-                  onPressed: widget.onClickAddQuest,
+                child: QuestLogButton(
+                  primaryColor: QuestLogColors.accent,
+                  label: 'QUEST',
+                  prefixIcon: Icons.add,
+                  onPress: widget.onClickAddQuest,
                 ),
               ),
           ],
