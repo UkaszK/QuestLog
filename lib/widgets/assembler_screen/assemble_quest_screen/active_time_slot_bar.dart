@@ -407,17 +407,11 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
             ] else
               Align(
                 alignment: Alignment.centerRight,
-                child: OutlinedButton.icon(
-                  icon: const Icon(Icons.add, size: 16),
-                  label: Text(
-                    'QUEST',
-                    style: GoogleFonts.jetBrainsMono(fontSize: 12),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: QuestLogColors.accent,
-                    side: const BorderSide(color: QuestLogColors.accent),
-                  ),
-                  onPressed: widget.onClickAddQuest,
+                child: QuestLogButton(
+                  primaryColor: QuestLogColors.accent,
+                  label: 'QUEST',
+                  prefixIcon: Icons.add,
+                  onPress: widget.onClickAddQuest,
                 ),
               ),
           ],
