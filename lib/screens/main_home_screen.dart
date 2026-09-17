@@ -7,6 +7,7 @@ import 'package:questlog/screens/assembler_screen.dart';
 import 'package:questlog/screens/backlog_screen.dart';
 import 'package:questlog/screens/dashboard_screen.dart';
 import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/widgets/achievements_screen/achievement_unlock_listener.dart';
 import 'package:questlog/widgets/questlog_app_bar.dart';
 import 'package:questlog/widgets/questlog_navigation_bar.dart';
 
@@ -28,7 +29,9 @@ class MainHomeScreen extends ConsumerWidget {
     return Scaffold(
       extendBody: true,
       appBar: QuestLogAppBar(),
-      body: IndexedStack(index: currentIndex, children: _pages),
+      body: AchievementUnlockListener(
+        child: IndexedStack(index: currentIndex, children: _pages),
+      ),
       bottomNavigationBar: QuestLogNavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: notifier.setIndex,

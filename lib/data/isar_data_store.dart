@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:questlog/data/achievement_unlock.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/assembler_side_quest.dart';
 import 'package:questlog/data/main_quest.dart';
@@ -17,6 +18,7 @@ class IsarDataStore {
       SideQuestSchema,
       AssemblerMainQuestSchema,
       AssemblerSideQuestSchema,
+      AchievementUnlockSchema,
     ], directory: dir.path);
   }
 
@@ -124,5 +126,23 @@ class IsarDataStore {
     instance.writeTxnSync(
       () => instance.assemblerSideQuests.deleteSync(assemblerSideQuest.id),
     );
+  }
+
+  // AchievementUnlock
+  static Set<String> getAnnouncedAchievementKeys() => instance
+      .achievementUnlocks
+      .where()
+      .findAllSync()
+      .map((unlock) => unlock.key)
+      .toSet();
+
+  static void addAchievementUnlocks(Iterable<String> keys) {
+    final now = DateTime.now();
+    final unlocks = keys
+        .map((key) => AchievementUnlock(key: key, unlockedAt: now))
+        .toList();
+    if (unlocks.isEmpty) return;
+
+    instance.writeTxnSync(() => instance.achievementUnlocks.putAllSync(unlocks));
   }
 }
