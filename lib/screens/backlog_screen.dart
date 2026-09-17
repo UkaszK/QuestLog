@@ -28,32 +28,40 @@ class BacklogScreen extends ConsumerStatefulWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.questCount});
+  const _Header({required this.questCount, required this.rightSide});
 
   final int questCount;
+  final Widget rightSide;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          'BACKLOG',
-          style: GoogleFonts.jetBrainsMono(
-            color: QuestLogColors.textPrimary,
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'BACKLOG',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '$questCount QUESTS IN BACKLOG',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.textSecondary,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 4),
-        Text(
-          '$questCount QUESTS IN BACKLOG',
-          style: GoogleFonts.jetBrainsMono(
-            color: QuestLogColors.textSecondary,
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+
+        rightSide,
       ],
     );
   }
@@ -254,20 +262,15 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
         return QuestLogScreenContainer(
           spacing: 25,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _Header(questCount: totalQuestCount),
-
-                QuestLogDropdown(
-                  options: QuestFilterOption.values,
-                  selection: _selectedFilter,
-                  onChange: (filter) =>
-                      setState(() => _selectedFilter = filter),
-                  labelOf: (filter) => filter.label,
-                  primaryColorOf: (filter) => filter.color,
-                ),
-              ],
+            _Header(
+              questCount: totalQuestCount,
+              rightSide: QuestLogDropdown(
+                options: QuestFilterOption.values,
+                selection: _selectedFilter,
+                onChange: (filter) => setState(() => _selectedFilter = filter),
+                labelOf: (filter) => filter.label,
+                primaryColorOf: (filter) => filter.color,
+              ),
             ),
 
             if (sortedCategories.isNotEmpty) ...[
