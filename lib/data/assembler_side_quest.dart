@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:questlog/data/side_quest.dart';
+import 'package:questlog/utils/DateTime/date_time_extension.dart';
 
 part 'assembler_side_quest.g.dart';
 
@@ -36,7 +36,7 @@ class AssemblerSideQuest implements Comparable<AssemblerSideQuest> {
       sideQuestId: sideQuest.id,
       name: sideQuest.name,
       questCategoryName: sideQuest.questCategoryName,
-      occurrenceDate: DateUtils.dateOnly(completedAt),
+      occurrenceDate: completedAt.dateOnly,
       completedAt: completedAt,
     );
   }

@@ -8,6 +8,7 @@ import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/providers/quest_providers.dart';
 import 'package:questlog/providers/side_quest_providers.dart';
+import 'package:questlog/utils/DateTime/date_time_extension.dart';
 
 typedef DashboardState = ({
   List<AssemblerMainQuest> assemblerMainQuests,
@@ -19,12 +20,14 @@ typedef DashboardState = ({
 
 final dashboardStateProvider =
     Provider.family<AsyncValue<DashboardState>, DateTime>((ref, date) {
+      final normalizedDate = date.dateOnly;
+
       final states = [
-        ref.watch(assemblerMainQuestsForDayProvider(date)),
-        ref.watch(assemblerSideQuestsForDayProvider(date)),
+        ref.watch(assemblerMainQuestsForDayProvider(normalizedDate)),
+        ref.watch(assemblerSideQuestsForDayProvider(normalizedDate)),
         ref.watch(sideQuestsProvider),
-        ref.watch(completedSideQuestIdsForDayProvider(date)),
-        ref.watch(dailyProgressForDayProvider(date)),
+        ref.watch(completedSideQuestIdsForDayProvider(normalizedDate)),
+        ref.watch(dailyProgressForDayProvider(normalizedDate)),
       ];
 
       if (states.any((state) => state.isLoading)) {
@@ -44,13 +47,20 @@ final dashboardStateProvider =
       ));
     });
 
-final dashboardControllerProvider = NotifierProvider<DashboardController, void>(
-  () => DashboardController(),
-);
+typedef DashboardViewState = ({DateTime selectedDay});
 
-class DashboardController extends Notifier<void> {
+final dashboardViewStateNotifierProvider =
+    NotifierProvider<DashboardViewStateNotifier, DashboardViewState>(
+      () => DashboardViewStateNotifier(),
+    );
+
+class DashboardViewStateNotifier extends Notifier<DashboardViewState> {
   @override
-  void build() {}
+  DashboardViewState build() => (selectedDay: DateTime.now().dateOnly);
+
+  void shiftDay(int value) {
+    state = (selectedDay: state.selectedDay.add(Duration(days: value)));
+  }
 
   void checkAssemblerMainQuest(
     AssemblerMainQuest assemblerMainQuest,

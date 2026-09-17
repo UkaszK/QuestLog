@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 extension DateTimeExtension on DateTime {
@@ -11,4 +12,6 @@ extension DateTimeExtension on DateTime {
   String toDDMMYYYY() {
     return DateFormat('dd-MM-yyyy').format(this);
   }
+
+  DateTime get dateOnly => DateUtils.dateOnly(this);
 }

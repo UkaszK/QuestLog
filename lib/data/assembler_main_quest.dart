@@ -92,6 +92,9 @@ class AssemblerMainQuest implements Comparable<AssemblerMainQuest> {
   String get timeText => getTimeText(startTime, endTime);
 
   @ignore
+  String get timeTextOneLine => getTimeText(startTime, endTime, false);
+
+  @ignore
   bool get subTasksCompleted => subTasks.every((subTask) => subTask.completed);
 
   int compareByDate(AssemblerMainQuest other) {

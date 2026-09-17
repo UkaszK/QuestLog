@@ -7,6 +7,7 @@ import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/data/time_slot.dart';
 import 'package:questlog/providers/quest_providers.dart';
 import 'package:questlog/screens/select_main_quest_screen.dart';
+import 'package:questlog/utils/DateTime/date_time_extension.dart';
 
 typedef AssemblerState = ({List<AssemblerMainQuest> selectedDayQuests});
 
@@ -49,7 +50,7 @@ final assemblerViewStateNotifierProvider =
 class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
   @override
   AssemblerViewState build() => (
-    selectedDay: DateUtils.dateOnly(DateTime.now()),
+    selectedDay: DateTime.now().dateOnly,
     selectedTimeSlot: null,
     assembledMainQuest: null,
     editingQuest: null,
@@ -88,7 +89,7 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
   }
 
   void handleAddMainQuestToAssemble(MainQuest mainQuest) {
-    final today = DateUtils.dateOnly(DateTime.now());
+    final today = DateTime.now().dateOnly;
     final defaultTimeSlot = (
       startTime: today,
       endTime: today.add(const Duration(hours: 2)),
@@ -183,7 +184,7 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
   }
 
   void updateSelectedDay(DateTime date) {
-    final normalizedDate = DateUtils.dateOnly(date);
+    final normalizedDate = date.dateOnly;
     state = (
       selectedDay: normalizedDate,
       selectedTimeSlot: null,

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/quest_log_colors.dart';
+import 'package:questlog/utils/DateTime/date_time_extension.dart';
 
 class DayPicker extends StatefulWidget {
   DayPicker({
     super.key,
     required DateTime selectedDay,
     required this.onDaySelected,
-  }) : selectedDay = DateUtils.dateOnly(selectedDay);
+  }) : selectedDay = selectedDay.dateOnly;
 
   final DateTime selectedDay;
   final ValueChanged<DateTime> onDaySelected;

@@ -91,11 +91,11 @@ class AssemblerMainQuestBlock extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            assemblerQuest.timeText.replaceFirst('\n', ' '),
+                            assemblerQuest.timeTextOneLine,
                             style: GoogleFonts.jetBrainsMono(
                               color: QuestLogColors.textPrimary,
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
 
