@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/screens/main_home_screen.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

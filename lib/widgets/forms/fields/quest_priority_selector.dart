@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/quest_priority.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 
 class QuestPrioritySelector extends StatelessWidget {
   const QuestPrioritySelector({

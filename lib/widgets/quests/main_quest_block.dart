@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/main_quest.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/data/quest_priority.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/quests/quest_container.dart';
 import 'package:questlog/widgets/reusables/quest_log_badge.dart';
 
@@ -28,13 +29,15 @@ class MainQuestBlock extends StatelessWidget {
                     primaryColor: QuestLogColors.accent,
                   ),
 
-                  const SizedBox(width: 5),
+                  if (mainQuest.priority == QuestPriority.high) ...[
+                    const SizedBox(width: 5),
 
-                  QuestLogBadge(
-                    label: mainQuest.priority.label.toUpperCase(),
-                    primaryColor: mainQuest.priority.color,
-                    prefixIcon: mainQuest.priority.icon,
-                  ),
+                    QuestLogBadge(
+                      label: mainQuest.priority.label.toUpperCase(),
+                      primaryColor: mainQuest.priority.color,
+                      prefixIcon: mainQuest.priority.icon,
+                    ),
+                  ],
                 ],
               ),
               Row(

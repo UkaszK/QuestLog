@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:questlog/data/main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/utils/DateTime/date_time_extension.dart';
 import 'package:questlog/widgets/reusables/quest_log_button.dart';
 

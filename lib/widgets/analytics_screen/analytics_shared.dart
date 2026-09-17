@@ -1,7 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/reusables/quest_log_section_header.dart';
 
 /// Bordered surface card used by all analytics sections.

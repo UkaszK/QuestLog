@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:questlog/data/analytics_metrics.dart';
 import 'package:questlog/providers/analytics_providers.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
+import 'package:questlog/widgets/achievements_screen/achievements_preview.dart';
 import 'package:questlog/widgets/analytics_screen/analytics_overview_tiles.dart';
 import 'package:questlog/widgets/analytics_screen/category_breakdown.dart';
 import 'package:questlog/widgets/analytics_screen/daily_completion_chart.dart';
@@ -33,6 +34,7 @@ class AnalyticsScreen extends ConsumerWidget {
             onRangeChange: ref.read(analyticsRangeProvider.notifier).select,
           ),
           AnalyticsOverviewTiles(metrics: metrics),
+          const AchievementsPreview(),
           DailyCompletionChart(metrics: metrics),
           WeekdayPerformanceChart(metrics: metrics),
           CategoryBreakdown(metrics: metrics),

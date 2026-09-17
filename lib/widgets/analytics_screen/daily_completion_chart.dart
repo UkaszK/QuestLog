@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:questlog/data/analytics_metrics.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/analytics_screen/analytics_bar_chart.dart';
 import 'package:questlog/widgets/analytics_screen/analytics_shared.dart';
 

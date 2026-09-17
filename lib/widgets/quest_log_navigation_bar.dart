@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/themed_svg_icon.dart';
 
 class QuestLogNavigationBar extends StatelessWidget {

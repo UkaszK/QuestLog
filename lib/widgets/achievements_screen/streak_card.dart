@@ -1,0 +1,98 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:questlog/data/day.dart';
+import 'package:questlog/data/gamification_metrics.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
+import 'package:questlog/widgets/analytics_screen/analytics_shared.dart';
+
+/// Current streak, best streak and the last seven days of activity.
+class StreakCard extends StatelessWidget {
+  const StreakCard({super.key, required this.metrics});
+
+  final GamificationMetrics metrics;
+
+  @override
+  Widget build(BuildContext context) {
+    final active = metrics.currentStreak > 0;
+    final color = active
+        ? QuestLogColors.otherAccent
+        : QuestLogColors.textSecondary;
+
+    return AnalyticsCard(
+      child: Row(
+        children: [
+          Icon(
+            active
+                ? Icons.local_fire_department
+                : Icons.local_fire_department_outlined,
+            size: 32,
+            color: color,
+          ),
+
+          const SizedBox(width: 14),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${metrics.currentStreak}D',
+                style: GoogleFonts.jetBrainsMono(
+                  color: color,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(
+                'BEST ${metrics.bestStreak}D',
+                style: analyticsCaptionStyle(),
+              ),
+            ],
+          ),
+
+          const Spacer(),
+
+          Row(
+            spacing: 6,
+            children: [
+              for (final day in metrics.recentDays)
+                _DayDot(day: day, color: color),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DayDot extends StatelessWidget {
+  const _DayDot({required this.day, required this.color});
+
+  final StreakDay day;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: day.active ? color : Colors.transparent,
+            border: Border.all(
+              color: day.active ? color : QuestLogColors.border,
+              width: 1,
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 4),
+
+        Text(
+          Day.fromDateTime(day.date).label[0],
+          style: analyticsCaptionStyle(),
+        ),
+      ],
+    );
+  }
+}

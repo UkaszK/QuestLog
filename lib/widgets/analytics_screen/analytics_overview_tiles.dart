@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/analytics_metrics.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/utils/get_duration_hours_and_minutes.dart';
 import 'package:questlog/widgets/analytics_screen/analytics_shared.dart';
 

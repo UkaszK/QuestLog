@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 
 class QuestTitleInputField extends StatelessWidget {
   const QuestTitleInputField({super.key, required this.controller});

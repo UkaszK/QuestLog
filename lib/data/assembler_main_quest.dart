@@ -16,6 +16,7 @@ class AssemblerMainQuest implements Comparable<AssemblerMainQuest> {
     required this.startTime,
     required this.endTime,
     this.completed = false,
+    this.completedAt,
   });
 
   AssemblerMainQuest copyWith({
@@ -26,6 +27,8 @@ class AssemblerMainQuest implements Comparable<AssemblerMainQuest> {
     DateTime? startTime,
     DateTime? endTime,
     bool? completed,
+    DateTime? completedAt,
+    bool clearCompletedAt = false,
   }) {
     return AssemblerMainQuest(
       mainQuestId: mainQuestId ?? this.mainQuestId,
@@ -35,6 +38,7 @@ class AssemblerMainQuest implements Comparable<AssemblerMainQuest> {
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       completed: completed ?? this.completed,
+      completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
     );
   }
 
@@ -47,6 +51,10 @@ class AssemblerMainQuest implements Comparable<AssemblerMainQuest> {
   final DateTime startTime;
   final DateTime endTime;
   final bool completed;
+
+  /// When the quest was actually ticked off. Null for quests completed before
+  /// this field existed, or for quests that are not completed.
+  final DateTime? completedAt;
 
   @ignore
   QuestStatus get status {

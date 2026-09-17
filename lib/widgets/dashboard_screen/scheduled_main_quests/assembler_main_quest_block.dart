@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
-import 'package:questlog/data/quest_status.dart';
 import 'package:questlog/data/sub_task.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 
 class AssemblerMainQuestBlock extends StatelessWidget {
   const AssemblerMainQuestBlock({
@@ -62,10 +61,7 @@ class AssemblerMainQuestBlock extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(
-          width: questStatus != QuestStatus.open ? 2 : 1,
-          color: color,
-        ),
+        border: Border.all(width: 0.5, color: color),
         color: QuestLogColors.surface,
       ),
       child: Column(
@@ -146,19 +142,21 @@ class AssemblerMainQuestBlock extends StatelessWidget {
             ],
           ),
 
-          Divider(color: QuestLogColors.border),
+          if (assemblerQuest.subTasks.isNotEmpty) ...[
+            Divider(color: QuestLogColors.border),
 
-          Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 30),
-            child: Column(
-              spacing: 10,
-              children: [
-                for (final subTask in assemblerQuest.subTasks) ...[
-                  _buildSubTask(subTask),
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(horizontal: 30),
+              child: Column(
+                spacing: 10,
+                children: [
+                  for (final subTask in assemblerQuest.subTasks) ...[
+                    _buildSubTask(subTask),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

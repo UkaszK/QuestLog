@@ -63,6 +63,8 @@ class DashboardController extends Notifier<void> {
     final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
       subTasks: updatedSubTasks,
       completed: newValue,
+      completedAt: newValue ? DateTime.now() : null,
+      clearCompletedAt: !newValue,
     );
 
     IsarDataStore.updateAssemblerMainQuest(
@@ -97,6 +99,7 @@ class DashboardController extends Notifier<void> {
     final updatedAssemblerMainQuest = assemblerMainQuest.copyWith(
       subTasks: updatedSubTasks,
       completed: completed,
+      completedAt: completed == true ? DateTime.now() : null,
     );
 
     IsarDataStore.updateAssemblerMainQuest(

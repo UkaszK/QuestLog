@@ -1,21 +1,12 @@
 import 'package:flutter/painting.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 
 enum QuestType {
-  main,
-  side;
+  main(label: 'Main Quest', color: QuestLogColors.accent),
+  side(label: 'Side Quest', color: QuestLogColors.otherAccent);
 
-  String get label {
-    return switch (this) {
-      QuestType.main => 'Main Quest',
-      QuestType.side => 'Side Quest',
-    };
-  }
+  const QuestType({required this.label, required this.color});
 
-  Color get color {
-    return switch (this) {
-      QuestType.main => QuestLogColors.accent,
-      QuestType.side => QuestLogColors.otherAccent,
-    };
-  }
+  final String label;
+  final Color color;
 }
