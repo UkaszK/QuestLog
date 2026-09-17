@@ -83,10 +83,10 @@ class _Header extends StatelessWidget {
                 ),
               ),
               Text(
-                '${((metrics.earnedBadges / metrics.totalBadges) * 100).round()}',
+                '${((metrics.earnedBadges / metrics.totalBadges) * 100).round()}%',
                 style: GoogleFonts.jetBrainsMono(
                   color: QuestLogColors.textPrimary,
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w900,
                 ),
               ),

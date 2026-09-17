@@ -49,6 +49,7 @@ class _Content extends StatelessWidget {
           rightSide: _ViewAllButton(
             label: '${metrics.earnedBadges}/${metrics.totalBadges}',
           ),
+          crossAxisAlignment: CrossAxisAlignment.end,
         ),
 
         const SizedBox(height: 12),
