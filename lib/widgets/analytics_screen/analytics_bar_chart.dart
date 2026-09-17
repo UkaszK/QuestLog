@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/analytics_screen/analytics_card.dart';
+import 'package:questlog/widgets/analytics_screen/analytics_shared.dart';
 
 class AnalyticsBar {
   const AnalyticsBar({

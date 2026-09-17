@@ -28,7 +28,8 @@ class AnalyticsScreen extends ConsumerWidget {
         children: [
           _Header(
             range: metrics.range,
-            metrics: metrics,
+            startDate: metrics.startDate,
+            endDate: metrics.endDate,
             onRangeChange: ref.read(analyticsRangeProvider.notifier).select,
           ),
           AnalyticsOverviewTiles(metrics: metrics),
@@ -39,7 +40,7 @@ class AnalyticsScreen extends ConsumerWidget {
           ScheduleDistribution(metrics: metrics),
         ],
       ),
-      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
+      error: (error, stack) => Center(child: Text('Error loading: $error')),
       loading: () => const QuestLogLoadingScreen(),
     );
   }
@@ -48,12 +49,14 @@ class AnalyticsScreen extends ConsumerWidget {
 class _Header extends StatelessWidget {
   const _Header({
     required this.range,
-    required this.metrics,
+    required this.startDate,
+    required this.endDate,
     required this.onRangeChange,
   });
 
   final AnalyticsRange range;
-  final AnalyticsMetrics metrics;
+  final DateTime startDate;
+  final DateTime endDate;
   final void Function(AnalyticsRange) onRangeChange;
 
   static final _rangeFormat = DateFormat('dd.MM.yyyy');
@@ -78,8 +81,8 @@ class _Header extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${_rangeFormat.format(metrics.startDate)}'
-                ' - ${_rangeFormat.format(metrics.endDate)}',
+                '${_rangeFormat.format(startDate)}'
+                ' - ${_rangeFormat.format(endDate)}',
                 style: GoogleFonts.jetBrainsMono(
                   color: QuestLogColors.textSecondary,
                   fontSize: 10,

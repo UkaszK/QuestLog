@@ -33,6 +33,7 @@ class _SideQuestsState extends State<SideQuests> {
       icon: Icons.checklist,
       iconColor: QuestLogColors.otherAccent,
       dividerStyle: (dividerDistance: 0),
+      crossAxisAlignment: CrossAxisAlignment.center,
       rightSide: SegmentedButton<bool>(
         segments: const [
           ButtonSegment(value: false, label: Text('ALL')),

@@ -51,7 +51,7 @@ class SelectMainQuestScreen extends ConsumerWidget {
           ],
         );
       },
-      error: (error, stack) => Center(child: Text('Fehler beim Laden: $error')),
+      error: (error, stack) => Center(child: Text('Error loading: $error')),
       loading: () => QuestLogLoadingScreen(),
     );
   }

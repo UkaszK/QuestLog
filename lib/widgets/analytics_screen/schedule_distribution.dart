@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:questlog/data/analytics_metrics.dart';
 import 'package:questlog/theme/questlog_colors.dart';
-import 'package:questlog/widgets/analytics_screen/analytics_card.dart';
+import 'package:questlog/widgets/analytics_screen/analytics_shared.dart';
 
 class ScheduleDistribution extends StatelessWidget {
   const ScheduleDistribution({super.key, required this.metrics});
