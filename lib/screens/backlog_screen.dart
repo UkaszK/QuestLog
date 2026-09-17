@@ -17,7 +17,7 @@ import 'package:questlog/widgets/quests/main_quest_block.dart';
 import 'package:questlog/widgets/quests/quest_container.dart';
 import 'package:questlog/widgets/reusables/quest_log_badge.dart';
 import 'package:questlog/widgets/reusables/quest_log_button.dart';
-import 'package:questlog/widgets/reusables/quest_log_choice_chip_bar.dart';
+import 'package:questlog/widgets/reusables/quest_log_dropdown.dart';
 import 'package:questlog/widgets/reusables/quest_log_screen_container.dart';
 
 class BacklogScreen extends ConsumerStatefulWidget {
@@ -25,6 +25,46 @@ class BacklogScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _BacklogScreenState();
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.questCount, required this.rightSide});
+
+  final int questCount;
+  final Widget rightSide;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'BACKLOG',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '$questCount QUESTS IN BACKLOG',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.textSecondary,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+
+        rightSide,
+      ],
+    );
+  }
 }
 
 class _BacklogScreenState extends ConsumerState<BacklogScreen> {
@@ -214,104 +254,121 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
                 filteredQuestsByCategory[category]!.$2.length,
         };
 
+        final totalQuestCount = categoryCounts.values.fold<int>(
+          0,
+          (sum, count) => sum + count,
+        );
+
         return QuestLogScreenContainer(
+          spacing: 25,
           children: [
-            QuestLogChoiceChipBar(
-              options: QuestFilterOption.values,
-              selection: _selectedFilter,
-              onChange: (filter) => setState(() => _selectedFilter = filter),
-              labelOf: (filterOption) => filterOption.label,
+            _Header(
+              questCount: totalQuestCount,
+              rightSide: QuestLogDropdown(
+                options: QuestFilterOption.values,
+                selection: _selectedFilter,
+                onChange: (filter) => setState(() => _selectedFilter = filter),
+                labelOf: (filter) => filter.label,
+                primaryColorOf: (filter) => filter.color,
+              ),
             ),
 
             if (sortedCategories.isNotEmpty) ...[
-              const SizedBox(height: 32),
+              Column(
+                children: [
+                  if (sortedCategories.isNotEmpty) ...[
+                    for (final category in sortedCategories) ...[
+                      QuestCategoryHeader(
+                        label: category.name,
+                        questCount: categoryCounts[category] ?? 0,
+                      ),
 
-              if (sortedCategories.isNotEmpty) ...[
-                for (final category in sortedCategories) ...[
-                  QuestCategoryHeader(
-                    label: category.name,
-                    questCount: categoryCounts[category] ?? 0,
-                  ),
+                      const SizedBox(height: 10),
 
-                  const SizedBox(height: 10),
-
-                  Column(
-                    spacing: 10,
-                    children: [
-                      for (final mainQuest
-                          in filteredQuestsByCategory[category]!.$1) ...[
-                        MainQuestBlock(
-                          mainQuest: mainQuest,
-                          footer: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
+                      Column(
+                        spacing: 10,
+                        children: [
+                          for (final mainQuest
+                              in filteredQuestsByCategory[category]!.$1) ...[
+                            MainQuestBlock(
+                              mainQuest: mainQuest,
+                              footer: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
-                                      _EditButton(
-                                        onPress: () =>
-                                            notifier.onClickEditMainQuest(
+                                      Row(
+                                        children: [
+                                          _EditButton(
+                                            onPress: () =>
+                                                notifier.onClickEditMainQuest(
+                                                  context,
+                                                  mainQuest,
+                                                ),
+                                          ),
+
+                                          const SizedBox(width: 10),
+
+                                          _ArchiveButton(
+                                            onPress: () => _dialogBuilder(
                                               context,
                                               mainQuest,
+                                              () => notifier.archiveMainQuest(
+                                                mainQuest,
+                                              ),
                                             ),
-                                      ),
-
-                                      const SizedBox(width: 10),
-
-                                      _ArchiveButton(
-                                        onPress: () => _dialogBuilder(
-                                          context,
-                                          mainQuest,
-                                          () => notifier.archiveMainQuest(
-                                            mainQuest,
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ],
                                   ),
+                                  QuestLogButton(
+                                    primaryColor: QuestLogColors.accent,
+                                    onPress: () {
+                                      assemblerNotifier
+                                          .handleAddMainQuestToAssemble(
+                                            mainQuest,
+                                          );
+                                      navigationNotifier.setIndex(1);
+                                    },
+                                    label: 'ASSEMBLE TODAY',
+                                    fontSize: 10,
+                                    prefixIcon: Icons.bolt_outlined,
+                                    backgroundColor: Colors.transparent,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 4,
+                                    ),
+                                  ),
                                 ],
                               ),
-                              QuestLogButton(
-                                primaryColor: QuestLogColors.accent,
-                                onPress: () {
-                                  assemblerNotifier
-                                      .handleAddMainQuestToAssemble(mainQuest);
-                                  navigationNotifier.setIndex(1);
-                                },
-                                label: 'ASSEMBLE TODAY',
-                                fontSize: 10,
-                                prefixIcon: Icons.bolt_outlined,
-                                backgroundColor: Colors.transparent,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 4,
-                                ),
+                            ),
+                          ],
+
+                          for (final sideQuest
+                              in filteredQuestsByCategory[category]!.$2) ...[
+                            _SideQuestBlock(
+                              sideQuest: sideQuest,
+                              onArchive: () => _dialogBuilder(
+                                context,
+                                sideQuest,
+                                () => notifier.archiveSideQuest(sideQuest),
                               ),
-                            ],
-                          ),
-                        ),
-                      ],
+                              onClickEdit: () => notifier.onClickEditSideQuest(
+                                context,
+                                sideQuest,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
 
-                      for (final sideQuest
-                          in filteredQuestsByCategory[category]!.$2) ...[
-                        _SideQuestBlock(
-                          sideQuest: sideQuest,
-                          onArchive: () => _dialogBuilder(
-                            context,
-                            sideQuest,
-                            () => notifier.archiveSideQuest(sideQuest),
-                          ),
-                          onClickEdit: () =>
-                              notifier.onClickEditSideQuest(context, sideQuest),
-                        ),
-                      ],
+                      const SizedBox(height: 32),
                     ],
-                  ),
-
-                  const SizedBox(height: 32),
+                  ],
                 ],
-              ],
+              ),
             ] else ...[
               const SizedBox(height: 128),
               _BacklogEmptyNote(),

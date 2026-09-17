@@ -47,11 +47,9 @@ class AssemblerScreen extends ConsumerWidget {
     final notifier = ref.read(assemblerViewStateNotifierProvider.notifier);
     final assemblerViewState = ref.watch(assemblerViewStateNotifierProvider);
     final selectedDay = assemblerViewState.selectedDay;
-    final assemblerDataStateAsync = ref.watch(
-      assemblerStateProvider(selectedDay),
-    );
+    final assemblerStateAsync = ref.watch(assemblerStateProvider(selectedDay));
 
-    final DateTime baseDate = DateUtils.dateOnly(selectedDay);
+    final DateTime baseDate = selectedDay.dateOnly;
     final TimeSlot? selectedTimeSlot = assemblerViewState.selectedTimeSlot;
     final AssemblerMainQuest? editingQuest = assemblerViewState.editingQuest;
     final MainQuest? assembledMainQuest = assemblerViewState.assembledMainQuest;
@@ -59,7 +57,7 @@ class AssemblerScreen extends ConsumerWidget {
     final String assembledQuestName =
         assembledMainQuest?.name ?? editingQuest?.name ?? '';
 
-    return assemblerDataStateAsync.when(
+    return assemblerStateAsync.when(
       data: (state) {
         final hasOverlap = _hasOverlap(
           state.selectedDayQuests,

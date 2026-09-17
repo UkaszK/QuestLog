@@ -14,7 +14,11 @@ class QuestLogScreenContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.only(top: 16, right: 16, left: 16, bottom: 150),
-      child: Column(spacing: spacing, children: children),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: spacing,
+        children: children,
+      ),
     );
   }
 }
