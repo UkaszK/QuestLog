@@ -256,7 +256,7 @@ class _AssemblerState extends State<Assembler> {
                       vertical: smallSized ? 4 : 10,
                     ),
                     decoration: BoxDecoration(
-                      border: Border.all(color: statusColor, width: 1),
+                      border: Border.all(color: statusColor, width: 0.5),
                     ),
                     child: ClipRect(
                       child: Column(

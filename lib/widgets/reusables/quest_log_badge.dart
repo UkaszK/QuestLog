@@ -24,7 +24,7 @@ class QuestLogBadge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        border: Border.all(color: borderColor ?? primaryColor),
+        border: Border.all(color: borderColor ?? primaryColor, width: 0.5),
         borderRadius: BorderRadiusGeometry.circular(2),
         color: backgroundColor ?? primaryColor.withValues(alpha: 0.15),
       ),
