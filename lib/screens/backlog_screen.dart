@@ -334,7 +334,7 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
                                     },
                                     label: 'ASSEMBLE TODAY',
                                     fontSize: 10,
-                                    prefixIcon: Icons.bolt_outlined,
+                                    prefixIcon: Icons.add_circle_outline,
                                     backgroundColor: Colors.transparent,
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 6,

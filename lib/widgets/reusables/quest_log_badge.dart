@@ -10,6 +10,7 @@ class QuestLogBadge extends StatelessWidget {
     this.borderColor,
     this.prefixIcon,
     this.suffixIcon,
+    this.padding = const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
   });
 
   final String label;
@@ -18,11 +19,12 @@ class QuestLogBadge extends StatelessWidget {
   final Color? borderColor;
   final IconData? prefixIcon;
   final IconData? suffixIcon;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      padding: padding,
       decoration: BoxDecoration(
         border: Border.all(color: borderColor ?? primaryColor, width: 0.5),
         borderRadius: BorderRadiusGeometry.circular(2),
@@ -40,7 +42,7 @@ class QuestLogBadge extends StatelessWidget {
             style: GoogleFonts.jetBrainsMono(
               color: primaryColor,
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
             ),
           ),
 
