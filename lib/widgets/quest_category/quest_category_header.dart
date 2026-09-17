@@ -26,6 +26,7 @@ class QuestCategoryHeader extends StatelessWidget {
         borderColor: QuestLogColors.border,
       ),
       dividerStyle: (dividerDistance: 4),
+      crossAxisAlignment: CrossAxisAlignment.center,
     );
   }
 }

@@ -232,6 +232,7 @@ class _ActiveTimeSlotBarState extends State<ActiveTimeSlotBar> {
       child: SafeArea(
         bottom: false,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

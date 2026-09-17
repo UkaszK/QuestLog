@@ -11,6 +11,7 @@ class QuestLogSectionHeader extends StatelessWidget {
     this.rightSide,
     this.hideDivider = false,
     this.dividerStyle = (dividerDistance: 8),
+    this.crossAxisAlignment = CrossAxisAlignment.end,
   });
 
   final String title;
@@ -19,6 +20,7 @@ class QuestLogSectionHeader extends StatelessWidget {
   final Widget? rightSide;
   final bool hideDivider;
   final ({double? dividerDistance}) dividerStyle;
+  final CrossAxisAlignment crossAxisAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class QuestLogSectionHeader extends StatelessWidget {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: crossAxisAlignment,
           children: [
             Row(
               children: [
