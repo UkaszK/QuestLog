@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 
 enum QuestPriority {
   low,

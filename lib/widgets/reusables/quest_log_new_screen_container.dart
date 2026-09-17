@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:questlog/widgets/questlog_app_bar.dart';
+import 'package:questlog/widgets/quest_log_app_bar.dart';
 import 'package:questlog/widgets/reusables/quest_log_screen_container.dart';
 
 class QuestLogNewScreenContainer extends StatelessWidget {

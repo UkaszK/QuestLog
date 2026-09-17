@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/utils/get_duration_hours_and_minutes.dart';
 
 /// Identifies a single achievement track. Persisted by [name], so renaming a

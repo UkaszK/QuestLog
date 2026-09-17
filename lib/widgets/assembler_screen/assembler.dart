@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/time_slot.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/utils/get_time_text.dart';
 
 class Assembler extends StatefulWidget {

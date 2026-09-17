@@ -6,10 +6,10 @@ import 'package:questlog/screens/analytics_screen.dart';
 import 'package:questlog/screens/assembler_screen.dart';
 import 'package:questlog/screens/backlog_screen.dart';
 import 'package:questlog/screens/dashboard_screen.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/achievements_screen/achievement_unlock_listener.dart';
-import 'package:questlog/widgets/questlog_app_bar.dart';
-import 'package:questlog/widgets/questlog_navigation_bar.dart';
+import 'package:questlog/widgets/quest_log_app_bar.dart';
+import 'package:questlog/widgets/quest_log_navigation_bar.dart';
 
 class MainHomeScreen extends ConsumerWidget {
   const MainHomeScreen({super.key});

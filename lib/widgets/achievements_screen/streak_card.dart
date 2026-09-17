@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/gamification_metrics.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/analytics_screen/analytics_shared.dart';
 
 /// Current streak, best streak and the last seven days of activity.

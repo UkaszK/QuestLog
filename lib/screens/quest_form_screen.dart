@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/quest_type.dart';
 import 'package:questlog/providers/quest_form_providers.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/forms/fields/quest_log_switch.dart';
 import 'package:questlog/widgets/forms/main_quest_form.dart';
 import 'package:questlog/widgets/forms/side_quest_form.dart';

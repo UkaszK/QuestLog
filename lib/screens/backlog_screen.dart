@@ -10,7 +10,7 @@ import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/providers/assembler_providers.dart';
 import 'package:questlog/providers/backlog_providers.dart';
 import 'package:questlog/providers/navigation_bar_providers.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/quest_category/quest_category_header.dart';
 import 'package:questlog/widgets/quest_log_loading_screen.dart';
 import 'package:questlog/widgets/quests/main_quest_block.dart';

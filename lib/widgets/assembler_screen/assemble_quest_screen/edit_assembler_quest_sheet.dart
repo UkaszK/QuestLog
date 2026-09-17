@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/sub_task.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/forms/fields/form_submit_button.dart';
 import 'package:questlog/widgets/forms/fields/quest_sub_tasks_field.dart';
 import 'package:questlog/widgets/forms/fields/quest_title_input_field.dart';

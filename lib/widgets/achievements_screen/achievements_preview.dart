@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/data/gamification_metrics.dart';
 import 'package:questlog/providers/achievement_providers.dart';
 import 'package:questlog/screens/achievements_screen.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/achievements_screen/achievement_badge_tile.dart';
 import 'package:questlog/widgets/achievements_screen/achievement_detail_sheet.dart';
 import 'package:questlog/widgets/achievements_screen/streak_card.dart';

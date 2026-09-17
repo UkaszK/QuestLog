@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/reusables/quest_log_badge.dart';
 import 'package:questlog/widgets/reusables/quest_log_section_header.dart';
 

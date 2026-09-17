@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/day.dart';
 import 'package:questlog/data/side_quest.dart';
-import 'package:questlog/theme/questlog_colors.dart';
+import 'package:questlog/theme/quest_log_colors.dart';
 import 'package:questlog/widgets/dashboard_screen/side_quests/assembler_side_quest_block.dart';
 import 'package:questlog/widgets/reusables/quest_log_section_header.dart';
 
