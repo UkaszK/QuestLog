@@ -2,29 +2,14 @@ import 'package:flutter/painting.dart';
 import 'package:questlog/theme/quest_log_colors.dart';
 
 enum QuestFilterOption {
-  all,
-  mainQuests,
-  sideQuests,
-  highPriority,
-  dueToday;
+  all(label: 'All', color: QuestLogColors.accent),
+  mainQuests(label: 'Main Quests', color: QuestLogColors.accent),
+  sideQuests(label: 'Side Quests', color: QuestLogColors.otherAccent),
+  highPriority(label: 'High Priority', color: QuestLogColors.warning),
+  dueToday(label: 'Due Today', color: QuestLogColors.accent);
 
-  String get label {
-    return switch (this) {
-      QuestFilterOption.all => 'All',
-      QuestFilterOption.mainQuests => 'Main Quests',
-      QuestFilterOption.sideQuests => 'Side Quests',
-      QuestFilterOption.highPriority => 'High Priority',
-      QuestFilterOption.dueToday => 'Due Today',
-    };
-  }
+  const QuestFilterOption({required this.label, required this.color});
 
-  Color get color {
-    return switch (this) {
-      QuestFilterOption.all => QuestLogColors.accent,
-      QuestFilterOption.mainQuests => QuestLogColors.accent,
-      QuestFilterOption.sideQuests => QuestLogColors.otherAccent,
-      QuestFilterOption.highPriority => QuestLogColors.warning,
-      QuestFilterOption.dueToday => QuestLogColors.accent,
-    };
-  }
+  final String label;
+  final Color color;
 }

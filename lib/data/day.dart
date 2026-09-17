@@ -1,23 +1,15 @@
 enum Day {
-  monday,
-  tuesday,
-  wednesday,
-  thursday,
-  friday,
-  saturday,
-  sunday;
+  monday(label: 'Monday'),
+  tuesday(label: 'Tuesday'),
+  wednesday(label: 'Wednesday'),
+  thursday(label: 'Thursday'),
+  friday(label: 'Friday'),
+  saturday(label: 'Saturday'),
+  sunday(label: 'Sunday');
+
+  const Day({required this.label});
+
+  final String label;
 
   static Day fromDateTime(DateTime date) => Day.values[date.weekday - 1];
-
-  String get label {
-    return switch (this) {
-      Day.monday => 'Monday',
-      Day.tuesday => 'Tuesday',
-      Day.wednesday => 'Wednesday',
-      Day.thursday => 'Thursday',
-      Day.friday => 'Friday',
-      Day.saturday => 'Saturday',
-      Day.sunday => 'Sunday',
-    };
-  }
 }

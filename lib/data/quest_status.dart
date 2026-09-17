@@ -2,26 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:questlog/theme/quest_log_colors.dart';
 
 enum QuestStatus {
-  open,
-  completed,
-  active,
-  pending;
+  open(label: 'Upcoming', color: QuestLogColors.textSecondary),
+  completed(label: 'Done', color: QuestLogColors.success),
+  active(label: 'Active', color: QuestLogColors.accent),
+  pending(label: 'Overdue', color: QuestLogColors.warning);
 
-  Color get color {
-    return switch (this) {
-      QuestStatus.open => QuestLogColors.textSecondary,
-      QuestStatus.completed => QuestLogColors.success,
-      QuestStatus.active => QuestLogColors.accent,
-      QuestStatus.pending => QuestLogColors.warning,
-    };
-  }
+  const QuestStatus({required this.label, required this.color});
 
-  String get label {
-    return switch (this) {
-      QuestStatus.open => 'Upcoming',
-      QuestStatus.completed => 'Done',
-      QuestStatus.active => 'Active',
-      QuestStatus.pending => 'Overdue',
-    };
-  }
+  final String label;
+  final Color color;
 }
