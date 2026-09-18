@@ -89,7 +89,7 @@ class AssemblerScreen extends ConsumerWidget {
                         ),
                         _AssemblerTitle(
                           rightSide: Text(
-                            selectedDay.toDDMMYYYY(),
+                            selectedDay.toDDMMYYYY('-'),
                             style: GoogleFonts.jetBrainsMono(
                               color: QuestLogColors.accent,
                               fontSize: 10,

@@ -27,46 +27,6 @@ class BacklogScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _BacklogScreenState();
 }
 
-class _Header extends StatelessWidget {
-  const _Header({required this.questCount, required this.rightSide});
-
-  final int questCount;
-  final Widget rightSide;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'BACKLOG',
-              style: GoogleFonts.jetBrainsMono(
-                color: QuestLogColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '$questCount QUESTS IN BACKLOG',
-              style: GoogleFonts.jetBrainsMono(
-                color: QuestLogColors.textSecondary,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-
-        rightSide,
-      ],
-    );
-  }
-}
-
 class _BacklogScreenState extends ConsumerState<BacklogScreen> {
   QuestFilterOption _selectedFilter = QuestFilterOption.all;
 
@@ -326,6 +286,9 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
                                   QuestLogButton(
                                     primaryColor: QuestLogColors.accent,
                                     onPress: () {
+                                      assemblerNotifier.updateSelectedDay(
+                                        DateTime.now(),
+                                      );
                                       assemblerNotifier
                                           .handleAddMainQuestToAssemble(
                                             mainQuest,
@@ -378,6 +341,46 @@ class _BacklogScreenState extends ConsumerState<BacklogScreen> {
       },
       error: (error, stack) => Center(child: Text('Error loading: $error')),
       loading: () => QuestLogLoadingScreen(),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.questCount, required this.rightSide});
+
+  final int questCount;
+  final Widget rightSide;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'BACKLOG',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '$questCount QUESTS IN BACKLOG',
+              style: GoogleFonts.jetBrainsMono(
+                color: QuestLogColors.textSecondary,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+
+        rightSide,
+      ],
     );
   }
 }
