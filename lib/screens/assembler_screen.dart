@@ -107,6 +107,7 @@ class AssemblerScreen extends ConsumerWidget {
                           displayInsertBlocks: !hasTimeSlot,
                           hasOverlap: hasOverlap,
                           selectedTimeSlot: selectedTimeSlot,
+                          editingQuest: editingQuest,
                           onSelectTimeSlot: notifier.updateSelectedTimeSlot,
                           onUpdateTimeSlot: notifier.updateSelectedTimeSlot,
                           onSelectExistingQuest:

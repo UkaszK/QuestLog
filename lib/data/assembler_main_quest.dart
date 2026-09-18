@@ -97,6 +97,10 @@ class AssemblerMainQuest implements Comparable<AssemblerMainQuest> {
   @ignore
   bool get subTasksCompleted => subTasks.every((subTask) => subTask.completed);
 
+  @ignore
+  String get subTasksListed =>
+      subTasks.map((subTask) => subTask.name).join(', ');
+
   int compareByDate(AssemblerMainQuest other) {
     return startTime.compareTo(other.startTime);
   }
