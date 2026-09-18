@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/side_quest.dart';
 import 'package:questlog/theme/quest_log_colors.dart';
+import 'package:questlog/widgets/reusables/quest_log_badge.dart';
 
 class AssemblerSideQuestBlock extends StatelessWidget {
   const AssemblerSideQuestBlock({
@@ -30,8 +31,8 @@ class AssemblerSideQuestBlock extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: 32,
-            height: 32,
+            width: 24,
+            height: 24,
             child: Checkbox(
               value: completed,
               onChanged: (newValue) => onCheckSideQuest(newValue ?? false),
@@ -71,31 +72,18 @@ class AssemblerSideQuestBlock extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.jetBrainsMono(
                           color: QuestLogColors.textSecondary,
-                          fontSize: 10,
-                          letterSpacing: -0.5,
+                          fontSize: 8,
                         ),
                       ),
                     ),
                     if (timeIntervalString != null) ...[
                       const SizedBox(width: 5),
 
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: QuestLogColors.accentLessOpacity,
-                            width: 1,
-                          ),
-                          color: QuestLogColors.otherAccentLessOpacity,
-                        ),
-                        child: Text(
-                          timeIntervalString.toUpperCase(),
-                          style: GoogleFonts.jetBrainsMono(
-                            color: QuestLogColors.otherAccent,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      QuestLogBadge(
+                        label: timeIntervalString.toUpperCase(),
+                        primaryColor: QuestLogColors.otherAccent,
+                        borderColor: QuestLogColors.otherAccentLessOpacity,
+                        padding: EdgeInsets.symmetric(horizontal: 2),
                       ),
                     ],
                   ],
@@ -107,20 +95,9 @@ class AssemblerSideQuestBlock extends StatelessWidget {
           const SizedBox(width: 10),
 
           if (scheduledToday) ...[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-              decoration: BoxDecoration(
-                border: Border.all(width: 1, color: QuestLogColors.otherAccent),
-                color: QuestLogColors.otherAccent.withValues(alpha: 0.1),
-              ),
-              child: Text(
-                'TODAY',
-                style: GoogleFonts.jetBrainsMono(
-                  color: QuestLogColors.otherAccent,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            QuestLogBadge(
+              label: 'TODAY',
+              primaryColor: QuestLogColors.otherAccent,
             ),
           ],
         ],

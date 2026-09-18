@@ -13,6 +13,36 @@ import 'package:questlog/widgets/reusables/quest_log_screen_container.dart';
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
+  Future<void> _selectDate(
+    BuildContext context,
+    DateTime selectedDay,
+    void Function(DateTime) onChange,
+  ) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDay,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: QuestLogColors.accent,
+              onPrimary: Colors.black,
+              surface: Colors.black,
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      onChange(picked);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(dashboardViewStateNotifierProvider.notifier);
@@ -29,6 +59,8 @@ class DashboardScreen extends ConsumerWidget {
               selectedDay: selectedDay,
               leftAction: () => notifier.shiftDay(-1),
               rightAction: () => notifier.shiftDay(1),
+              onClickDate: () =>
+                  _selectDate(context, selectedDay, notifier.setDay),
             ),
 
             DashboardDailyProgress(progress: state.progress),
@@ -63,11 +95,13 @@ class _Header extends StatelessWidget {
     required this.selectedDay,
     required this.leftAction,
     required this.rightAction,
+    required this.onClickDate,
   });
 
   final DateTime selectedDay;
   final VoidCallback leftAction;
   final VoidCallback rightAction;
+  final VoidCallback onClickDate;
 
   static final _dayFormat = DateFormat('EEE, d MMM');
 
@@ -104,12 +138,15 @@ class _Header extends StatelessWidget {
           children: [
             _DayNavButton(icon: Icons.chevron_left, onTap: leftAction),
             const SizedBox(width: 8),
-            Text(
-              _dayFormat.format(selectedDay).toUpperCase(),
-              style: GoogleFonts.jetBrainsMono(
-                color: QuestLogColors.textSecondary,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
+            GestureDetector(
+              onTap: onClickDate,
+              child: Text(
+                _dayFormat.format(selectedDay).toUpperCase(),
+                style: GoogleFonts.jetBrainsMono(
+                  color: QuestLogColors.textSecondary,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(width: 8),

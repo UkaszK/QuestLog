@@ -89,14 +89,13 @@ class AssemblerViewStateNotifier extends Notifier<AssemblerViewState> {
   }
 
   void handleAddMainQuestToAssemble(MainQuest mainQuest) {
-    final today = DateTime.now().dateOnly;
     final defaultTimeSlot = (
-      startTime: today,
-      endTime: today.add(const Duration(hours: 2)),
+      startTime: state.selectedDay,
+      endTime: state.selectedDay.add(const Duration(hours: 2)),
     );
 
     state = (
-      selectedDay: today,
+      selectedDay: state.selectedDay,
       selectedTimeSlot: state.selectedTimeSlot ?? defaultTimeSlot,
       assembledMainQuest: mainQuest,
       editingQuest: state.editingQuest,

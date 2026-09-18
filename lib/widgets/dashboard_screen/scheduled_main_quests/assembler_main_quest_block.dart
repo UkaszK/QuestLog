@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:questlog/data/assembler_main_quest.dart';
 import 'package:questlog/data/sub_task.dart';
 import 'package:questlog/theme/quest_log_colors.dart';
+import 'package:questlog/widgets/reusables/quest_log_badge.dart';
 
 class AssemblerMainQuestBlock extends StatelessWidget {
   const AssemblerMainQuestBlock({
@@ -56,12 +57,12 @@ class AssemblerMainQuestBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final questStatus = assemblerQuest.status;
-    final color = questStatus.color;
+    final statusColor = questStatus.color;
 
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(width: 0.5, color: color),
+        border: Border.all(width: 0.5, color: statusColor),
         color: QuestLogColors.surface,
       ),
       child: Column(
@@ -77,13 +78,13 @@ class AssemblerMainQuestBlock extends StatelessWidget {
                     child: Checkbox(
                       value: assemblerQuest.completed,
                       onChanged: (value) => onCheckQuest(value ?? false),
-                      side: BorderSide(color: color),
+                      side: BorderSide(color: statusColor),
                       activeColor: QuestLogColors.accent,
                       checkColor: QuestLogColors.black,
                     ),
                   ),
 
-                  const SizedBox(width: 5),
+                  const SizedBox(width: 10),
 
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,20 +125,9 @@ class AssemblerMainQuestBlock extends StatelessWidget {
                   ),
                 ],
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: color),
-                  color: color.withValues(alpha: 0.1),
-                ),
-                child: Text(
-                  questStatus.label.toUpperCase(),
-                  style: GoogleFonts.jetBrainsMono(
-                    color: color,
-                    fontSize: 10,
-                    fontWeight: FontWeight(1000),
-                  ),
-                ),
+              QuestLogBadge(
+                label: questStatus.label.toUpperCase(),
+                primaryColor: statusColor,
               ),
             ],
           ),
@@ -146,7 +136,7 @@ class AssemblerMainQuestBlock extends StatelessWidget {
             Divider(color: QuestLogColors.border),
 
             Padding(
-              padding: EdgeInsetsGeometry.symmetric(horizontal: 30),
+              padding: EdgeInsetsGeometry.symmetric(horizontal: 25),
               child: Column(
                 spacing: 10,
                 children: [

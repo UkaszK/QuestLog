@@ -59,7 +59,11 @@ class DashboardViewStateNotifier extends Notifier<DashboardViewState> {
   DashboardViewState build() => (selectedDay: DateTime.now().dateOnly);
 
   void shiftDay(int value) {
-    state = (selectedDay: state.selectedDay.add(Duration(days: value)));
+    setDay(state.selectedDay.add(Duration(days: value)));
+  }
+
+  void setDay(DateTime date) {
+    state = (selectedDay: date.dateOnly);
   }
 
   void checkAssemblerMainQuest(
