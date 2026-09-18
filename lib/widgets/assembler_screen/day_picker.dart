@@ -70,7 +70,6 @@ class DayPicker extends StatelessWidget {
               shadows: shadows,
             ),
           ),
-          SizedBox(height: 12, child: Row(children: [])),
         ],
       ),
     );
@@ -176,6 +175,8 @@ class DayPicker extends StatelessWidget {
             ),
           ],
         ),
+
+        const SizedBox(height: 25),
       ],
     );
   }
