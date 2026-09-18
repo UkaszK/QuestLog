@@ -105,7 +105,7 @@ class _InteractiveBlockWidgetState extends State<InteractiveBlockWidget> {
   }
 
   void _resizeStart(int minutes) {
-    var newStart = _snapToDragStep(_startTime.add(Duration(minutes: minutes)));
+    var newStart = _startTime.add(Duration(minutes: minutes));
     if (newStart.isBefore(widget.baseDate)) newStart = widget.baseDate;
 
     if (newStart.isBefore(_endTime.subtract(const Duration(minutes: 15)))) {
@@ -115,7 +115,7 @@ class _InteractiveBlockWidgetState extends State<InteractiveBlockWidget> {
   }
 
   void _resizeEnd(int minutes) {
-    var newEnd = _snapToDragStep(_endTime.add(Duration(minutes: minutes)));
+    var newEnd = _endTime.add(Duration(minutes: minutes));
     if (newEnd.isAfter(_endOfDay)) newEnd = _endOfDay;
 
     if (newEnd.isAfter(_startTime.add(const Duration(minutes: 15)))) {
@@ -124,14 +124,24 @@ class _InteractiveBlockWidgetState extends State<InteractiveBlockWidget> {
     }
   }
 
-  void _accumulateDrag(double delta, void Function(int) onStep) {
-    _dragAccumulator += delta;
-    if (_dragAccumulator.abs() < _dragStepMinutes) return;
+  void _snapResizedStart() {
+    var newStart = _snapToDragStep(_startTime);
+    if (newStart.isBefore(widget.baseDate)) newStart = widget.baseDate;
 
-    final steps = (_dragAccumulator / _dragStepMinutes).truncate();
-    final minutes = steps * _dragStepMinutes;
-    _dragAccumulator -= minutes;
-    onStep(minutes);
+    if (newStart.isBefore(_endTime.subtract(const Duration(minutes: 15)))) {
+      setState(() => _startTime = newStart);
+      _notifyTimeSlotUpdated();
+    }
+  }
+
+  void _snapResizedEnd() {
+    var newEnd = _snapToDragStep(_endTime);
+    if (newEnd.isAfter(_endOfDay)) newEnd = _endOfDay;
+
+    if (newEnd.isAfter(_startTime.add(const Duration(minutes: 15)))) {
+      setState(() => _endTime = newEnd);
+      _notifyTimeSlotUpdated();
+    }
   }
 
   void _accumulateFreeDrag(double delta) {
@@ -181,8 +191,16 @@ class _InteractiveBlockWidgetState extends State<InteractiveBlockWidget> {
                   : const SizedBox.shrink(),
             ),
           ),
-          _buildResizeHandle(top: true, onStep: _resizeStart),
-          _buildResizeHandle(top: false, onStep: _resizeEnd),
+          _buildResizeHandle(
+            top: true,
+            onStep: _resizeStart,
+            onEnd: _snapResizedStart,
+          ),
+          _buildResizeHandle(
+            top: false,
+            onStep: _resizeEnd,
+            onEnd: _snapResizedEnd,
+          ),
         ],
       ),
     );
@@ -191,6 +209,7 @@ class _InteractiveBlockWidgetState extends State<InteractiveBlockWidget> {
   Widget _buildResizeHandle({
     required bool top,
     required void Function(int) onStep,
+    required VoidCallback onEnd,
   }) {
     return Positioned(
       top: top ? 0 : null,
@@ -200,7 +219,8 @@ class _InteractiveBlockWidgetState extends State<InteractiveBlockWidget> {
       child: GestureDetector(
         onVerticalDragStart: (_) => _dragAccumulator = 0.0,
         onVerticalDragUpdate: (details) =>
-            _accumulateDrag(details.delta.dy, onStep),
+            _accumulateFreeDragFor(details.delta.dy, onStep),
+        onVerticalDragEnd: (_) => onEnd(),
         child: Container(
           height: 15,
           color: Colors.transparent,
@@ -214,5 +234,14 @@ class _InteractiveBlockWidgetState extends State<InteractiveBlockWidget> {
         ),
       ),
     );
+  }
+
+  void _accumulateFreeDragFor(double delta, void Function(int) onStep) {
+    _dragAccumulator += delta;
+    final minutes = _dragAccumulator.round();
+    if (minutes == 0) return;
+
+    _dragAccumulator -= minutes;
+    onStep(minutes);
   }
 }
