@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questlog/providers/assembler_providers.dart';
 import 'package:questlog/providers/quest_providers.dart';
 import 'package:questlog/theme/quest_log_colors.dart';
+import 'package:questlog/widgets/backlog_empty_note.dart';
 import 'package:questlog/widgets/quest_category/quest_category_header.dart';
+import 'package:questlog/widgets/quest_log_fab.dart';
 import 'package:questlog/widgets/quest_log_loading_screen.dart';
 import 'package:questlog/widgets/quests/main_quest_block.dart';
 import 'package:questlog/widgets/reusables/quest_log_button.dart';
@@ -21,32 +23,42 @@ class SelectMainQuestScreen extends ConsumerWidget {
 
     return mainQuestsByCategoryAsync.when(
       data: (collection) {
+        final isNotEmpty = collection.entries.isNotEmpty;
         return QuestLogNewScreenContainer(
           spacing: 10,
+          fab: isNotEmpty ? null : QuestLogFAB(),
+          fabPosition: FloatingActionButtonLocation.centerDocked,
           children: [
-            for (final entry in collection.entries) ...[
-              QuestCategoryHeader(
-                label: entry.key.name,
-                questCount: entry.value.length,
-              ),
-
-              for (final mainQuest in entry.value) ...[
-                MainQuestBlock(
-                  mainQuest: mainQuest,
-                  footer: QuestLogButton(
-                    label: 'ASSEMBLE INTO SLOT',
-                    prefixIcon: Icons.bolt_outlined,
-                    onPress: () {
-                      assemblerNotifier.handleAddMainQuestToAssemble(mainQuest);
-                      Navigator.pop(context);
-                    },
-                    primaryColor: QuestLogColors.black,
-                    borderColor: QuestLogColors.accent,
-                    backgroundColor: QuestLogColors.accent,
-                    expandHorizontally: true,
-                  ),
+            if (isNotEmpty) ...[
+              for (final entry in collection.entries) ...[
+                QuestCategoryHeader(
+                  label: entry.key.name,
+                  questCount: entry.value.length,
                 ),
+
+                for (final mainQuest in entry.value) ...[
+                  MainQuestBlock(
+                    mainQuest: mainQuest,
+                    footer: QuestLogButton(
+                      label: 'ASSEMBLE INTO SLOT',
+                      prefixIcon: Icons.bolt_outlined,
+                      onPress: () {
+                        assemblerNotifier.handleAddMainQuestToAssemble(
+                          mainQuest,
+                        );
+                        Navigator.pop(context);
+                      },
+                      primaryColor: QuestLogColors.black,
+                      borderColor: QuestLogColors.accent,
+                      backgroundColor: QuestLogColors.accent,
+                      expandHorizontally: true,
+                    ),
+                  ),
+                ],
               ],
+            ] else ...[
+              const SizedBox(height: 128),
+              BacklogEmptyNote(),
             ],
           ],
         );
