@@ -70,3 +70,5 @@ lib/generated_plugin_registrant.dart
 *.g.dart
 
 # End of https://www.toptal.com/developers/gitignore/api/flutter
+
+.widget_preview/
